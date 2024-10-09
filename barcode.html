@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In nhãn thùng hàng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39+Extended+Text&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        #printPreview {
+            width: 276px;
+            height: 88px;
+            display: flex;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+
+        .print-label {
+            width: 138px;
+            height: 88px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2px;
+            box-sizing: border-box;
+        }
+
+        .print-label-title {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .print-label-barcode {
+            font-family: 'Libre Barcode 39 Extended Text', cursive;
+            font-size: 32px;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .print-label-price {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        #printButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #printArea {
+            display: none;
+        }
+
+        @media print {
+            @page {
+                size: 69mm 22mm;
+                margin: 0;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                width: 69mm;
+                height: 22mm;
+            }
+
+            #printArea {
+                display: flex;
+                width: 69mm;
+                height: 22mm;
+                page-break-after: always;
+            }
+
+            #printPreview,
+            #printButton {
+                display: none !important;
+            }
+
+            .print-label {
+                width: 34.5mm;
+                height: 22mm;
+                padding: 0.5mm;
+            }
+
+            .print-label-title {
+                font-size: 4mm;
+            }
+
+            .print-label-barcode {
+                font-size: 8mm;
+            }
+
+            .print-label-price {
+                font-size: 3mm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="printPreview"></div>
+    <button id="printButton">In nhãn</button>
+    <div id="printArea"></div>
+
+    <script>
+        function loadData(item, price, barcode) {
+            displayPrintPreview(item, price, barcode);
+            preparePrintLabel(item, price, barcode);
+        }
+
+        function createLabelHTML(item, price, barcode) {
+            return `
+                <div class="print-label">
+                    <div class="print-label-title">${item}</div>
+                    <div class="print-label-barcode">${barcode}</div>
+                    <div class="print-label-price">${price}</div>
+                </div>
+            `;
+        }
+
+        function displayPrintPreview(item, price, barcode) {
+            const printPreview = document.getElementById('printPreview');
+            printPreview.innerHTML = createLabelHTML(item, price, barcode) + createLabelHTML(item, price, barcode);
+        }
+
+        function preparePrintLabel(item, price, barcode) {
+            const printArea = document.getElementById('printArea');
+            printArea.innerHTML = createLabelHTML(item, price, barcode) + createLabelHTML(item, price, barcode);
+        }
+
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const item = urlParams.get('item') || 'Dầu gội Weilaiya xả gừng';
+            const price = urlParams.get('price') || '680.000 VNĐ';
+            const barcode = urlParams.get('barcode') || '';
+
+            loadData(item, price, barcode);
+
+            document.getElementById('printButton').addEventListener('click', function () {
+                window.print();
+            });
+        };
+    </script>
+</body>
+
+</html>
