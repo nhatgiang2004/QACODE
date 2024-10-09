@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>In nhãn thùng hàng</title>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39+Extended+Text&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,20 +36,23 @@
         }
 
         .print-label-title {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
             text-align: center;
         }
 
         .print-label-barcode {
-            font-family: 'Libre Barcode 39 Extended Text', cursive;
-            font-size: 32px;
             text-align: center;
-            line-height: 1;
+            height: 50px;
+        }
+
+        .print-label-barcode img {
+            height: 100%;
+            max-width: 100%;
         }
 
         .print-label-price {
-            font-size: 12px;
+            font-size: 16px;
             font-weight: bold;
             text-align: right;
         }
@@ -105,11 +107,11 @@
             }
 
             .print-label-barcode {
-                font-size: 9mm;
+                height: 12mm;
             }
 
             .print-label-price {
-                font-size: 2mm;
+                font-size: 3mm;
             }
         }
     </style>
@@ -127,10 +129,13 @@
         }
 
         function createLabelHTML(item, price, barcode) {
+            const barcodeUrl = `https://barcodeapi.org/api/code39/${barcode}`;
             return `
                 <div class="print-label">
                     <div class="print-label-title">${item}</div>
-                    <div class="print-label-barcode">${barcode}</div>
+                    <div class="print-label-barcode">
+                        <img src="${barcodeUrl}" alt="Barcode">
+                    </div>
                     <div class="print-label-price">${price}</div>
                 </div>
             `;
@@ -150,7 +155,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const item = urlParams.get('item') || 'Dầu gội Weilaiya xả gừng';
             const price = urlParams.get('price') || '680.000 VNĐ';
-            const barcode = urlParams.get('barcode') || '';
+            const barcode = urlParams.get('barcode') || '893680686725';
 
             loadData(item, price, barcode);
 
