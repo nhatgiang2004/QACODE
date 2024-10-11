@@ -108,7 +108,7 @@
             }
 
             .print-label-barcode {
-                height: 12mm;
+                height: 14mm;
             }
 
             .print-label-price {
@@ -159,9 +159,9 @@
             JsBarcode(`#${elementId}`, barcodeData, {
                 format: "CODE128",
                 width: 2,
-                height: 40,
+                height: 50,
                 displayValue: true,
-                fontSize: 12,
+                fontSize: 14,
                 marginTop: 5,
                 marginBottom: 5
             });
@@ -171,7 +171,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const item = urlParams.get('item') || 'Dầu gội Weilaiya xả gừng';
             const price = urlParams.get('price') || '680.000 VNĐ';
-            const barcode = urlParams.get('barcode') || '893680686725';
+            const barcode = urlParams.get('barcode') || '893685';
 
             loadData(item, price, barcode);
 
