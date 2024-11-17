@@ -228,6 +228,18 @@
                 <h2><strong>Phiếu Tính tiền</strong></h2>
                 <div><strong> Số: <span id="idhoahon"></span></strong></div>
                 <div><strong> Ngày: <span id="date"></span></strong></div>
+                <script>
+    // Lấy ngày hiện tại
+    const currentDate = new Date();
+
+    // Định dạng ngày tháng thành dd/mm/yyyy
+    const formattedDate = currentDate.getDate().toString().padStart(2, '0') + '/' + 
+                          (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + 
+                          currentDate.getFullYear();
+
+    // Hiển thị lên phần tử HTML có id là "date"
+    document.getElementById('date').textContent = formattedDate;
+</script>
             </div>
 
 
