@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>K&#7871;t qu&#7843; thi &#273;&#7845;u</title>
+</head>
+<body>
+  <h1>K&#7871;t qu&#7843; thi &#273;&#7845;u</h1>
+  <table border="1" id="sheetData">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    fetch("https://opensheet.elk.sh/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/Hi&#7875;n th&#7883; KQ Sân 1")
+      .then(response => response.json())
+      .then(data => {
+        const table = document.getElementById("sheetData");
+        const thead = table.querySelector("thead");
+        const tbody = table.querySelector("tbody");
+
+        // T&#7841;o header
+        const headerRow = document.createElement("tr");
+        Object.keys(data[0]).forEach(key => {
+          const th = document.createElement("th");
+          th.textContent = key;
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+
+        // T&#7841;o n&#7897;i dung
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          Object.values(row).forEach(cell => {
+            const td = document.createElement("td");
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      });
+  </script>
+</body>
+</html>
