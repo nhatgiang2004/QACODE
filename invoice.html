@@ -73,7 +73,7 @@
   <script>
     // Lấy tham số từ URL
     const params = new URLSearchParams(window.location.search);
-    const total = params.get("total") || "100000";  // số tiền
+    const total = params.get("sum") || "100000";  // số tiền
     const id = params.get("id") || "HD001";         // mã hóa đơn
 
     // Thông tin tài khoản ngân hàng
@@ -82,7 +82,7 @@
     const accountName = "DO THU HUONG"; // Tên chủ TK
 
     // Nội dung chuyển khoản
-    const addInfo = Tenkh + " Thanh toan " ;
+    const addInfo = Id + " Thanh toan " ;
 
     // Tạo link VietQR
     const qrUrl = `https://img.vietqr.io/image/${bankBin}-${accountNo}-compact.png?amount=${total}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
@@ -178,6 +178,7 @@
 </script>
 </body>
 </html>
+
 
 
 
