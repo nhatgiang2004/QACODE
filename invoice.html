@@ -1,174 +1,191 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PHIẾU TÍNH TIỀN</title>
-  <style>
-    :root { --maxw: 480px; }
-    body { font-family: Arial, sans-serif; margin:0; background:#fff; }
-    .wrap { max-width: var(--maxw); margin: 16px auto; padding: 16px 18px; border:1px solid #000; background:#fff; }
-    .head { display:flex; gap:12px; align-items:center; }
-    .head img { width:64px; height:auto; }
-    .shop { line-height:1.25; }
-    .shop b { font-size:18px; }
-    h1 { text-align:center; margin:18px 0 8px; font-size:24px; letter-spacing:1px; }
-    .info p { margin:4px 0; font-size:14px; }
-    table { width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
-    th, td { border:1px solid #000; padding:6px 8px; text-align:center; }
-    th { background:#f2f2f2; }
-    td.tl { text-align:left; }
-    td.tr { text-align:right; }
-    .sum { margin-top:10px; font-size:15px; }
-    .sum p { margin:6px 0; }
-    .qr { text-align:center; margin:16px 0 6px; }
-    .qr img { width:180px; height:auto; }
-    .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu tính tiền</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 10px; /* Giảm padding để phù hợp với A7 */
+        }
 
-    /* Nút trên cùng bên phải */
-    .actions {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 999;
-    }
-    .actions button {
-      margin: 4px;
-      padding: 8px 14px;
-      font-size: 13px;
-      cursor: pointer;
-      border:1px solid #333;
-      border-radius:6px;
-      background:#f9f9f9;
-    }
+        /* Định nghĩa kích thước cho khổ A7 (74 x 105 mm) */
+        .container {
+            width: 74mm;
+            height: 105mm;
+            background: white;
+            padding: 5mm;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: auto;
+            box-sizing: border-box; /* Bao gồm padding và border trong kích thước */
+        }
 
-    @media (max-width: 520px) { .wrap { margin:0; border:none; } }
-    @media print { body{ background:#fff } .wrap{ border:none; margin:0; } .actions{display:none} }
-  </style>
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 5mm;
+            text-align: left;
+        }
+        .logo {
+            width: 15mm;
+            height: auto;
+            margin-right: 5mm;
+        }
+        .company-info {
+            font-size: 8pt;
+            line-height: 1.2;
+            text-align: left;
+        }
+        .company-info p {
+            margin: 0;
+            line-height: 1.2;
+        }
+        h2 {
+            text-align: center;
+            margin: 5mm 0;
+            font-size: 14pt;
+        }
+        .info-section {
+            font-size: 9pt;
+            line-height: 1.3;
+            margin-bottom: 5mm;
+        }
+        .info-section p {
+            margin: 2mm 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8pt;
+            margin-bottom: 5mm;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 2mm;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .text-left {
+            text-align: left;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .summary-section {
+            font-size: 9pt;
+            line-height: 1.4;
+            margin-bottom: 5mm;
+        }
+        .qr-code {
+            text-align: center;
+            margin: 5mm 0;
+        }
+        .qr-code img {
+            max-width: 25mm;
+            height: auto;
+        }
+        .footer {
+            text-align: center;
+            font-size: 7pt;
+            line-height: 1.2;
+        }
+        /* Mobile-specific adjustments */
+        @media (max-width: 480px) {
+            .header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .logo {
+                margin-right: 0;
+            }
+        }
+        
+        /* Chế độ in */
+        @media print {
+            body {
+                width: 74mm;
+                height: 105mm;
+                margin: 0;
+                padding: 0;
+                background: white;
+            }
+            .container {
+                width: 74mm;
+                height: 105mm;
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 5mm;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Nút in và xuất PDF -->
-  <div class="actions">
-    <button onclick="window.print()">🖨 Print</button>
-    <button onclick="exportPDF()">📄 Xuất PDF</button>
-  </div>
 
-  <div class="wrap" id="invoice">
-    <div class="head">
-      <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" alt="Logo" />
-      <div class="shop">
-        <b>HUONG DO PICKLEBALL</b><br/>
-        118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa
-      </div>
+    <div class="container">
+        <div class="header">
+            <img src='https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg' alt='Logo' class='logo'>
+            <div class='company-info'>
+                <p><strong>HUONG DO PICKLEBALL</strong></p>
+                <p>118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa</p>
+            </div>
+        </div>
+
+        <h2>PHIẾU TÍNH TIỀN</h2>
+
+        <div class="info-section">
+            <p><strong>Số giao dịch:</strong> [IDT]</p>
+            <p><strong>Ngày, giờ:</strong> " & TEXT(LOOKUP([_THISROW].[IDT], "TenBangDuLieu", "IDT", "Ngaygioihethong"), "DD/MM/YYYY hh:mm:ss") & "</p>
+            <p><strong>Tên Khách hàng:</strong> " & LOOKUP([_THISROW].[IDT], "TenBangDuLieu", "IDT", "Tenkh") & "</p>
+            <p><strong>Giờ bắt đầu:</strong> " & TEXT(LOOKUP([_THISROW].[IDT], "TenBangDuLieu", "IDT", "tugio"), "hh:mm") & "</p>
+            <p><strong>Giờ kết thúc:</strong> " & TEXT(LOOKUP([_THISROW].[IDT], "TenBangDuLieu", "IDT", "dengio"), "hh:mm") & "</p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Dịch vụ</th>
+                    <th>SL</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-left">SUBSTITUTE([Inventory Change Log][Tenhangban], ",", "<br>")</td>
+                    <td>SUBSTITUTE(TEXT([Inventory Change Log][Soluong]), ",", "<br>")</td>
+                    <td class="text-right">SUBSTITUTE(TEXT([Inventory Change Log][dongia]), ",", "<br>")</td>
+                    <td class="text-right">SUBSTITUTE(TEXT([Inventory Change Log][Thanhtien]), ",", "<br>")</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="summary-section">
+            <p>
+                <strong>Tổng cộng:</strong> " & TEXT(SUM([Inventory Change Log][Thanhtien])) & " đ<br>
+                <strong>Bằng chữ:</strong> " & (list([Bangchu])) & "
+            </p>
+        </div>
+
+        <div class="qr-code">
+            <img src="[qr]" alt="QR Code">
+        </div>
+
+        <div class="footer">
+            <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
+            <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+            <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
+        </div>
     </div>
 
-    <h1>PHIẾU TÍNH TIỀN</h1>
-
-    <div class="info">
-      <p><b>Số giao dịch:</b> <span id="id"></span></p>
-      <p><b>Ngày, giờ:</b> <span id="time"></span></p>
-      <p><b>Tên Khách hàng:</b> <span id="cust"></span></p>
-      <p><b>Giờ bắt đầu:</b> <span id="start"></span></p>
-      <p><b>Giờ kết thúc:</b> <span id="end"></span></p>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th style="width:46%">Dịch vụ</th>
-          <th style="width:10%">SL</th>
-          <th style="width:22%">Đơn giá</th>
-          <th style="width:22%">Thành tiền</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-
-    <div class="sum">
-      <p><b>Tổng cộng:</b> <span id="total"></span> đ</p>
-      <p><b>Bằng chữ:</b> <span id="totalText"></span></p>
-    </div>
-
-    <div class="qr">
-      <img id="qr" style="width:150px; height:150px;" alt="QR Thanh toán">
-    </div>
-
-    <div class="foot">
-      <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
-      <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
-      <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
-    </div>
-  </div>
-
-  <!-- Load html2pdf.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-  <script>
-    function exportPDF() {
-      const element = document.getElementById("invoice");
-      const opt = {
-        margin:       0.5,
-        filename:     'phieu-tinh-tien.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-  </script>
-
-  <script>
-    const qp = new URLSearchParams(location.search);
-    const get = k => qp.get(k) || "";
-
-    const toNumber = v => {
-      if (typeof v === "number") return v;
-      let s = String(v || "").trim();
-      s = s.replace(/[^\d-]/g, "");
-      return s ? parseInt(s, 10) : 0;
-    };
-    const fmt = n => Number(n || 0).toLocaleString("vi-VN");
-
-    document.getElementById("id").textContent = get("id");
-    document.getElementById("time").textContent = get("time");
-    document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
-    document.getElementById("start").textContent = get("start");
-    document.getElementById("end").textContent = get("end");
-
-    const tbody = document.getElementById("tbody");
-    let rows = [];
-    const itemsParam = get("items");
-
-    if (itemsParam) {
-      itemsParam.split(";").forEach(one => {
-        if (!one) return;
-        const parts = one.split("|");
-        const name = (parts[0] || "").trim();
-        const qty  = toNumber(parts[1]);
-        const price= toNumber(parts[2]);
-        rows.push({ name, qty, price });
-      });
-    }
-
-    let grand = 0;
-    tbody.innerHTML = rows.map(r => {
-      const line = (r.qty || 0) * (r.price || 0);
-      grand += line;
-      return `<tr>
-        <td class="tl">${r.name}</td>
-        <td>${r.qty || 0}</td>
-        <td class="tr">${fmt(r.price)}</td>
-        <td class="tr">${fmt(line)}</td>
-      </tr>`;
-    }).join("");
-
-    const totalParam = toNumber(get("total"));
-    const total = totalParam > 0 ? totalParam : grand;
-    document.getElementById("total").textContent = fmt(total);
-    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
-
-    const qr = get("img") || get("qr");
-    if (qr) document.getElementById("qr").src = qr;
-  </script>
 </body>
 </html>
