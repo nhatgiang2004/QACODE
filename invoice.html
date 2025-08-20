@@ -73,7 +73,7 @@
   <script>
     // Lấy tham số từ URL
     const params = new URLSearchParams(window.location.search);
-    const total = params.get("sum") || "100000";  // số tiền
+    const total = params.get("total") || "100000";  // số tiền
     const id = params.get("id") || "HD001";         // mã hóa đơn
 
     // Thông tin tài khoản ngân hàng
@@ -178,6 +178,7 @@
 </script>
 </body>
 </html>
+
 
 
 
