@@ -70,7 +70,7 @@
       <p><b>Tên Khách hàng:</b> <span id="cust"></span></p>
       <p><b>Ngày vào:</b> <span id="start"></span></p>
       <p><b>Ngày ra:</b> <span id="end"></span></p>
-      <p><b>Số ngày lưu trú:</b> <span id="songay"></span></p>
+    
  
     </div>
 
@@ -136,7 +136,7 @@
     document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
     document.getElementById("start").textContent = get("start");
     document.getElementById("end").textContent = get("end");
-    document.getElementById("songay").textContent = get("songay");
+  
 
     const tbody = document.getElementById("tbody");
     let rows = [];
@@ -175,3 +175,4 @@
   </script>
 </body>
 </html>
+
