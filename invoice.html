@@ -1,171 +1,116 @@
-<!DOCTYPE html>
-<html lang="vi">
+"<!DOCTYPE html>
+<html lang='vi'>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phiếu tính tiền</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: auto;
-        }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .logo {
-            width: 60px;
-            height: auto;
-            margin-right: 15px;
-        }
-        .company-info {
-            font-size: 14px;
-            line-height: 1.4;
-            text-align: left;
-        }
-        .company-info p {
-            margin: 0;
-            line-height: 1.2;
-        }
-        h2 {
-            text-align: center;
-            margin: 10px 0;
-            font-size: 20px;
-        }
-        .info-section {
-            font-size: 14px;
-            line-height: 1.4;
-            margin-bottom: 15px;
-        }
-        .info-section p {
-            margin: 5px 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .text-left {
-            text-align: left;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .summary-section {
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-        .qr-code {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .qr-code img {
-            max-width: 150px;
-            height: auto;
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            line-height: 1.2;
-        }
-        /* Mobile-specific adjustments */
-        @media (max-width: 480px) {
-            .header {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .logo {
-                margin-right: 0;
-            }
-        }
-    </style>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Phiếu tính tiền</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: auto;
+}
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    text-align: left;
+}
+.logo {
+    width: 60px;
+    height: auto;
+    margin-right: 15px;
+}
+.company-info {
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: left;
+}
+.company-info p { margin: 0; line-height: 1.2; }
+h2 { text-align: center; margin: 10px 0; font-size: 20px; }
+.info-section { font-size: 14px; line-height: 1.4; margin-bottom: 15px; }
+.info-section p { margin: 5px 0; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+}
+th { background-color: #f2f2f2; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.summary-section { font-size: 14px; line-height: 1.6; margin-bottom: 15px; }
+.qr-code { text-align: center; margin: 20px 0; }
+.qr-code img { max-width: 150px; height: auto; }
+.footer { text-align: center; font-size: 12px; line-height: 1.2; }
+@media (max-width: 480px) {
+    .header { flex-direction: column; align-items: center; text-align: center; }
+    .logo { margin-right: 0; }
+}
+</style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="header">
-            <img src='https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg' alt='Logo' class='logo'>
-            <div class='company-info'>
-                <p><strong>HUONG DO PICKLEBALL</strong></p>
-                <p>118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa</p>
-            </div>
-        </div>
-
-        <h2>PHIẾU TÍNH TIỀN</h2>
-
-        <div class="info-section">
-     <strong>Số giao dịch:</strong> " & [IDT] & "<br>
-  <strong>Ngày, giờ:</strong> " & TEXT([Ngaygioihethong], "DD/MM/YYYY hh:mm:ss") & "<br>
-  <strong>Tên Khách hàng:</strong> " & [Tenkh] & "<br>
-  <strong>Giờ bắt đầu:</strong> " & TEXT([tugio], "hh:mm") & "<br>
-  <strong>Giờ kết thúc:</strong> " & TEXT([dengio], "hh:mm") & "<br>
-
-        </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Dịch vụ</th>
-                    <th>SL</th>
-                    <th>Đơn giá</th>
-                    <th>Thành tiền</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="text-left">SUBSTITUTE([Inventory Change Log][Tenhangban], ",", "<br>")</td>
-                    <td>SUBSTITUTE(TEXT([Inventory Change Log][Soluong]), ",", "<br>")</td>
-                    <td class="text-right">SUBSTITUTE(TEXT([Inventory Change Log][dongia]), ",", "<br>")</td>
-                    <td class="text-right">SUBSTITUTE(TEXT([Inventory Change Log][Thanhtien]), ",", "<br>")</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="summary-section">
-            <p>
-                <strong>Tổng cộng:</strong> " & TEXT(SUM([Inventory Change Log][Thanhtien])) & " đ<br>
-                <strong>Bằng chữ:</strong> " & (list([Bangchu])) & "
-            </p>
-        </div>
-
-        <div class="qr-code">
-            <img src="[qr]" alt="QR Code">
-        </div>
-
-        <div class="footer">
-            <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
-            <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
-            <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
+<div class='container'>
+    <div class='header'>
+        <img src='https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg' alt='Logo' class='logo'>
+        <div class='company-info'>
+            <p><strong>HUONG DO PICKLEBALL</strong></p>
+            <p>118 Lò Chum, P. Hạc Thành, Thanh Hóa</p>
         </div>
     </div>
-
+    <h2>PHIẾU TÍNH TIỀN</h2>
+    <div class='info-section'>
+        <p><strong>Số giao dịch:</strong> " & [IDT] & "</p>
+        <p><strong>Ngày, giờ:</strong> " & TEXT([Ngaygioihethong],"DD/MM/YYYY hh:mm:ss") & "</p>
+        <p><strong>Tên khách hàng:</strong> " & [Tenkh] & "</p>
+        <p><strong>Giờ bắt đầu:</strong> " & TEXT([tugio],"hh:mm") & "</p>
+        <p><strong>Giờ kết thúc:</strong> " & TEXT([dengio],"hh:mm") & "</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Dịch vụ</th>
+                <th>SL</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class='text-left'>" & SUBSTITUTE(TEXT([Inventory Change Log][Tenhangban]), ",", "<br>") & "</td>
+                <td>" & SUBSTITUTE(TEXT([Inventory Change Log][Soluong]), ",", "<br>") & "</td>
+                <td class='text-right'>" & SUBSTITUTE(TEXT([Inventory Change Log][dongia]), ",", "<br>") & "</td>
+                <td class='text-right'>" & SUBSTITUTE(TEXT([Inventory Change Log][Thanhtien]), ",", "<br>") & "</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class='summary-section'>
+        <p><strong>Tổng cộng:</strong> " & TEXT(SUM([Inventory Change Log][Thanhtien]), "#,###") & " đ</p>
+        <p><strong>Bằng chữ:</strong> " & [Bangchu] & "</p>
+    </div>
+    <div class='qr-code'>
+        <img src='" & [qr] & "' alt='QR Code'>
+    </div>
+    <div class='footer'>
+        <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
+        <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+    </div>
+</div>
 </body>
-</html>
-
+</html>"
