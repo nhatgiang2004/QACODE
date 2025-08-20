@@ -65,10 +65,38 @@
       <p><b>Bằng chữ:</b> <span id="totalText"></span></p>
     </div>
 
-    <div class="qr">
+<div class="qr">
+  <h3>Quét mã để thanh toán</h3>
+  <img id="qr" alt="VietQR" />
+</div>
 
-    <img src="&[qr]&" style='width: 150px; height: 150px;'>
-    </div>
+<script>
+  // Hàm lấy query string từ URL
+  function getQueryParam(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name) || "";
+  }
+
+  // Lấy dữ liệu cần cho QR (ví dụ tổng tiền + id giao dịch)
+  const id = getQueryParam("id");
+  const total = getQueryParam("total");
+  const tenkh = getQueryParam("tenkh");
+
+  // 🔑 Ví dụ: VietQR với BIDV (970418) và số tài khoản giả định
+  // Bạn thay số tài khoản / ngân hàng thật của mình
+  const bankBin = "970418"; // Mã BIN ngân hàng (VD: BIDV)
+  const accountNo = "123456789"; // Số tài khoản nhận
+  const accountName = "NGUYEN VAN A"; // Tên chủ tài khoản
+  const amount = total || "0";
+  const addInfo = "Thanh toan don hang " + id;
+
+  // API tạo QR từ VietQR.io
+  const qrUrl = `https://img.vietqr.io/image/${bankBin}-${accountNo}-compact.png?amount=${amount}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
+
+  // Gán vào thẻ img
+  document.getElementById("qr").src = qrUrl;
+</script>
+
 
     <div class="foot">
       <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
@@ -156,4 +184,5 @@
 </script>
 </body>
 </html>
+
 
