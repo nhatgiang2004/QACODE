@@ -77,7 +77,7 @@
     const id = params.get("id") || "HD001";         // mã hóa đơn
 
     // Thông tin tài khoản ngân hàng
-    const bankBin = "970415";      // Mã ngân hàng (ví dụ Techcombank)
+    const bankBin = "970415";      // Mã ngân hàng (ví dụ Viettinbank)
     const accountNo = "108001037696"; // Số tài khoản nhận tiền
     const accountName = "DO THU HUONG"; // Tên chủ TK
 
@@ -86,7 +86,7 @@
 
     // Tạo link VietQR
     const qrUrl = `https://img.vietqr.io/image/${bankBin}-${accountNo}-compact.png?amount=${total}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
-
+    const qrUrl = `https://img.vietqr.io/image/ICB-108001037696-compact.png?amount=75000&addInfo=Test%20Thanh%20toan%20tien%20choi%20The%20thao&accountName=DO%20THU%20HUONG
     // Gán link QR vào ảnh
     document.getElementById("qr").src = qrUrl;
   </script>
@@ -179,6 +179,7 @@
 </script>
 </body>
 </html>
+
 
 
 
