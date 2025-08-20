@@ -66,9 +66,19 @@
     </div>
 
 
- <div class="qr">
-    <img id="qr" style="width: 200px; height: 200px;" alt="Mã QR Thanh toán">
-  </div>
+<div class="qr">
+  <img id="qr" style="width:150px; height:150px;" alt="QR Thanh toán">
+</div>
+
+<script>
+  // Hàm lấy tham số từ URL
+  function getParam(name) {
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  // Gán QR vào ảnh
+  document.getElementById("qr").src = getParam("img");
+</script>
 
 
     
@@ -159,6 +169,7 @@
 </script>
 </body>
 </html>
+
 
 
 
