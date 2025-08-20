@@ -1,49 +1,116 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phiếu tính tiền</title>
-  <style>
-    body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; }
-    .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-    h2 { text-align: center; margin: 10px 0; }
-    .info-section p { margin: 5px 0; font-size: 14px; }
-    .summary-section { margin-top: 10px; font-size: 14px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phiếu tính tiền</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: auto;
+}
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.logo {
+    width: 60px;
+    height: auto;
+    margin-right: 15px;
+}
+.company-info { font-size: 14px; }
+h2 { text-align: center; margin: 10px 0; font-size: 20px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 15px; }
+th, td { border: 1px solid black; padding: 6px; text-align: center; }
+th { background-color: #f2f2f2; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.qr-code { text-align: center; margin: 20px 0; }
+.qr-code img { max-width: 150px; height: auto; }
+.footer { text-align: center; font-size: 12px; }
+</style>
 </head>
 <body>
 <div class="container">
-  <h2>PHIẾU TÍNH TIỀN</h2>
-  <div class="info-section">
-    <p><strong>Số giao dịch:</strong> <span id="id"></span></p>
-    <p><strong>Ngày, giờ:</strong> <span id="ngay"></span></p>
-    <p><strong>Tên khách hàng:</strong> <span id="ten"></span></p>
-    <p><strong>Giờ bắt đầu:</strong> <span id="tugio"></span></p>
-    <p><strong>Giờ kết thúc:</strong> <span id="dengio"></span></p>
-  </div>
-  <div class="summary-section">
-    <p><strong>Tổng cộng:</strong> <span id="tong"></span> đ</p>
-  </div>
-  <div class="footer">
-    <p><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></p>
-    <p><i>Xin cảm ơn và hẹn gặp lại!</i></p>
-  </div>
+    <div class="header">
+        <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" class="logo">
+        <div class="company-info">
+            <p><strong>HUONG DO PICKLEBALL</strong></p>
+            <p>118 Lò Chum, P. Hạc Thành, Thanh Hóa</p>
+        </div>
+    </div>
+
+    <h2>PHIẾU TÍNH TIỀN</h2>
+
+    <div class="info-section">
+        <p><strong>Số giao dịch:</strong> <span id="idt"></span></p>
+        <p><strong>Ngày, giờ:</strong> <span id="ngay"></span></p>
+        <p><strong>Tên khách hàng:</strong> <span id="ten"></span></p>
+        <p><strong>Giờ bắt đầu:</strong> <span id="tugio"></span></p>
+        <p><strong>Giờ kết thúc:</strong> <span id="dengio"></span></p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Dịch vụ</th>
+                <th>SL</th>
+                <th>Đơn giá</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-left"><span id="hang"></span></td>
+                <td><span id="soluong"></span></td>
+                <td class="text-right"><span id="dongia"></span></td>
+                <td class="text-right"><span id="thanhtien"></span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="summary-section">
+        <p><strong>Tổng cộng:</strong> <span id="tong"></span> đ</p>
+        <p><strong>Bằng chữ:</strong> <span id="bangchu"></span></p>
+    </div>
+
+    <div class="qr-code">
+        <img id="qr" src="" alt="QR Code">
+    </div>
+
+    <div class="footer">
+        <p><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></p>
+        <p><i>Xin cảm ơn và hẹn gặp lại!</i></p>
+    </div>
 </div>
 
 <script>
-// Hàm lấy query string từ URL
-function getParam(key) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(key) || "";
+function getParam(name) {
+    return new URLSearchParams(window.location.search).get(name) || "";
 }
-// Gán dữ liệu vào HTML
-document.getElementById("id").innerText = getParam("id");
-document.getElementById("ngay").innerText = getParam("ngay");
-document.getElementById("ten").innerText = getParam("ten");
-document.getElementById("tugio").innerText = getParam("tugio");
-document.getElementById("dengio").innerText = getParam("dengio");
-document.getElementById("tong").innerText = getParam("tong");
+document.getElementById("idt").textContent = getParam("idt");
+document.getElementById("ngay").textContent = getParam("ngay");
+document.getElementById("ten").textContent = getParam("ten");
+document.getElementById("tugio").textContent = getParam("tugio");
+document.getElementById("dengio").textContent = getParam("dengio");
+document.getElementById("hang").innerHTML = getParam("hang").replace(/,/g,"<br>");
+document.getElementById("soluong").innerHTML = getParam("soluong").replace(/,/g,"<br>");
+document.getElementById("dongia").innerHTML = getParam("dongia").replace(/,/g,"<br>");
+document.getElementById("thanhtien").innerHTML = getParam("thanhtien").replace(/,/g,"<br>");
+document.getElementById("tong").textContent = getParam("tong");
+document.getElementById("bangchu").textContent = getParam("bangchu");
+document.getElementById("qr").src = getParam("qr");
 </script>
 </body>
 </html>
