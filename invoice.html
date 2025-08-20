@@ -66,11 +66,17 @@
     </div>
 
 
-<div class='qr'>
- 
-    <img src="[qr]" style='width: 150px; height: 150px;'>
-  </div>
+<div class="qr">
+  <img id="qr" style="width: 150px; height: 150px;">
+</div>
 
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const qrUrl = params.get("qr") || "";
+  if (qrUrl) {
+    document.getElementById("qr").src = qrUrl;
+  }
+</script>
 
     
 
@@ -160,6 +166,7 @@
 </script>
 </body>
 </html>
+
 
 
 
