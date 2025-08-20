@@ -2,184 +2,172 @@
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>In Tem Barcode</title>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f8f9fa;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hóa đơn bán hàng</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
 
-        #printPreview {
-            width: 276px;
-            height: 88px;
-            display: flex;
-            margin-bottom: 20px;
-            background-color: white;
-        }
+    .invoice {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin: auto;
+    }
 
-        .print-label {
-            width: 138px;
-            height: 88px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 2px;
-            box-sizing: border-box;
-        }
+    .invoice-header {
+      text-align: center;
+      margin-bottom: 15px;
+    }
 
-        .print-label-title {
-            font-size: 10px;
-            font-weight: bold;
-            text-align: center;
-        }
+    .invoice-header h2 {
+      margin: 0;
+    }
 
-        .print-label-barcode {
-            text-align: center;
-            height: 60px;
-        }
+    .invoice-info {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
 
-        .print-label-barcode svg {
-            height: 100%;
-            max-width: 100%;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
 
-        .print-label-price {
-            font-size: 16px;
-            font-weight: bold;
-            text-align: right;
-        }
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      text-align: left;
+    }
 
-        #printButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
+    th {
+      background: #f1f1f1;
+    }
 
-        #printArea {
-            display: none;
-        }
+    .total {
+      text-align: right;
+      font-weight: bold;
+    }
 
-        @media print {
-            @page {
-                size: 69mm 22mm;
-                margin: 0;
-            }
+    #printButton {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+    }
 
-            body {
-                margin: 0;
-                padding: 0;
-                width: 69mm;
-                height: 22mm;
-            }
+    @media print {
+      #printButton {
+        display: none;
+      }
 
-            #printArea {
-                display: flex;
-                width: 69mm;
-                height: 22mm;
-                page-break-after: always;
-            }
+      body {
+        background: white;
+      }
 
-            #printPreview,
-            #printButton {
-                display: none !important;
-            }
-
-            .print-label {
-                width: 34.5mm;
-                height: 22mm;
-                padding: 0.5mm;
-            }
-
-            .print-label-title {
-                font-size: 2mm;
-            }
-
-            .print-label-barcode {
-                height: 14mm;
-            }
-
-            .print-label-price {
-                font-size: 2mm;
-            }
-        }
-    </style>
+      .invoice {
+        box-shadow: none;
+        margin: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div id="printPreview"></div>
-    <button id="printButton">In nhãn</button>
-    <div id="printArea"></div>
+  <div class="invoice" id="invoice">
+    <div class="invoice-header">
+      <h2>HÓA ĐƠN BÁN HÀNG</h2>
+      <small id="invoiceDate"></small>
+    </div>
 
-    <script>
-        function loadData(item, price, barcode) {
-            displayPrintPreview(item, price, barcode);
-            preparePrintLabel(item, price, barcode);
-        }
+    <div class="invoice-info">
+      <p><strong>Khách hàng:</strong> <span id="customerName">Nguyễn Văn A</span></p>
+      <p><strong>SĐT:</strong> <span id="customerPhone">0123456789</span></p>
+    </div>
 
-        function createLabelHTML(item, price, barcode, id) {
-            return `
-                <div class="print-label">
-                    <div class="print-label-title">${item}</div>
-                    <div class="print-label-barcode">
-                        <svg id="barcode${id}"></svg>
-                    </div>
-                    <div class="print-label-price">${price}</div>
-                </div>
-            `;
-        }
+    <table>
+      <thead>
+        <tr>
+          <th>Sản phẩm</th>
+          <th>SL</th>
+          <th>Đơn giá</th>
+          <th>Thành tiền</th>
+        </tr>
+      </thead>
+      <tbody id="invoiceItems">
+        <!-- Hàng hóa sẽ render bằng JS -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" class="total">Tổng cộng</td>
+          <td id="totalAmount">0 VNĐ</td>
+        </tr>
+      </tfoot>
+    </table>
 
-        function displayPrintPreview(item, price, barcode) {
-            const printPreview = document.getElementById('printPreview');
-            printPreview.innerHTML = createLabelHTML(item, price, barcode, 'Preview1') + createLabelHTML(item, price, barcode, 'Preview2');
-            generateBarcode('barcodePreview1', barcode);
-            generateBarcode('barcodePreview2', barcode);
-        }
+    <button id="printButton">In hóa đơn</button>
+  </div>
 
-        function preparePrintLabel(item, price, barcode) {
-            const printArea = document.getElementById('printArea');
-            printArea.innerHTML = createLabelHTML(item, price, barcode, 'Print1') + createLabelHTML(item, price, barcode, 'Print2');
-            generateBarcode('barcodePrint1', barcode);
-            generateBarcode('barcodePrint2', barcode);
-        }
+  <script>
+    function formatCurrency(value) {
+      return value.toLocaleString("vi-VN") + " VNĐ";
+    }
 
-        function generateBarcode(elementId, barcodeData) {
-            JsBarcode(`#${elementId}`, barcodeData, {
-                format: "CODE128",
-                width: 2,
-                height: 50,
-                displayValue: true,
-                fontSize: 14,
-                marginTop: 5,
-                marginBottom: 5
-            });
-        }
+    function loadInvoice() {
+      const urlParams = new URLSearchParams(window.location.search);
 
-        window.onload = function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const item = urlParams.get('item') || 'Dầu gội Weilaiya xả gừng';
-            const price = urlParams.get('price') || '680.000 VNĐ';
-            const barcode = urlParams.get('barcode') || '893685';
+      document.getElementById("customerName").textContent = urlParams.get("customer") || "Khách lẻ";
+      document.getElementById("customerPhone").textContent = urlParams.get("phone") || "Không có";
 
-            loadData(item, price, barcode);
+      const today = new Date().toLocaleDateString("vi-VN");
+      document.getElementById("invoiceDate").textContent = "Ngày: " + today;
 
-            document.getElementById('printButton').addEventListener('click', function () {
-                window.print();
-            });
-        };
-    </script>
+      let items = [
+        { name: "Sản phẩm A", qty: 2, price: 150000 },
+        { name: "Sản phẩm B", qty: 1, price: 200000 },
+        { name: "Sản phẩm C", qty: 3, price: 50000 }
+      ];
+
+      let tableBody = "";
+      let total = 0;
+      items.forEach(item => {
+        const subtotal = item.qty * item.price;
+        total += subtotal;
+        tableBody += `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.qty}</td>
+            <td>${formatCurrency(item.price)}</td>
+            <td>${formatCurrency(subtotal)}</td>
+          </tr>`;
+      });
+
+      document.getElementById("invoiceItems").innerHTML = tableBody;
+      document.getElementById("totalAmount").textContent = formatCurrency(total);
+    }
+
+    window.onload = function () {
+      loadInvoice();
+      document.getElementById("printButton").addEventListener("click", function () {
+        window.print();
+      });
+    };
+  </script>
 </body>
 
 </html>
