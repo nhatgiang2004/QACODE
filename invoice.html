@@ -5,294 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phiếu tính tiền</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
             padding: 20px;
         }
-        
+
         .container {
-            max-width: 800px;
-            margin: 0 auto;
             background: white;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
         }
-        
+
         .header {
-            background: linear-gradient(135deg, #2c3e50, #4a6491);
-            color: white;
-            padding: 30px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            text-align: left;
         }
-        
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            opacity: 0.9;
-        }
-        
         .logo {
-            font-size: 40px;
+            width: 60px;
+            height: auto;
+            margin-right: 15px;
+        }
+        .company-info {
+            font-size: 14px;
+            line-height: 1.4;
+            text-align: left;
+        }
+        .company-info p {
+            margin: 0;
+            line-height: 1.2;
+        }
+        h2 {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 20px;
+        }
+        .info-section {
+            font-size: 14px;
+            line-height: 1.4;
             margin-bottom: 15px;
         }
-        
-        .content {
-            padding: 30px;
+        .info-section p {
+            margin: 5px 0;
         }
-        
-        .info-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .info-box {
-            flex: 1;
-            min-width: 250px;
-            margin: 0 10px 20px;
-        }
-        
-        .info-box h3 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 2px solid #4a6491;
-        }
-        
-        .info-item {
-            margin-bottom: 8px;
-            display: flex;
-        }
-        
-        .info-label {
-            font-weight: 600;
-            min-width: 120px;
-            color: #555;
-        }
-        
-        .info-value {
-            flex: 1;
-        }
-        
-        .table-container {
-            overflow-x: auto;
-            margin-bottom: 30px;
-        }
-        
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 14px;
+            margin-bottom: 15px;
         }
-        
         th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
         }
-        
         th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: #2c3e50;
+            background-color: #f2f2f2;
         }
-        
-        tr:last-child td {
-            border-bottom: none;
+        .text-left {
+            text-align: left;
         }
-        
-        .total-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+        .text-right {
+            text-align: right;
         }
-        
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
+        .summary-section {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
-        
-        .total-label {
-            font-weight: 600;
-            color: #555;
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
         }
-        
-        .total-amount {
-            font-weight: 700;
-            color: #2c3e50;
+        .qr-code img {
+            max-width: 150px;
+            height: auto;
         }
-        
-        .grand-total {
-            font-size: 1.2em;
-            border-top: 2px solid #ddd;
-            margin-top: 10px;
-            padding-top: 10px;
-            color: #e74c3c;
-        }
-        
         .footer {
-            background: #f8f9fa;
-            padding: 25px 30px;
             text-align: center;
+            font-size: 12px;
+            line-height: 1.2;
         }
-        
-        .signature-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-        }
-        
-        .signature-box {
-            text-align: center;
-            width: 45%;
-        }
-        
-        .signature-line {
-            border-top: 1px solid #ccc;
-            margin: 50px auto 10px;
-            width: 80%;
-        }
-        
-        .thank-you {
-            margin-top: 20px;
-            color: #4a6491;
-            font-style: italic;
-            font-weight: 600;
-        }
-        
-        .actions {
-            margin-top: 30px;
-            text-align: center;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: #4a6491;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 0 10px;
-            transition: background 0.3s;
-        }
-        
-        .btn:hover {
-            background: #2c3e50;
-        }
-        
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            
-            .container {
-                box-shadow: none;
-            }
-            
-            .actions {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .info-section {
+        /* Mobile-specific adjustments */
+        @media (max-width: 480px) {
+            .header {
                 flex-direction: column;
+                align-items: center;
+                text-align: center;
             }
-            
-            .info-box {
-                width: 100%;
-                margin: 0 0 20px;
-            }
-            
-            .signature-section {
-                flex-direction: column;
-            }
-            
-            .signature-box {
-                width: 100%;
-                margin-bottom: 30px;
+            .logo {
+                margin-right: 0;
             }
         }
     </style>
 </head>
 <body>
-  <div class='header'>
-    <img src='https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg' alt='Logo' class='logo'>
-    <div class='footer'>
-      <p><strong>HUONG DO PICKLEBALL</strong><br>
-      <a>118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa</a>
-    </div>
-  </div>
 
-  <h2>PHIẾU TÍNH TIỀN</h2>
+    <div class="container">
+        <div class="header">
+            <img src='https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg' alt='Logo' class='logo'>
+            <div class='company-info'>
+                <p><strong>HUONG DO PICKLEBALL</strong></p>
+                <p>118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa</p>
+            </div>
+        </div>
 
-            <p>Số: BL-2023-00851</p>
+        <h2>PHIẾU TÍNH TIỀN</h2>
+
+        <div class="info-section">
+            <p><strong>Số giao dịch:</strong> [IDT]</p>
+            <p><strong>Ngày, giờ:</strong> TEXT([Ngaygioihethong], "DD/MM/YYYY hh:mm:ss")</p>
+            <p><strong>Tên Khách hàng:</strong> [Tenkh]</p>
+            <p><strong>Giờ bắt đầu:</strong> TEXT([tugio], "hh:mm")</p>
+            <p><strong>Giờ kết thúc:</strong> TEXT([dengio], "hh:mm")</p>
         </div>
         
-<div style='line-height:1.4; font-size:14px'>
-  <strong>Số giao dịch:</strong> " & [IDT] & "<br>
-  <strong>Ngày, giờ:</strong> " & TEXT([Ngaygioihethong], "DD/MM/YYYY hh:mm:ss") & "<br>
-  <strong>Tên Khách hàng:</strong> " & [Tenkh] & "<br>
-  <strong>Giờ bắt đầu:</strong> " & TEXT([tugio], "hh:mm") & "<br>
-  <strong>Giờ kết thúc:</strong> " & TEXT([dengio], "hh:mm") & "<br>
-</div>
- <p>    
-  <table>
-    <tr>
-      <th>Dịch vụ</th>
-      <th>SL</th>
-      <th>Đơn giá</th>
-      <th>Thành tiền</th>
-    </tr>
-    <tr>    
-<td style='text-align:left'>" & SUBSTITUTE([Inventory Change Log][Tenhangban], ",", "<br>") & "</td> 
-  <td style='text-align:center'>" & SUBSTITUTE(TEXT([Inventory Change Log][Soluong]), ",", "<br>") & "</td>               
-  <td style='text-align:right'>" & SUBSTITUTE(TEXT([Inventory Change Log][dongia]), ",", "<br>") & "</td>                
-  <td style='text-align:right'>" & SUBSTITUTE(TEXT([Inventory Change Log][Thanhtien]), ",", "<br>") & "</td>                
-                
-    </tr>
- </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Dịch vụ</th>
+                    <th>SL</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-left">SUBSTITUTE([Inventory Change Log][Tenhangban], ",", "<br>")</td>
+                    <td>SUBSTITUTE(TEXT([Inventory Change Log][Soluong]), ",", "<br>")</td>
+                    <td class="text-right">SUBSTITUTE(TEXT([Inventory Change Log][dongia]), ",", "<br>")</td>
+                    <td class="text-right">SUBSTITUTE(TEXT([Inventory Change Log][Thanhtien]), ",", "<br>")</td>
+                </tr>
+            </tbody>
+        </table>
 
- <div style='line-height:1.4; font-size:14px'>
-    <p>
-       <strong>Tổng cộng:</strong> "&text(sum([Inventory Change Log][Thanhtien]))&" đ<br>
-       <strong>Bằng chữ:</strong> "&(list([Bangchu]))&"</p>
+        <div class="summary-section">
+            <p>
+                <strong>Tổng cộng:</strong> TEXT(SUM([Inventory Change Log][Thanhtien])) đ<br>
+                <strong>Bằng chữ:</strong> (list([Bangchu]))
+            </p>
+        </div>
 
+        <div class="qr-code">
+            <img src="[qr]" alt="QR Code">
+        </div>
 
-  </div>
-
-  <div class='qr'>
- 
-    <img src="&[qr]&" style='width: 150px; height: 150px;'>
-  </div>
-
-<div style='line-height:1; font-size:12px; text-align:center'>
-  <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
-  <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
-  <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
-</div>
+        <div class="footer">
+            <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
+            <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+            <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
+        </div>
+    </div>
 
 </body>
 </html>
-
-
