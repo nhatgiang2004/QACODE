@@ -66,17 +66,30 @@
     </div>
 
 
-<div class="qr">
-  <img id="qr" style="width: 150px; height: 150px;">
-</div>
+ <div class="qr">
+    <img id="qr" style="width: 200px; height: 200px;" alt="Mã QR Thanh toán">
+  </div>
 
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const qrUrl = params.get("qr") || "";
-  if (qrUrl) {
+  <script>
+    // Lấy tham số từ URL
+    const params = new URLSearchParams(window.location.search);
+    const total = params.get("total") || "100000";  // số tiền
+    const id = params.get("id") || "HD001";         // mã hóa đơn
+
+    // Thông tin tài khoản ngân hàng
+    const bankBin = "970418";      // Mã ngân hàng (ví dụ Techcombank)
+    const accountNo = "123456789"; // Số tài khoản nhận tiền
+    const accountName = "NGUYEN VAN A"; // Tên chủ TK
+
+    // Nội dung chuyển khoản
+    const addInfo = "Thanh toan " + id;
+
+    // Tạo link VietQR
+    const qrUrl = `https://img.vietqr.io/image/${bankBin}-${accountNo}-compact.png?amount=${total}&addInfo=${encodeURIComponent(addInfo)}&accountName=${encodeURIComponent(accountName)}`;
+
+    // Gán link QR vào ảnh
     document.getElementById("qr").src = qrUrl;
-  }
-</script>
+  </script>
 
     
 
@@ -166,6 +179,7 @@
 </script>
 </body>
 </html>
+
 
 
 
