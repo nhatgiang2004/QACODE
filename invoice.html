@@ -1,106 +1,157 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Hóa đơn bán hàng</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PHIẾU TÍNH TIỀN</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .toolbar {
-      margin-bottom: 20px;
-    }
-    .toolbar button {
-      margin-right: 10px;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .print-btn { background: #4caf50; color: white; }
-    .pdf-btn   { background: #2196f3; color: white; }
-    #invoice {
-      background: white;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      width: 600px;
-      margin: auto;
-    }
+    :root { --maxw: 480px; }
+    body { font-family: Arial, sans-serif; margin:0; background:#fff; }
+    .wrap { max-width: var(--maxw); margin: 16px auto; padding: 16px 18px; border:1px solid #000; background:#fff; }
+    .head { display:flex; gap:12px; align-items:center; }
+    .head img { width:64px; height:auto; }
+    .shop { line-height:1.25; }
+    .shop b { font-size:18px; }
+    h1 { text-align:center; margin:18px 0 8px; font-size:24px; letter-spacing:1px; }
+    .info p { margin:4px 0; font-size:14px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
+    th, td { border:1px solid #000; padding:6px 8px; text-align:center; }
+    th { background:#f2f2f2; }
+    td.tl { text-align:left; }
+    td.tr { text-align:right; }
+    .sum { margin-top:10px; font-size:15px; }
+    .sum p { margin:6px 0; }
+    .qr { text-align:center; margin:16px 0 6px; }
+    .qr img { width:180px; height:auto; }
+    .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
+    .actions { text-align:center; margin:16px 0; }
+    .actions button { margin:4px; padding:8px 16px; font-size:14px; cursor:pointer; border:1px solid #333; border-radius:6px; }
+    @media (max-width: 520px) { .wrap { margin:0; border:none; } }
+    @media print { body{ background:#fff } .wrap{ border:none; margin:0; } .actions{display:none} }
   </style>
-  <!-- Thư viện html2pdf -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-  <div class="toolbar">
-    <button class="print-btn" onclick="window.print()">🖨️ Print Preview</button>
-    <button class="pdf-btn" onclick="exportPDF()">📄 Export PDF</button>
-  </div>
+  <div class="wrap" id="invoice">
+    <div class="head">
+      <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" alt="Logo" />
+      <div class="shop">
+        <b>HUONG DO PICKLEBALL</b><br/>
+        118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa
+      </div>
+    </div>
 
-  <!-- Nội dung hóa đơn -->
-  <div id="invoice">
-    <h2 style="text-align:center">HÓA ĐƠN BÁN HÀNG</h2>
-    <p>Mã hóa đơn: <span id="idhd"></span></p>
-    <p>Khách hàng: <span id="tenkh"></span></p>
-    <p>Thời gian: <span id="time"></span></p>
+    <h1>PHIẾU TÍNH TIỀN</h1>
 
-    <table border="1" width="100%" cellspacing="0" cellpadding="5">
+    <div class="info">
+      <p><b>Số giao dịch:</b> <span id="id"></span></p>
+      <p><b>Ngày, giờ:</b> <span id="time"></span></p>
+      <p><b>Tên Khách hàng:</b> <span id="cust"></span></p>
+      <p><b>Giờ bắt đầu:</b> <span id="start"></span></p>
+      <p><b>Giờ kết thúc:</b> <span id="end"></span></p>
+    </div>
+
+    <table>
       <thead>
         <tr>
-          <th>Tên hàng</th>
-          <th>SL</th>
-          <th>Đơn giá</th>
-          <th>Thành tiền</th>
+          <th style="width:46%">Dịch vụ</th>
+          <th style="width:10%">SL</th>
+          <th style="width:22%">Đơn giá</th>
+          <th style="width:22%">Thành tiền</th>
         </tr>
       </thead>
-      <tbody id="items"></tbody>
+      <tbody id="tbody"></tbody>
     </table>
 
-    <h3 style="text-align:right">Tổng cộng: <span id="total"></span></h3>
-    <p style="text-align:right"><i><span id="texttotal"></span></i></p>
+    <div class="sum">
+      <p><b>Tổng cộng:</b> <span id="total"></span> đ</p>
+      <p><b>Bằng chữ:</b> <span id="totalText"></span></p>
+    </div>
 
-    <div style="text-align:center; margin-top:20px">
-      <img id="qr" src="" alt="QR Thanh toán" style="width:150px; height:150px">
+    <div class="qr">
+      <img id="qr" style="width:150px; height:150px;" alt="QR Thanh toán">
+    </div>
+
+    <div class="actions">
+      <button onclick="window.print()">🖨 Print</button>
+      <button onclick="exportPDF()">📄 Xuất PDF</button>
+    </div>
+
+    <div class="foot">
+      <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
+      <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+      <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
     </div>
   </div>
 
+  <!-- Load html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <script>
-    // Hàm export PDF
     function exportPDF() {
-      const element = document.getElementById('invoice');
+      const element = document.getElementById("invoice");
       const opt = {
         margin:       0.5,
-        filename:     'invoice.pdf',
+        filename:     'phieu-tinh-tien.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2 },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
       html2pdf().set(opt).from(element).save();
     }
+  </script>
 
-    // Parse URL params và render dữ liệu
-    const params = new URLSearchParams(window.location.search);
-    document.getElementById('idhd').innerText = params.get('id');
-    document.getElementById('tenkh').innerText = params.get('tenkh');
-    document.getElementById('time').innerText = params.get('time');
-    document.getElementById('total').innerText = params.get('total');
-    document.getElementById('texttotal').innerText = params.get('texttotal');
-    document.getElementById('qr').src = params.get('img');
+  <script>
+    const qp = new URLSearchParams(location.search);
+    const get = k => qp.get(k) || "";
 
-    // Items: dạng "Tên|SL|Đơn giá|Thành tiền;..."
-    const items = params.get('items')?.split(";") || [];
-    const tbody = document.getElementById('items');
-    items.forEach(row => {
-      const [ten, sl, gia, tien] = row.split("|");
-      if (ten) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${ten}</td><td>${sl}</td><td>${gia}</td><td>${tien}</td>`;
-        tbody.appendChild(tr);
-      }
-    });
+    const toNumber = v => {
+      if (typeof v === "number") return v;
+      let s = String(v || "").trim();
+      s = s.replace(/[^\d-]/g, "");
+      return s ? parseInt(s, 10) : 0;
+    };
+    const fmt = n => Number(n || 0).toLocaleString("vi-VN");
+
+    document.getElementById("id").textContent = get("id");
+    document.getElementById("time").textContent = get("time");
+    document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
+    document.getElementById("start").textContent = get("start");
+    document.getElementById("end").textContent = get("end");
+
+    const tbody = document.getElementById("tbody");
+    let rows = [];
+    const itemsParam = get("items");
+
+    if (itemsParam) {
+      itemsParam.split(";").forEach(one => {
+        if (!one) return;
+        const parts = one.split("|");
+        const name = (parts[0] || "").trim();
+        const qty  = toNumber(parts[1]);
+        const price= toNumber(parts[2]);
+        rows.push({ name, qty, price });
+      });
+    }
+
+    let grand = 0;
+    tbody.innerHTML = rows.map(r => {
+      const line = (r.qty || 0) * (r.price || 0);
+      grand += line;
+      return `<tr>
+        <td class="tl">${r.name}</td>
+        <td>${r.qty || 0}</td>
+        <td class="tr">${fmt(r.price)}</td>
+        <td class="tr">${fmt(line)}</td>
+      </tr>`;
+    }).join("");
+
+    const totalParam = toNumber(get("total"));
+    const total = totalParam > 0 ? totalParam : grand;
+    document.getElementById("total").textContent = fmt(total);
+    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
+
+    const qr = get("img") || get("qr");
+    if (qr) document.getElementById("qr").src = qr;
   </script>
 </body>
 </html>
