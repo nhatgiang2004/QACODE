@@ -1,174 +1,120 @@
-<!DOCTYPE html>
-<html lang="vi">
+"https://example.com?html=" & ENCODEURL(SUBSTITUTE("
 
+<!DOCTYPE html>
+<html lang='vi'>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biên lai thanh toán</title>
+  <meta charset='UTF-8'>
+  <title>Phiếu tính tiền</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .invoice {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      max-width: 400px;
+      width: 105mm;
       margin: auto;
+      padding: 10px;
+      border: 1px solid #000;
     }
-
-    .invoice-header {
-      text-align: center;
-      margin-bottom: 15px;
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-
-    .invoice-header h2 {
-      margin: 0;
+    .logo {
+      width: 60px;
     }
-
-    .invoice-info {
+    .company-info {
+      text-align: right;
       font-size: 14px;
-      margin-bottom: 20px;
     }
-
+    h2 {
+      text-align: center;
+      margin: 10px 0;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
     }
-
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 6px;
-      text-align: left;
+    table, th, td {
+      border: 1px solid black;
     }
-
-    th {
-      background: #f1f1f1;
+    th, td {
+      padding: 4px;
+      text-align: center;
     }
-
-    .total {
-      text-align: right;
+    .bold {
       font-weight: bold;
     }
-
-    #printButton {
-      margin-top: 20px;
-      padding: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      width: 100%;
+    .footer {
+      margin-top: 10px;
+      font-size: 14px;
     }
-
-    @media print {
-      #printButton {
-        display: none;
-      }
-
-      body {
-        background: white;
-      }
-
-      .invoice {
-        box-shadow: none;
-        margin: 0;
-        max-width: 100%;
-      }
+    .qr {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .qr img {
+      width: 120px;
     }
   </style>
 </head>
-
 <body>
-  <div class="invoice" id="invoice">
-    <div class="invoice-header">
-      <h2>HÓA &#272;&#416;N BÁN HÀNG</h2>
-      <small id="invoiceDate"></small>
+
+  <div class='header'>
+    <img src='https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg' alt='Logo' class='logo'>
+    <div class='footer'>
+      <p><strong>HUONG DO PICKLEBALL</strong><br>
+      <a>118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa</a>
     </div>
-
-    <div class="invoice-info">
-      <p><strong>Khách hàng:</strong> <span id="customerName">Nguy&#7877;n V&#259;n A</span></p>
-      <p><strong>S&#272;T:</strong> <span id="customerPhone">0123456789</span></p>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>S&#7843;n ph&#7849;m</th>
-          <th>SL</th>
-          <th>&#272;&#417;n giá</th>
-          <th>Thành ti&#7873;n</th>
-        </tr>
-      </thead>
-      <tbody id="invoiceItems">
-        <!-- Hàng hóa s&#7869; render b&#7857;ng JS -->
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="3" class="total">T&#7893;ng c&#7897;ng</td>
-          <td id="totalAmount">0 VN&#272;</td>
-        </tr>
-      </tfoot>
-    </table>
-
-    <button id="printButton">In hóa &#273;&#417;n</button>
   </div>
 
-  <script>
-    function formatCurrency(value) {
-      return value.toLocaleString("vi-VN") + " VN&#272;";
-    }
+  <h2>PHIẾU TÍNH TIỀN</h2>
 
-    function loadInvoice() {
-      const urlParams = new URLSearchParams(window.location.search);
+    <p>
+<div style='line-height:1.4; font-size:14px'>
+  <strong>Số giao dịch:</strong> " & [IDT] & "<br>
+  <strong>Ngày, giờ:</strong> " & TEXT([Ngaygioihethong], "DD/MM/YYYY hh:mm:ss") & "<br>
+  <strong>Tên Khách hàng:</strong> " & [Tenkh] & "<br>
+  <strong>Giờ bắt đầu:</strong> " & TEXT([tugio], "hh:mm") & "<br>
+  <strong>Giờ kết thúc:</strong> " & TEXT([dengio], "hh:mm") & "<br>
+</div>
+ <p>    
+  <table>
+    <tr>
+      <th>Dịch vụ</th>
+      <th>SL</th>
+      <th>Đơn giá</th>
+      <th>Thành tiền</th>
+    </tr>
+    <tr>    
+<td style='text-align:left'>" & SUBSTITUTE([Inventory Change Log][Tenhangban], ",", "<br>") & "</td> 
+  <td style='text-align:center'>" & SUBSTITUTE(TEXT([Inventory Change Log][Soluong]), ",", "<br>") & "</td>               
+  <td style='text-align:right'>" & SUBSTITUTE(TEXT([Inventory Change Log][dongia]), ",", "<br>") & "</td>                
+  <td style='text-align:right'>" & SUBSTITUTE(TEXT([Inventory Change Log][Thanhtien]), ",", "<br>") & "</td>                
+                
+    </tr>
+ </table>
 
-      document.getElementById("customerName").textContent = urlParams.get("customer") || "Khách l&#7867;";
-      document.getElementById("customerPhone").textContent = urlParams.get("phone") || "Không có";
+ <div style='line-height:1.4; font-size:14px'>
+    <p>
+       <strong>Tổng cộng:</strong> "&text(sum([Inventory Change Log][Thanhtien]))&" đ<br>
+       <strong>Bằng chữ:</strong> "&(list([Bangchu]))&"</p>
 
-      const today = new Date().toLocaleDateString("vi-VN");
-      document.getElementById("invoiceDate").textContent = "Ngày: " + today;
 
-      let items = [
-        { name: "S&#7843;n ph&#7849;m A", qty: 2, price: 150000 },
-        { name: "S&#7843;n ph&#7849;m B", qty: 1, price: 200000 },
-        { name: "S&#7843;n ph&#7849;m C", qty: 3, price: 50000 }
-      ];
+  </div>
 
-      let tableBody = "";
-      let total = 0;
-      items.forEach(item => {
-        const subtotal = item.qty * item.price;
-        total += subtotal;
-        tableBody += `
-          <tr>
-            <td>${item.name}</td>
-            <td>${item.qty}</td>
-            <td>${formatCurrency(item.price)}</td>
-            <td>${formatCurrency(subtotal)}</td>
-          </tr>`;
-      });
+  <div class='qr'>
+ 
+    <img src="&[qr]&" style='width: 150px; height: 150px;'>
+  </div>
 
-      document.getElementById("invoiceItems").innerHTML = tableBody;
-      document.getElementById("totalAmount").textContent = formatCurrency(total);
-    }
-
-    window.onload = function () {
-      loadInvoice();
-      document.getElementById("printButton").addEventListener("click", function () {
-        window.print();
-      });
-    };
-  </script>
+<div style='line-height:1; font-size:12px; text-align:center'>
+  <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
+  <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+  <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
+</div>
 </body>
-
 </html>
 
+
+
+", "%", "percent"))
