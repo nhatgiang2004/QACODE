@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HÛa &#273;&#417;n b·n h‡ng</title>
+  <title>Bi√™n lai thanh to√°n</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -91,12 +91,12 @@
 <body>
   <div class="invoice" id="invoice">
     <div class="invoice-header">
-      <h2>H”A &#272;&#416;N B¡N H¿NG</h2>
+      <h2>H√ìA &#272;&#416;N B√ÅN H√ÄNG</h2>
       <small id="invoiceDate"></small>
     </div>
 
     <div class="invoice-info">
-      <p><strong>Kh·ch h‡ng:</strong> <span id="customerName">Nguy&#7877;n V&#259;n A</span></p>
+      <p><strong>Kh√°ch h√†ng:</strong> <span id="customerName">Nguy&#7877;n V&#259;n A</span></p>
       <p><strong>S&#272;T:</strong> <span id="customerPhone">0123456789</span></p>
     </div>
 
@@ -105,12 +105,12 @@
         <tr>
           <th>S&#7843;n ph&#7849;m</th>
           <th>SL</th>
-          <th>&#272;&#417;n gi·</th>
-          <th>Th‡nh ti&#7873;n</th>
+          <th>&#272;&#417;n gi√°</th>
+          <th>Th√†nh ti&#7873;n</th>
         </tr>
       </thead>
       <tbody id="invoiceItems">
-        <!-- H‡ng hÛa s&#7869; render b&#7857;ng JS -->
+        <!-- H√†ng h√≥a s&#7869; render b&#7857;ng JS -->
       </tbody>
       <tfoot>
         <tr>
@@ -120,7 +120,7 @@
       </tfoot>
     </table>
 
-    <button id="printButton">In hÛa &#273;&#417;n</button>
+    <button id="printButton">In h√≥a &#273;&#417;n</button>
   </div>
 
   <script>
@@ -131,11 +131,11 @@
     function loadInvoice() {
       const urlParams = new URLSearchParams(window.location.search);
 
-      document.getElementById("customerName").textContent = urlParams.get("customer") || "Kh·ch l&#7867;";
-      document.getElementById("customerPhone").textContent = urlParams.get("phone") || "KhÙng cÛ";
+      document.getElementById("customerName").textContent = urlParams.get("customer") || "Kh√°ch l&#7867;";
+      document.getElementById("customerPhone").textContent = urlParams.get("phone") || "Kh√¥ng c√≥";
 
       const today = new Date().toLocaleDateString("vi-VN");
-      document.getElementById("invoiceDate").textContent = "Ng‡y: " + today;
+      document.getElementById("invoiceDate").textContent = "Ng√†y: " + today;
 
       let items = [
         { name: "S&#7843;n ph&#7849;m A", qty: 2, price: 150000 },
@@ -171,3 +171,4 @@
 </body>
 
 </html>
+
