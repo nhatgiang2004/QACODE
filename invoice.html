@@ -24,13 +24,35 @@
     .qr { text-align:center; margin:16px 0 6px; }
     .qr img { width:180px; height:auto; }
     .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
-    .actions { text-align:center; margin:16px 0; }
-    .actions button { margin:4px; padding:8px 16px; font-size:14px; cursor:pointer; border:1px solid #333; border-radius:6px; }
+
+    /* Nút trên cùng bên phải */
+    .actions {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 999;
+    }
+    .actions button {
+      margin: 4px;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      border:1px solid #333;
+      border-radius:6px;
+      background:#f9f9f9;
+    }
+
     @media (max-width: 520px) { .wrap { margin:0; border:none; } }
     @media print { body{ background:#fff } .wrap{ border:none; margin:0; } .actions{display:none} }
   </style>
 </head>
 <body>
+  <!-- Nút in và xuất PDF -->
+  <div class="actions">
+    <button onclick="window.print()">🖨 Print</button>
+    <button onclick="exportPDF()">📄 Xuất PDF</button>
+  </div>
+
   <div class="wrap" id="invoice">
     <div class="head">
       <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" alt="Logo" />
@@ -71,19 +93,6 @@
       <img id="qr" style="width:150px; height:150px;" alt="QR Thanh toán">
     </div>
 
-    <body>
-  <!-- Thanh công cụ phía trên -->
-  <div style="width: 100%; display: flex; justify-content: flex-end; padding: 10px;">
-    <button onclick="window.print()" 
-            style="margin-left: 10px; padding: 6px 12px; border-radius: 6px; border: none; background: #007bff; color: white; cursor: pointer;">
-      Print Preview
-    </button>
-
-    <button onclick="exportPDF()" 
-            style="margin-left: 10px; padding: 6px 12px; border-radius: 6px; border: none; background: #28a745; color: white; cursor: pointer;">
-      Xuất PDF
-    </button>
-  </div>
     <div class="foot">
       <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
       <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
@@ -163,4 +172,3 @@
   </script>
 </body>
 </html>
-
