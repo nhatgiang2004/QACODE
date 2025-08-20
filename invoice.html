@@ -243,137 +243,49 @@
             <p>Số: BL-2023-00851</p>
         </div>
         
-        <div class="content">
-            <div class="info-section">
-                <div class="info-box">
-                    <h3>Thông tin người thanh toán</h3>
-                    <div class="info-item">
-                        <span class="info-label">Họ và tên:</span>
-                        <span class="info-value">Nguyễn Văn A</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Địa chỉ:</span>
-                        <span class="info-value">123 Đường Nguyễn Trãi, Quận 1, TP.HCM</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Số điện thoại:</span>
-                        <span class="info-value">0909123456</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Email:</span>
-                        <span class="info-value">nguyenvana@example.com</span>
-                    </div>
-                </div>
+<div style='line-height:1.4; font-size:14px'>
+  <strong>Số giao dịch:</strong> " & [IDT] & "<br>
+  <strong>Ngày, giờ:</strong> " & TEXT([Ngaygioihethong], "DD/MM/YYYY hh:mm:ss") & "<br>
+  <strong>Tên Khách hàng:</strong> " & [Tenkh] & "<br>
+  <strong>Giờ bắt đầu:</strong> " & TEXT([tugio], "hh:mm") & "<br>
+  <strong>Giờ kết thúc:</strong> " & TEXT([dengio], "hh:mm") & "<br>
+</div>
+ <p>    
+  <table>
+    <tr>
+      <th>Dịch vụ</th>
+      <th>SL</th>
+      <th>Đơn giá</th>
+      <th>Thành tiền</th>
+    </tr>
+    <tr>    
+<td style='text-align:left'>" & SUBSTITUTE([Inventory Change Log][Tenhangban], ",", "<br>") & "</td> 
+  <td style='text-align:center'>" & SUBSTITUTE(TEXT([Inventory Change Log][Soluong]), ",", "<br>") & "</td>               
+  <td style='text-align:right'>" & SUBSTITUTE(TEXT([Inventory Change Log][dongia]), ",", "<br>") & "</td>                
+  <td style='text-align:right'>" & SUBSTITUTE(TEXT([Inventory Change Log][Thanhtien]), ",", "<br>") & "</td>                
                 
-                <div class="info-box">
-                    <h3>Thông tin biên lai</h3>
-                    <div class="info-item">
-                        <span class="info-label">Ngày lập:</span>
-                        <span class="info-value">15/11/2023</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Người lập:</span>
-                        <span class="info-value">Trần Thị B - P.Kế toán</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Hình thức:</span>
-                        <span class="info-value">Chuyển khoản</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Trạng thái:</span>
-                        <span class="info-value">Đã thanh toán</span>
-                    </div>
-                </div>
-            </div>
-            
-            <h3>Chi tiết thanh toán</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Nội dung</th>
-                            <th>Đơn giá</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Phí dịch vụ tháng 11/2023</td>
-                            <td>1,500,000 đ</td>
-                            <td>1</td>
-                            <td>1,500,000 đ</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Phí quản lý</td>
-                            <td>200,000 đ</td>
-                            <td>1</td>
-                            <td>200,000 đ</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Phí bảo trì</td>
-                            <td>300,000 đ</td>
-                            <td>1</td>
-                            <td>300,000 đ</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>VAT (10%)</td>
-                            <td></td>
-                            <td></td>
-                            <td>200,000 đ</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div class="total-section">
-                <div class="total-row">
-                    <span class="total-label">Tạm tính:</span>
-                    <span class="total-amount">2,000,000 đ</span>
-                </div>
-                <div class="total-row">
-                    <span class="total-label">Giảm giá:</span>
-                    <span class="total-amount">0 đ</span>
-                </div>
-                <div class="total-row">
-                    <span class="total-label">Phí VAT (10%):</span>
-                    <span class="total-amount">200,000 đ</span>
-                </div>
-                <div class="total-row grand-total">
-                    <span class="total-label">TỔNG CỘNG:</span>
-                    <span class="total-amount">2,200,000 đ</span>
-                </div>
-            </div>
-            
-            <div class="thank-you">
-                <p>Cảm ơn Quý khách đã sử dụng dịch vụ của chúng tôi!</p>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <div class="signature-section">
-                <div class="signature-box">
-                    <p>Người thanh toán</p>
-                    <div class="signature-line"></div>
-                    <p>(Ký và ghi rõ họ tên)</p>
-                </div>
-                <div class="signature-box">
-                    <p>Người lập biên lai</p>
-                    <div class="signature-line"></div>
-                    <p>(Ký và ghi rõ họ tên)</p>
-                </div>
-            </div>
-            
-            <div class="actions">
-                <button class="btn" onclick="window.print()">In Biên Lai</button>
-                <button class="btn" onclick="window.location.href='#'">Tải PDF</button>
-            </div>
-        </div>
-    </div>
+    </tr>
+ </table>
+
+ <div style='line-height:1.4; font-size:14px'>
+    <p>
+       <strong>Tổng cộng:</strong> "&text(sum([Inventory Change Log][Thanhtien]))&" đ<br>
+       <strong>Bằng chữ:</strong> "&(list([Bangchu]))&"</p>
+
+
+  </div>
+
+  <div class='qr'>
+ 
+    <img src="&[qr]&" style='width: 150px; height: 150px;'>
+  </div>
+
+<div style='line-height:1; font-size:12px; text-align:center'>
+  <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
+  <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+  <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
+</div>
+
 </body>
 </html>
+
