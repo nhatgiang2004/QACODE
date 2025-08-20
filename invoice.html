@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PHIẾU TÍNH TIỀN</title>
   <style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     :root { --maxw: 480px; }
     body { font-family: Arial, sans-serif; margin:0; background:#fff; }
     .wrap { max-width: var(--maxw); margin: 16px auto; padding: 16px 18px; border:1px solid #000; background:#fff; }
@@ -50,25 +47,12 @@
   </style>
 </head>
 <body>
-<div class="actions">
-  <button onclick="window.print()">🖨 Print</button>
-  <button onclick="exportPDF()">📄 Xuất PDF</button>
-</div>
+  <!-- Nút in và xuất PDF -->
+  <div class="actions">
+    <button onclick="window.print()">🖨 Print</button>
+    <button onclick="exportPDF()">📄 Xuất PDF</button>
+  </div>
 
-<script>
-function exportPDF() {
-  const element = document.getElementById("invoice");
-  const opt = {
-    margin:       0.5,
-    filename:     'hoadon.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true }, // Quan trọng để hiện ảnh online
-    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-  };
-
-  html2pdf().set(opt).from(element).save();
-}
-</script>
   <div class="wrap" id="invoice">
     <div class="head">
       <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" alt="Logo" />
@@ -188,5 +172,4 @@ function exportPDF() {
   </script>
 </body>
 </html>
-
 
