@@ -1,104 +1,157 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Phiếu tính tiền</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PHIẾU TÍNH TIỀN</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .header { text-align: center; }
-    .header img { width: 80px; }
-    h2 { text-align: center; margin-top: 10px; }
-    .info-section { margin: 10px 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    table, th, td { border: 1px solid black; }
-    th, td { padding: 6px; text-align: center; }
-    .total { margin-top: 10px; font-weight: bold; }
-    .footer { text-align: center; margin-top: 20px; font-style: italic; }
-    .qr { text-align: center; margin-top: 15px; }
-    .qr img { width: 200px; }
+    :root { --maxw: 480px; }
+    body { font-family: Arial, sans-serif; margin:0; background:#fff; }
+    .wrap { max-width: var(--maxw); margin: 16px auto; padding: 16px 18px; border:1px solid #000; }
+    .head { display:flex; gap:12px; align-items:center; }
+    .head img { width:64px; height:auto; }
+    .shop { line-height:1.25; }
+    .shop b { font-size:18px; }
+    h1 { text-align:center; margin:18px 0 8px; font-size:24px; letter-spacing:1px; }
+    .info p { margin:4px 0; font-size:14px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
+    th, td { border:1px solid #000; padding:6px 8px; text-align:center; }
+    th { background:#f2f2f2; }
+    td.tl { text-align:left; }
+    td.tr { text-align:right; }
+    .sum { margin-top:10px; font-size:15px; }
+    .sum p { margin:6px 0; }
+    .qr { text-align:center; margin:16px 0 6px; }
+    .qr img { width:180px; height:auto; }
+    .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
+    @media (max-width: 520px) { .wrap { margin:0; border:none; } }
+    @media print { body{ background:#fff } .wrap{ border:none; margin:0; } }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="head">
+      <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" alt="Logo" />
+      <div class="shop">
+        <b>HUONG DO PICKLEBALL</b><br/>
+        118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa
+      </div>
+    </div>
 
-  <div class="header">
-    <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" alt="logo"><br>
-    <strong>HUONG DO PICKLEBALL</strong><br>
-    118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa
-  </div>
+    <h1>PHIẾU TÍNH TIỀN</h1>
 
-  <h2>PHIẾU TÍNH TIỀN</h2>
+    <div class="info">
+      <p><b>Số giao dịch:</b> <span id="id"></span></p>
+      <p><b>Ngày, giờ:</b> <span id="time"></span></p>
+      <p><b>Tên Khách hàng:</b> <span id="cust"></span></p>
+      <p><b>Giờ bắt đầu:</b> <span id="start"></span></p>
+      <p><b>Giờ kết thúc:</b> <span id="end"></span></p>
+    </div>
 
-  <div class="info-section">
-    <strong>Số giao dịch:</strong> <span id="id"></span><br>
-    <strong>Ngày, giờ:</strong> <span id="time"></span><br>
-    <strong>Tên Khách hàng:</strong> <span id="tenkh"></span><br>
-    <strong>Giờ bắt đầu:</strong> <span id="start"></span><br>
-    <strong>Giờ kết thúc:</strong> <span id="end"></span><br>
-  </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:46%">Dịch vụ</th>
+          <th style="width:10%">SL</th>
+          <th style="width:22%">Đơn giá</th>
+          <th style="width:22%">Thành tiền</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Dịch vụ</th>
-        <th>SL</th>
-        <th>Đơn giá</th>
-        <th>Thành tiền</th>
-      </tr>
-    </thead>
-    <tbody id="items"></tbody>
-  </table>
+    <div class="sum">
+      <p><b>Tổng cộng:</b> <span id="total"></span> đ</p>
+      <p><b>Bằng chữ:</b> <span id="totalText"></span></p>
+    </div>
 
-  <div class="total">
-    Tổng cộng: <span id="total"></span> đ<br>
-    Bằng chữ: <span id="texttotal"></span>
-  </div>
+    <div class="qr">
+      <img id="qr" alt="VietQR" />
+    </div>
 
-  <div class="qr">
-    <img id="qr" src="" alt="QR Code">
-  </div>
-
-  <div class="footer">
-    Quý khách vui lòng giữ lại phiếu tính tiền<br>
-    Xin cảm ơn và hẹn gặp lại!<br>
-    Cảm ơn khi tiếp nhận phản hồi của quý khách.
+    <div class="foot">
+      <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
+      <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+      <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
+    </div>
   </div>
 
 <script>
-  function getParam(name) {
-    return new URLSearchParams(window.location.search).get(name) || "";
-  }
+  const qp = new URLSearchParams(location.search);
+  const get = k => qp.get(k) || "";
 
-  document.getElementById("id").textContent = getParam("id");
-  document.getElementById("time").textContent = getParam("time");
-  document.getElementById("tenkh").textContent = getParam("tenkh");
-  document.getElementById("start").textContent = getParam("start");
-  document.getElementById("end").textContent = getParam("end");
-  document.getElementById("total").textContent = getParam("total");
-  document.getElementById("texttotal").textContent = getParam("texttotal");
+  // ---- helpers ----
+  const toNumber = v => {
+    if (typeof v === "number") return v;
+    let s = String(v || "").trim();
+    // bỏ mọi ký tự không phải số (VND không dùng thập phân)
+    s = s.replace(/[^\d-]/g, "");
+    return s ? parseInt(s, 10) : 0;
+  };
+  const fmt = n => Number(n || 0).toLocaleString("vi-VN");
 
-  // load QR
-  let qrLink = getParam("qr");
-  if (qrLink) document.getElementById("qr").src = qrLink;
+  // ---- info ----
+  document.getElementById("id").textContent = get("id");
+  document.getElementById("time").textContent = get("time");
+  document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
+  document.getElementById("start").textContent = get("start");
+  document.getElementById("end").textContent = get("end");
 
-  // parse items: Dịch vụ|SL|Đơn giá;...
-  let itemsStr = getParam("items");
-  if (itemsStr) {
-    let rows = decodeURIComponent(itemsStr).split(";");
-    let html = "";
-    rows.forEach(r => {
-      let [name, qty, price] = r.split("|");
-      if (!name) return;
-      let total = parseInt(qty) * parseInt(price);
-      html += `<tr>
-        <td>${name}</td>
-        <td>${qty}</td>
-        <td>${parseInt(price).toLocaleString()}</td>
-        <td>${total.toLocaleString()}</td>
-      </tr>`;
+  // ---- items: hỗ trợ 2 kiểu truyền ----
+  // A) items=Ten|SL|DonGia;Ten|SL|DonGia;...
+  // B) hang=a;b;c  & soluong=1;2;3 & gia=10000;20000;...
+  const tbody = document.getElementById("tbody");
+  let rows = [];
+
+  const itemsParam = get("items");
+  if (itemsParam) {
+    // URLSearchParams đã decode → không decode lần nữa
+    itemsParam.split(";").forEach(one => {
+      if (!one) return;
+      const parts = one.split("|");
+      const name = (parts[0] || "").trim();
+      const qty  = toNumber(parts[1]);
+      const price= toNumber(parts[2]);
+      rows.push({ name, qty, price });
     });
-    document.getElementById("items").innerHTML = html;
+  } else {
+    const splitList = s => !s ? [] : (s.includes(";") ? s.split(";") : s.split(",")).map(x=>x.trim());
+    const names = splitList(get("hang"));
+    const qtys  = splitList(get("soluong"));
+    const prices= splitList(get("gia"));
+    const n = Math.max(names.length, qtys.length, prices.length);
+    for (let i = 0; i < n; i++) {
+      const name = names[i] || "";
+      const qty  = toNumber(qtys[i]);
+      const price= toNumber(prices[i]);
+      if (name || qty || price) rows.push({ name, qty, price });
+    }
   }
-</script>
 
+  // ---- render + tính tổng ----
+  let grand = 0;
+  tbody.innerHTML = rows.map(r => {
+    const line = (r.qty || 0) * (r.price || 0);
+    grand += line;
+    return `<tr>
+      <td class="tl">${r.name}</td>
+      <td>${r.qty || 0}</td>
+      <td class="tr">${fmt(r.price)}</td>
+      <td class="tr">${fmt(line)}</td>
+    </tr>`;
+  }).join("");
+
+  // tổng cộng (ưu tiên số truyền vào, nếu không có sẽ dùng số tính)
+  const totalParam = toNumber(get("total"));
+  const total = totalParam > 0 ? totalParam : grand;
+  document.getElementById("total").textContent = fmt(total);
+
+  // bằng chữ (nếu truyền)
+  document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
+
+  // QR
+  const qr = get("qr");
+  if (qr) document.getElementById("qr").src = qr;
+</script>
 </body>
 </html>
