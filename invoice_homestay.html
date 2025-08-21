@@ -167,18 +167,22 @@
       </tr>`;
     }).join("");
 
-    const totalParam = toNumber(get("total2"));
+    const totalParam2 = toNumber(get("total2"));
+    const total2 = totalParam2 > 0 ? totalParam2 : grand;
+    document.getElementById("total2").textContent = fmt(total2);
+
     const totalParam = toNumber(get("total"));
     const total = totalParam > 0 ? totalParam : grand;
-    document.getElementById("total2").textContent = fmt(total2);
     document.getElementById("total").textContent = fmt(total);
     document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
 
+    
     const qr = get("img") || get("qr");
     if (qr) document.getElementById("qr").src = qr;
   </script>
 </body>
 </html>
+
 
 
 
