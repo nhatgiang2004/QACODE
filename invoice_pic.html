@@ -25,6 +25,7 @@
     .qr img { width:180px; height:auto; }
     .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
 
+    /* Nút trên cùng bên phải */
     .actions {
       position: fixed;
       top: 10px;
@@ -46,6 +47,7 @@
   </style>
 </head>
 <body>
+  <!-- Nút in và xuất PDF -->
   <div class="actions">
     <button onclick="window.print()">🖨 Print</button>
     <button onclick="exportPDF()">📄 Xuất PDF</button>
@@ -53,7 +55,7 @@
 
   <div class="wrap" id="invoice">
     <div class="head">
-      <img id="logo" src="https://ibb.co/sB45My1" alt="Logo" />
+      <img src="https://i.ibb.co/HDGQyJBw/1-Logo-100358.jpg" alt="Logo" />
       <div class="shop">
         <b>HUONG DO PICKLEBALL</b><br/>
         118 Lò Chum, P. Hạc Thành, tỉnh Thanh Hóa
@@ -98,23 +100,22 @@
     </div>
   </div>
 
+  <!-- Load html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script>
+
+ <script>
 async function convertImageToBase64(url) {
-  try {
-    const response = await fetch(url, { mode: 'cors' });
-    const blob = await response.blob();
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-  } catch (e) {
-    return url; // fallback nếu không chuyển được
-  }
+  const response = await fetch(url, { mode: 'cors' });
+  const blob = await response.blob();
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
 }
 
 async function prepareInvoice() {
+  // Chuyển Logo và QR sang Base64
   const logo = document.querySelector("#logo");
   const qr = document.querySelector("#qr");
 
@@ -123,7 +124,7 @@ async function prepareInvoice() {
 }
 
 async function exportPDF() {
-  await prepareInvoice();
+  await prepareInvoice(); // Đảm bảo ảnh đã chuyển xong
   const element = document.getElementById("invoice");
 
   const opt = {
@@ -134,67 +135,69 @@ async function exportPDF() {
     jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
   };
 
-  html2pdf().set({
-  html2canvas: { useCORS: true, allowTaint: true },
-  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-});
-
+  html2pdf().set(opt).from(element).save();
 }
-
-// Load dữ liệu từ URL
-const qp = new URLSearchParams(location.search);
-const get = k => qp.get(k) || "";
-const toNumber = v => {
-  if (typeof v === "number") return v;
-  let s = String(v || "").trim();
-  s = s.replace(/[^\d-]/g, "");
-  return s ? parseInt(s, 10) : 0;
-};
-const fmt = n => Number(n || 0).toLocaleString("vi-VN");
-
-document.getElementById("id").textContent = get("id");
-document.getElementById("time").textContent = get("time");
-document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
-document.getElementById("start").textContent = get("start");
-document.getElementById("end").textContent = get("end");
-
-const tbody = document.getElementById("tbody");
-let rows = [];
-const itemsParam = get("items");
-if (itemsParam) {
-  itemsParam.split(";").forEach(one => {
-    if (!one) return;
-    const parts = one.split("|");
-    const name = (parts[0] || "").trim();
-    const qty  = toNumber(parts[1]);
-    const price= toNumber(parts[2]);
-    rows.push({ name, qty, price });
-  });
-}
-
-let grand = 0;
-tbody.innerHTML = rows.map(r => {
-  const line = (r.qty || 0) * (r.price || 0);
-  grand += line;
-  return `<tr>
-    <td class="tl">${r.name}</td>
-    <td>${r.qty || 0}</td>
-    <td class="tr">${fmt(r.price)}</td>
-    <td class="tr">${fmt(line)}</td>
-  </tr>`;
-}).join("");
-
-const totalParam = toNumber(get("total"));
-const total = totalParam > 0 ? totalParam : grand;
-document.getElementById("total").textContent = fmt(total);
-document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
-
-const qrImg = get("img") || get("qr");
-if (qrImg) document.getElementById("qr").src = qrImg;
-
-window.onload = prepareInvoice;
 </script>
+
+
+  <script>
+    const qp = new URLSearchParams(location.search);
+    const get = k => qp.get(k) || "";
+
+    const toNumber = v => {
+      if (typeof v === "number") return v;
+      let s = String(v || "").trim();
+      s = s.replace(/[^\d-]/g, "");
+      return s ? parseInt(s, 10) : 0;
+    };
+    const fmt = n => Number(n || 0).toLocaleString("vi-VN");
+
+    document.getElementById("id").textContent = get("id");
+    document.getElementById("time").textContent = get("time");
+    document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
+    document.getElementById("start").textContent = get("start");
+    document.getElementById("end").textContent = get("end");
+
+    const tbody = document.getElementById("tbody");
+    let rows = [];
+    const itemsParam = get("items");
+
+    if (itemsParam) {
+      itemsParam.split(";").forEach(one => {
+        if (!one) return;
+        const parts = one.split("|");
+        const name = (parts[0] || "").trim();
+        const qty  = toNumber(parts[1]);
+        const price= toNumber(parts[2]);
+        rows.push({ name, qty, price });
+      });
+    }
+
+    let grand = 0;
+    tbody.innerHTML = rows.map(r => {
+      const line = (r.qty || 0) * (r.price || 0);
+      grand += line;
+      return `<tr>
+        <td class="tl">${r.name}</td>
+        <td>${r.qty || 0}</td>
+        <td class="tr">${fmt(r.price)}</td>
+        <td class="tr">${fmt(line)}</td>
+      </tr>`;
+    }).join("");
+
+    const totalParam = toNumber(get("total"));
+    const total = totalParam > 0 ? totalParam : grand;
+    document.getElementById("total").textContent = fmt(total);
+    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
+
+    const qr = get("img") || get("qr");
+    if (qr) document.getElementById("qr").src = qr;
+  </script>
 </body>
 </html>
+
+
+
+
 
 
