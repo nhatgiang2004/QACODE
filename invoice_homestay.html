@@ -89,7 +89,7 @@
     <div class="sum">
       <p><b>Tổng cộng:</b> <span id="total"></span> đ</p>
       <p><b>Đặt cọc:</b> <span id="total1"></span> đ</p>
-      <p><b>Còn phải thanh toán:</b> <span id="total"></span> đ</p>
+      <p><b>Còn phải thanh toán:</b> <span id="total2"></span> đ</p>
       <p><b>Bằng chữ:</b> <span id="totalText"></span></p>
     </div>
 
@@ -169,7 +169,7 @@
 
     const totalParam = toNumber(get("total"));
     const total = totalParam > 0 ? totalParam : grand;
-    document.getElementById("total").textContent = fmt(total);
+    document.getElementById("total2").textContent = fmt(total2);
     document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
 
     const qr = get("img") || get("qr");
@@ -177,6 +177,7 @@
   </script>
 </body>
 </html>
+
 
 
 
