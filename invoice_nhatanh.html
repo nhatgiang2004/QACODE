@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PHI&#7870;U TÍNH TI&#7872;N</title>
+  <style>
+    :root { --maxw: 480px; }
+    body { font-family: Arial, sans-serif; margin:0; background:#fff; }
+    .wrap { max-width: var(--maxw); margin: 16px auto; padding: 16px 18px; border:1px solid #000; background:#fff; }
+    .head { display:flex; gap:12px; align-items:center; }
+    .head img { width:64px; height:auto; }
+    .shop { line-height:1.25; }
+    .shop b { font-size:18px; }
+    h1 { text-align:center; margin:18px 0 8px; font-size:24px; letter-spacing:1px; }
+    .info p { margin:4px 0; font-size:14px; }
+    table { width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
+    th, td { border:1px solid #000; padding:6px 8px; text-align:center; }
+    th { background:#f2f2f2; }
+    td.tl { text-align:left; }
+    td.tr { text-align:right; }
+    .sum { margin-top:10px; font-size:15px; }
+    .sum p { margin:6px 0; }
+    .qr { text-align:center; margin:16px 0 6px; }
+    .qr img { width:180px; height:auto; }
+    .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
+
+    /* Nút trên cùng bên ph&#7843;i */
+    .actions {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 999;
+    }
+    .actions button {
+      margin: 4px;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      border:1px solid #333;
+      border-radius:6px;
+      background:#f9f9f9;
+    }
+
+    @media (max-width: 520px) { .wrap { margin:0; border:none; } }
+    @media print { body{ background:#fff } .wrap{ border:none; margin:0; } .actions{display:none} }
+  </style>
+</head>
+<body>
+  <!-- Nút in và xu&#7845;t PDF -->
+  <div class="actions">
+    <button onclick="window.print()">&#128424; Print</button>
+    <button onclick="exportPDF()">&#128196; Xu&#7845;t PDF</button>
+  </div>
+
+  <div class="wrap" id="invoice">
+    <div class="head">
+      <img src="https://i.ibb.co/1fY43Q42/1-Logo-105800.jpg" alt="Logo" />
+      <div class="shop">
+      <b>VILLA FLC NG&#7884;C TRAI</b><br/>
+        SN 729 Bà Tri&#7879;u, P. H&#7841;c Thành, t&#7881;nh Thanh hóa - &#272;T: 0919050618
+
+      </div>
+    </div>
+
+    <h1>PHI&#7870;U TÍNH TI&#7872;N</h1>
+
+    <div class="info">
+      <p><b>S&#7889; giao d&#7883;ch:</b> <span id="id"></span></p>
+      <p><b>Ngày, gi&#7901;:</b> <span id="time"></span></p>
+      <p><b>Tên Khách hàng:</b> <span id="cust"></span></p>
+      <p><b>Ngày &#273;i:</b> <span id="start"></span></p>
+      <p><b>Ngày v&#7873;:</b> <span id="end"></span></p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:46%">D&#7883;ch v&#7909;</th>
+          <th style="width:10%">SL</th>
+          <th style="width:22%">&#272;&#417;n giá</th>
+          <th style="width:22%">Thành ti&#7873;n</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <div class="sum">
+      <p><b>T&#7893;ng c&#7897;ng: <span id="total2"></span> &#273; </b></p>
+      <p><b>&#272;&#7863;t c&#7885;c: <span id="total1"></span> &#273; </b></p>
+      <p><b>Còn ph&#7843;i thanh toán:<span id="total"></span> &#273; </b></p>
+      <p><b>B&#7857;ng ch&#7919;:</b> <span id="totalText"></span></p>
+    </div>
+
+    <div class="qr">
+      <img id="qr" style="width:200px; height:200px;" alt="QR Thanh toán">
+    </div>
+
+    <div class="foot">
+      <p><b><i>Quý khách vui lòng gi&#7919; l&#7841;i phi&#7871;u tính ti&#7873;n</i></b></p>
+      <p><b><i>Xin c&#7843;m &#417;n và h&#7865;n g&#7863;p l&#7841;i!</i></b></p>
+      <p><b><i>C&#7843;m &#417;n khi ti&#7871;p nh&#7853;n ph&#7843;n h&#7891;i c&#7911;a quý khách.</i></b></p>
+    </div>
+  </div>
+
+  <!-- Load html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+  function exportPDF() {
+    const element = document.getElementById("invoice");
+    const opt = {
+      margin: 0.5,
+      filename: 'phieu-tinh-tien.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+</script>
+
+  <script>
+    const qp = new URLSearchParams(location.search);
+    const get = k => qp.get(k) || "";
+
+    const toNumber = v => {
+      if (typeof v === "number") return v;
+      let s = String(v || "").trim();
+      s = s.replace(/[^\d-]/g, "");
+      return s ? parseInt(s, 10) : 0;
+    };
+    const fmt = n => Number(n || 0).toLocaleString("vi-VN");
+
+    document.getElementById("id").textContent = get("id");
+    document.getElementById("time").textContent = get("time");
+    document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
+    document.getElementById("start").textContent = get("start");
+    document.getElementById("end").textContent = get("end");
+  
+
+    const tbody = document.getElementById("tbody");
+    let rows = [];
+    const itemsParam = get("items");
+
+    if (itemsParam) {
+      itemsParam.split(";").forEach(one => {
+        if (!one) return;
+        const parts = one.split("|");
+        const name = (parts[0] || "").trim();
+        const qty  = toNumber(parts[1]);
+        const price= toNumber(parts[2]);
+        rows.push({ name, qty, price });
+      });
+    }
+
+    let grand = 0;
+    tbody.innerHTML = rows.map(r => {
+      const line = (r.qty || 0) * (r.price || 0);
+      grand += line;
+      return `<tr>
+        <td class="tl">${r.name}</td>
+        <td>${r.qty || 0}</td>
+        <td class="tr">${fmt(r.price)}</td>
+        <td class="tr">${fmt(line)}</td>
+      </tr>`;
+    }).join("");
+
+    const totalParam2 = toNumber(get("total2"));
+    const total2 = totalParam2 > 0 ? totalParam2 : grand;
+    document.getElementById("total2").textContent = fmt(total2);
+
+    const totalParam1 = toNumber(get("total1"));
+    const total1 = totalParam1 > 0 ? totalParam1 : grand;
+    document.getElementById("total1").textContent = fmt(total1);
+
+    const totalParam = toNumber(get("total"));
+    const total = totalParam > 0 ? totalParam : grand;
+    document.getElementById("total").textContent = fmt(total);
+    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
+
+    
+    const qr = get("img") || get("qr");
+    if (qr) document.getElementById("qr").src = qr;
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
