@@ -107,19 +107,19 @@
   <!-- Load html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <script>
-    function exportPDF() {
-      const element = document.getElementById("invoice");
-      const opt = {
-        margin:       0.5,
-        filename:     'phieu-tinh-tien.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
-  </script>
+<script>
+  function exportPDF() {
+    const element = document.getElementById("invoice");
+    const opt = {
+      margin: 0.5,
+      filename: 'phieu-tinh-tien.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+</script>
 
   <script>
     const qp = new URLSearchParams(location.search);
@@ -186,6 +186,7 @@
   </script>
 </body>
 </html>
+
 
 
 
