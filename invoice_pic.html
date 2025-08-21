@@ -134,7 +134,11 @@ async function exportPDF() {
     jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
   };
 
-  html2pdf().set(opt).from(element).save();
+  html2pdf().set({
+  html2canvas: { useCORS: true, allowTaint: true },
+  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+});
+
 }
 
 // Load dữ liệu từ URL
@@ -192,4 +196,5 @@ window.onload = prepareInvoice;
 </script>
 </body>
 </html>
+
 
