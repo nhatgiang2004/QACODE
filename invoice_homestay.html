@@ -88,7 +88,7 @@
 
     <div class="sum">
       <p><b>Tổng cộng:</b> <span id="total"></span> đ</p>
-      <p><b>Đặt cọc:</b> <span id="total"></span> đ</p>
+      <p><b>Đặt cọc:</b> <span id="total1"></span> đ</p>
       <p><b>Còn phải thanh toán:</b> <span id="total"></span> đ</p>
       <p><b>Bằng chữ:</b> <span id="totalText"></span></p>
     </div>
@@ -138,6 +138,7 @@
     document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
     document.getElementById("start").textContent = get("start");
     document.getElementById("end").textContent = get("end");
+    document.getElementById("tongngay").textContent = get("tongngay");
 
     const tbody = document.getElementById("tbody");
     let rows = [];
@@ -176,5 +177,6 @@
   </script>
 </body>
 </html>
+
 
 
