@@ -169,6 +169,7 @@
 
     const totalParam = toNumber(get("total"));
     const total = totalParam > 0 ? totalParam : grand;
+    document.getElementById("total2").textContent = fmt(total2);
     document.getElementById("total").textContent = fmt(total);
     document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
 
@@ -177,6 +178,7 @@
   </script>
 </body>
 </html>
+
 
 
 
