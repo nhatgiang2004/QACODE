@@ -57,8 +57,9 @@
     <div class="head">
       <img src="https://i.ibb.co/gZpWr7wD/FLC-SS.png" alt="Logo" />
       <div class="shop">
-        <b>VILLA FLC NGỌC TRAI</b><br/>
+      <b>VILLA FLC NGỌC TRAI</b><br/>
         NT60 Sầm Sơn, Thanh Hóa, ĐT: 0919050618
+
       </div>
     </div>
 
@@ -70,8 +71,6 @@
       <p><b>Tên Khách hàng:</b> <span id="cust"></span></p>
       <p><b>Ngày vào:</b> <span id="start"></span></p>
       <p><b>Ngày ra:</b> <span id="end"></span></p>
-    
- 
     </div>
 
     <table>
@@ -136,7 +135,6 @@
     document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
     document.getElementById("start").textContent = get("start");
     document.getElementById("end").textContent = get("end");
-  
 
     const tbody = document.getElementById("tbody");
     let rows = [];
@@ -167,17 +165,12 @@
 
     const totalParam = toNumber(get("total"));
     const total = totalParam > 0 ? totalParam : grand;
-    document.getElementById("total2").textContent = fmt(total2);
-    document.getElementById("totalText").textContent = get("texttotal2") || get("bangchu") || "";
+    document.getElementById("total").textContent = fmt(total);
+    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
 
     const qr = get("img") || get("qr");
     if (qr) document.getElementById("qr").src = qr;
   </script>
 </body>
 </html>
-
-
-
-
-
 
