@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PHI&#7870;U TÕNH TI&#7872;N</title>
+  <title>PHI&#7870;U T√çNH TI&#7872;N</title>
   <style>
     :root { --maxw: 480px; }
     body { font-family: Arial, sans-serif; margin:0; background:#fff; }
@@ -25,7 +25,7 @@
     .qr img { width:180px; height:auto; }
     .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
 
-    /* N˙t trÍn c˘ng bÍn ph&#7843;i */
+    /* N√∫t tr√™n c√πng b√™n ph&#7843;i */
     .actions {
       position: fixed;
       top: 10px;
@@ -47,7 +47,7 @@
   </style>
 </head>
 <body>
-  <!-- N˙t in v‡ xu&#7845;t PDF -->
+  <!-- N√∫t in v√† xu&#7845;t PDF -->
   <div class="actions">
     <button onclick="window.print()">&#128424; Print</button>
     <button onclick="exportPDF()">&#128196; Xu&#7845;t PDF</button>
@@ -57,49 +57,49 @@
     <div class="head">
       <img src="https://i.ibb.co/1fY43Q42/1-Logo-105800.jpg" alt="Logo" />
       <div class="shop">
-      <b>VILLA FLC NG&#7884;C TRAI</b><br/>
-        SN 729 B‡ Tri&#7879;u, P. H&#7841;c Th‡nh, t&#7881;nh Thanh hÛa - &#272;T: 0919050618
+      <b>Cty TNHH V·∫≠n t·∫£i Du l·ªãch & TM Nh·∫≠t Anh</b><br/>
+        SN 729 B√† Tri·ªáu, P. H·∫°c Th√†nh, t·ªânh Thanh h√≥a - ƒêT: 0919050618
 
       </div>
     </div>
 
-    <h1>PHI&#7870;U TÕNH TI&#7872;N</h1>
+    <h1>PHI·∫æU T√çNH TI·ªÄN</h1>
 
     <div class="info">
-      <p><b>S&#7889; giao d&#7883;ch:</b> <span id="id"></span></p>
-      <p><b>Ng‡y, gi&#7901;:</b> <span id="time"></span></p>
-      <p><b>TÍn Kh·ch h‡ng:</b> <span id="cust"></span></p>
-      <p><b>Ng‡y &#273;i:</b> <span id="start"></span></p>
-      <p><b>Ng‡y v&#7873;:</b> <span id="end"></span></p>
+      <p><b>S·ªë giao d·ªãch:</b> <span id="id"></span></p>
+      <p><b>Ng√†y:</b> <span id="time"></span></p>
+      <p><b>T√™n Kh√°ch h√†ng:</b> <span id="cust"></span></p>
+      <p><b>Ng√†y ƒëi:</b> <span id="start"></span></p>
+      <p><b>Ng√†y v·ªÅ:</b> <span id="end"></span></p>
     </div>
 
     <table>
       <thead>
         <tr>
-          <th style="width:46%">D&#7883;ch v&#7909;</th>
+           <th style="width:46%">D·ªãch v·ª•</th>
           <th style="width:10%">SL</th>
-          <th style="width:22%">&#272;&#417;n gi·</th>
-          <th style="width:22%">Th‡nh ti&#7873;n</th>
+          <th style="width:22%">ƒê∆°n gi√°</th>
+          <th style="width:22%">Th√†nh ti·ªÅn</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
 
     <div class="sum">
-      <p><b>T&#7893;ng c&#7897;ng: <span id="total2"></span> &#273; </b></p>
-      <p><b>&#272;&#7863;t c&#7885;c: <span id="total1"></span> &#273; </b></p>
-      <p><b>CÚn ph&#7843;i thanh to·n:<span id="total"></span> &#273; </b></p>
-      <p><b>B&#7857;ng ch&#7919;:</b> <span id="totalText"></span></p>
+      <p><b>T·ªïng c·ªông: <span id="total2"></span> &#273; </b></p>
+      <p><b>ƒê·∫∑t c·ªçc: <span id="total1"></span> &#273; </b></p>
+      <p><b>C√≤n ph·∫£i thanh to√°n:<span id="total"></span> &#273; </b></p>
+      <p><b>B·∫±ng ch·ªØ:</b> <span id="totalText"></span></p>
     </div>
 
     <div class="qr">
-      <img id="qr" style="width:200px; height:200px;" alt="QR Thanh to·n">
+      <img id="qr" style="width:200px; height:200px;" alt="QR Thanh to√°n">
     </div>
 
     <div class="foot">
-      <p><b><i>Qu˝ kh·ch vui lÚng gi&#7919; l&#7841;i phi&#7871;u tÌnh ti&#7873;n</i></b></p>
-      <p><b><i>Xin c&#7843;m &#417;n v‡ h&#7865;n g&#7863;p l&#7841;i!</i></b></p>
-      <p><b><i>C&#7843;m &#417;n khi ti&#7871;p nh&#7853;n ph&#7843;n h&#7891;i c&#7911;a qu˝ kh·ch.</i></b></p>
+      <p><b><i>Qu√Ω kh√°ch vui l√≤ng gi&#7919; l&#7841;i phi&#7871;u t√≠nh ti&#7873;n</i></b></p>
+      <p><b><i>Xin c&#7843;m &#417;n v√† h&#7865;n g&#7863;p l&#7841;i!</i></b></p>
+      <p><b><i>C&#7843;m &#417;n khi ti&#7871;p nh&#7853;n ph&#7843;n h&#7891;i c&#7911;a qu√Ω kh√°ch.</i></b></p>
     </div>
   </div>
 
@@ -185,6 +185,7 @@
   </script>
 </body>
 </html>
+
 
 
 
