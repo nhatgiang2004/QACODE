@@ -167,6 +167,7 @@
       </tr>`;
     }).join("");
 
+    const totalParam = toNumber(get("total2"));
     const totalParam = toNumber(get("total"));
     const total = totalParam > 0 ? totalParam : grand;
     document.getElementById("total2").textContent = fmt(total2);
@@ -178,6 +179,7 @@
   </script>
 </body>
 </html>
+
 
 
 
