@@ -171,6 +171,10 @@
     const total2 = totalParam2 > 0 ? totalParam2 : grand;
     document.getElementById("total2").textContent = fmt(total2);
 
+    const totalParam1 = toNumber(get("total1"));
+    const total1 = totalParam1 > 0 ? totalParam1 : grand;
+    document.getElementById("total1").textContent = fmt(total1);
+
     const totalParam = toNumber(get("total"));
     const total = totalParam > 0 ? totalParam : grand;
     document.getElementById("total").textContent = fmt(total);
@@ -182,6 +186,7 @@
   </script>
 </body>
 </html>
+
 
 
 
