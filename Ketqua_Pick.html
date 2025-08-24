@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Bảng dữ liệu từ Google Sheet</title>
+  <title>Dữ liệu Google Sheet realtime</title>
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script>
     google.charts.load('current', {'packages':['table']});
@@ -10,7 +10,7 @@
 
     function drawTable() {
       var query = new google.visualization.Query(
-        'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?gid=1997402499&headers=1'
+        'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?gid=1997402499&headers=1&t=' + new Date().getTime()
       );
       query.send(handleQueryResponse);
     }
@@ -23,7 +23,7 @@
   </script>
 </head>
 <body>
-  <h2>Dữ liệu Google Sheet</h2>
+  <h2>Bảng dữ liệu realtime</h2>
   <div id="table_div"></div>
 </body>
 </html>
