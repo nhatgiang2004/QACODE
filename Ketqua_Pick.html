@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Google Sheet to Table</title>
+  <title>Bảng dữ liệu từ Google Sheet</title>
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script>
     google.charts.load('current', {'packages':['table']});
@@ -10,7 +10,7 @@
 
     function drawTable() {
       var query = new google.visualization.Query(
-        'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=Hiển thị KQ Sân 1'
+        'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?gid=1997402499&headers=1'
       );
       query.send(handleQueryResponse);
     }
