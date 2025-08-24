@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả Pickleball</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f8f8; padding: 20px; }
+    .controls { margin-bottom: 20px; }
+    select { font-size: 16px; padding: 5px; }
+    .match {
+      display: flex; align-items: center;
+      background: white; border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 15px; overflow: hidden;
+    }
+    .logo { background: white; padding: 10px; }
+    .logo img { width: 60px; height: 60px; }
+    .players {
+      flex: 1; background: #333; color: white;
+      padding: 12px; font-size: 18px; font-weight: bold;
+    }
+    .score { width: 60px; text-align: center; font-size: 28px; font-weight: bold; color: black; }
+    .status { width: 60px; display: flex; justify-content: center; align-items: center; }
+    .circle { width: 30px; height: 30px; border-radius: 50%; border: 2px solid black; }
+    .red { background: red; }
+    .green { background: green; }
+    .blue { background: blue; }
+  </style>
+
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <script>
+    // ID Google Sheet
+    const sheetId = "16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0";
+
+    // Các sheet có thể chọn
+    const sheets = {
+      "Bảng 1": "Sheet1",
+      "Bảng 2": "Sheet2",
+      "Kết quả": "Ketqua"
+    };
+
+    // Tải Google Charts
+    google.charts.load('current', {'packages':['table']});
+
+    function loadSheet(sheetName) {
+      let query = new google.visualization.Query(
+        `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?sheet=${sheetName}`
+      );
+      query.send(handleResponse);
+    }
+
+    function handleResponse(response) {
+      if (response.isError()) {
+        document.getElementById("matches").innerHTML = "<p>Lỗi tải dữ liệu</p>";
+        return;
+      }
+      let data = response.getDataTable();
+      let html = "";
+
+      for (let i = 0; i < data.getNumberOfRows(); i++) {
+        let logo = data.getValue(i, 0);      // cột 1: link logo
+        let players = data.getValue(i, 1);   // cột 2: tên người chơi
+        let score = data.getValue(i, 2);     // cột 3: điểm
+        let status = data.getValue(i, 3);    // cột 4: màu trạng thái (red/green/blue)
+
+        html += `
+          <div class="match">
+            <div class="logo"><img src="${logo}" alt="logo"></div>
+            <div class="players">${players}</div>
+            <div class="score">${score}</div>
+            <div class="status"><div class="circle ${status}"></div></div>
+          </div>`;
+      }
+      document.getElementById("matches").innerHTML = html;
+    }
+
+    function changeSheet() {
+      let sheetName = document.getElementById("sheetSelect").value;
+      loadSheet(sheetName);
+    }
+
+    google.charts.setOnLoadCallback(() => {
+      changeSheet(); // load sheet mặc định
+    });
+  </script>
+</head>
+<body>
+  <div class="controls">
+    <label for="sheetSelect">Chọn bảng dữ liệu: </label>
+    <select id="sheetSelect" onchange="changeSheet()">
+      <option value="Sheet1">Bảng 1</option>
+      <option value="Sheet2">Bảng 2</option>
+      <option value="Ketqua" selected>Kết quả</option>
+    </select>
+  </div>
+
+  <div id="matches"></div>
+</body>
+</html>
