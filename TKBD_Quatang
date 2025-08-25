@@ -5,27 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PHIẾU NHẬN QUÀ KHUYẾN MẠI</title>
   <style>
-    :root { --maxw: 480px; }
-    body { font-family: Arial, sans-serif; margin:0; background:#fff; }
-    .wrap { max-width: var(--maxw); margin: 16px auto; padding: 16px 18px; border:1px solid #000; background:#fff; }
-    .head { display:flex; gap:12px; align-items:center; }
-    .head img { width:64px; height:auto; }
-    .shop { line-height:1.25; }
-    .shop b { font-size:18px; }
-    h1 { text-align:center; margin:18px 0 8px; font-size:24px; letter-spacing:1px; }
-    .info p { margin:4px 0; font-size:14px; }
-    table { width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
-    th, td { border:1px solid #000; padding:6px 8px; text-align:center; }
-    th { background:#f2f2f2; }
-    td.tl { text-align:left; }
-    td.tr { text-align:right; }
-    .sum { margin-top:10px; font-size:15px; }
-    .sum p { margin:6px 0; }
-    .qr { text-align:center; margin:16px 0 6px; }
-    .qr img { width:180px; height:auto; }
-    .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
+    body { font-family: Times New Roman, serif; margin: 0; background: #fff; }
+    .wrap { max-width: 800px; margin: 20px auto; padding: 20px 40px; border: 1px solid #000; background: #fff; }
+    .head { display: flex; justify-content: space-between; align-items: center; }
+    .head img { width: 100px; height: auto; }
+    .head .title { text-align: center; flex: 1; }
+    .head .title b { font-size: 20px; }
+    .head .title u { display: block; margin-top: 4px; }
 
-    /* Nút trên cùng bên phải */
+    h1 { text-align: center; margin: 24px 0 16px; font-size: 26px; font-weight: bold; }
+
+    .info p { margin: 6px 0; font-size: 16px; line-height: 1.5; }
+    .info b { font-weight: bold; }
+    .info i { font-style: italic; }
+
+    .confirm { margin-top: 40px; text-align: right; font-size: 16px; }
+    .sign { margin-top: 60px; text-align: right; font-style: italic; }
+
     .actions {
       position: fixed;
       top: 10px;
@@ -37,172 +33,73 @@
       padding: 8px 14px;
       font-size: 13px;
       cursor: pointer;
-      border:1px solid #333;
-      border-radius:6px;
-      background:#f9f9f9;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background: #f9f9f9;
     }
-
-    @media (max-width: 520px) { .wrap { margin:0; border:none; } }
-    @media print { body{ background:#fff } .wrap{ border:none; margin:0; } .actions{display:none} }
+    @media print { .actions { display: none; } }
   </style>
 </head>
 <body>
-  <!-- Nút in và xuất PDF -->
   <div class="actions">
-    <button onclick="window.print()">🖨 Print</button>
+    <button onclick="window.print()">🖨 In</button>
     <button onclick="exportPDF()">📄 Xuất PDF</button>
   </div>
 
-  <div class="wrap" id="invoice">
+  <div class="wrap" id="voucher">
     <div class="head">
       <img src="https://i.ibb.co/Xf5qv9pg/vnpost.jpg" alt="Logo" />
-      <div class="shop">
-      <b>CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM</b><br/>
-       <u> Độc Lập – Tự Do – Hạnh Phúc </u>
-
+      <div class="title">
+        <b>CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM</b>
+        <u>Độc Lập – Tự Do – Hạnh Phúc</u>
       </div>
     </div>
 
     <h1>PHIẾU NHẬN QUÀ KHUYẾN MẠI</h1>
 
     <div class="info">
-      <p><b>Tôi là:</b> <span id="id"></span></p>
-      <p><b>Là chủ sổ tiết kiệm số:</b> <span id="time"></span></p>
-      <p><b>Phát hành ngày:</b> <span id="cust"></span></p>
-      <p><b>Tại Bưu điện Thiệu hoá</b></p>
-      <p><b>Số tiền gửi:</b> <span id="end"></span></p>
-      <p><b>đồng - Kỳ hạn:</b> <span id="tongngay"></span></p>
-      <p><b>Tôi đồng ý tham gia chương trình khuyến mại ''Tiết kiệm hè vàng - Ngập tràn ưu đãi''
-của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là:</b> <span id="tongngay"></span></p>
-      <p><b>Tôi cam kết sẽ không tất toán trước hạn. Nếu tất toán trước thời gian cam kết, tôi xin hoàn lại
-giá trị quà tặng đã nhận theo quy định của chương trình khuyến mại.</b></p>
-      <p><b>Xác nhận của khách hàng</b></p>
-      <p>(Ký và ghi rõ họ tên)</p>
-
-</div>
-
-    <table>
-      <thead>
-        <tr>
-          <th style="width:46%">Dịch vụ</th>
-          <th style="width:10%">SL</th>
-          <th style="width:22%">Đơn giá</th>
-          <th style="width:22%">Thành tiền</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-
-    <div class="sum">
-      <p><b>Tổng cộng: <span id="total2"></span> đ </b></p>
-      <p><b>Đặt cọc: <span id="total1"></span> đ </b></p>
-      <p><b>Còn phải thanh toán:<span id="total"></span> đ </b></p>
-      <p><b>Bằng chữ:</b> <span id="totalText"></span></p>
+      <p><b>Tôi là:</b> <span id="tenkh"></span></p>
+      <p><b>Là chủ sổ tiết kiệm số:</b> <i id="sotietkiem"></i></p>
+      <p><b>Phát hành ngày:</b> <i id="ngayph"></i></p>
+      <p><b>Tại Bưu điện:</b> <span id="buudien">Thiệu Hoá</span></p>
+      <p><b>Số tiền gửi:</b> <b><i id="sotien"></i> đồng</b> - Kỳ hạn: <b><i id="kyhan"></i></b></p>
+      <p>Tôi đồng ý tham gia chương trình khuyến mại <i>"Tiết kiệm hè vàng - Ngập tràn ưu đãi"</i> 
+      của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là: <b><i id="qua"></i></b></p>
+      <p>Tôi cam kết sẽ không tất toán trước hạn. Nếu tất toán trước thời gian cam kết, 
+      tôi xin hoàn lại giá trị quà tặng đã nhận theo quy định của chương trình khuyến mại.</p>
     </div>
 
-    <div class="qr">
-      <img id="qr" style="width:200px; height:200px;" alt="QR Thanh toán">
+    <div class="confirm">
+      <b>Xác nhận của khách hàng</b><br>
+      <i>(Ký và ghi rõ họ tên)</i>
     </div>
 
-    <div class="foot">
-      <p><b><i>Quý khách vui lòng giữ lại phiếu tính tiền</i></b></p>
-      <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
-      <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
-    </div>
+    <div class="sign">........................................</div>
   </div>
 
-  <!-- Load html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<script>
-  function exportPDF() {
-    const element = document.getElementById("invoice");
-    const opt = {
-      margin: 0.5,
-      filename: 'phieu-tinh-tien.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().set(opt).from(element).save();
-  }
-</script>
-
   <script>
-    const qp = new URLSearchParams(location.search);
-    const get = k => qp.get(k) || "";
-
-    const toNumber = v => {
-      if (typeof v === "number") return v;
-      let s = String(v || "").trim();
-      s = s.replace(/[^\d-]/g, "");
-      return s ? parseInt(s, 10) : 0;
-    };
-    const fmt = n => Number(n || 0).toLocaleString("vi-VN");
-
-    document.getElementById("id").textContent = get("id");
-    document.getElementById("time").textContent = get("time");
-    document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
-    document.getElementById("start").textContent = get("start");
-    document.getElementById("end").textContent = get("end");
-    document.getElementById("tongngay").textContent = get("tongngay");
-
-    const tbody = document.getElementById("tbody");
-    let rows = [];
-    const itemsParam = get("items");
-
-    if (itemsParam) {
-      itemsParam.split(";").forEach(one => {
-        if (!one) return;
-        const parts = one.split("|");
-        const name = (parts[0] || "").trim();
-        const qty  = toNumber(parts[1]);
-        const price= toNumber(parts[2]);
-        rows.push({ name, qty, price });
-      });
+    function exportPDF() {
+      const element = document.getElementById("voucher");
+      const opt = {
+        margin: 0.5,
+        filename: 'phieu-nhan-qua.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
     }
 
-    let grand = 0;
-    tbody.innerHTML = rows.map(r => {
-      const line = (r.qty || 0) * (r.price || 0);
-      grand += line;
-      return `<tr>
-        <td class="tl">${r.name}</td>
-        <td>${r.qty || 0}</td>
-        <td class="tr">${fmt(r.price)}</td>
-        <td class="tr">${fmt(line)}</td>
-      </tr>`;
-    }).join("");
-
-    const totalParam2 = toNumber(get("total2"));
-    const total2 = totalParam2 > 0 ? totalParam2 : grand;
-    document.getElementById("total2").textContent = fmt(total2);
-
-    const totalParam1 = toNumber(get("total1"));
-    const total1 = totalParam1 > 0 ? totalParam1 : grand;
-    document.getElementById("total1").textContent = fmt(total1);
-
-    const totalParam = toNumber(get("total"));
-    const total = totalParam > 0 ? totalParam : grand;
-    document.getElementById("total").textContent = fmt(total);
-    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
-
-    
-    const qr = get("img") || get("qr");
-    if (qr) document.getElementById("qr").src = qr;
+    // Lấy dữ liệu từ URL
+    const qp = new URLSearchParams(location.search);
+    const get = k => qp.get(k) || "";
+    document.getElementById("tenkh").textContent = get("tenkh");
+    document.getElementById("sotietkiem").textContent = get("stk");
+    document.getElementById("ngayph").textContent = get("date");
+    document.getElementById("sotien").textContent = get("sotien");
+    document.getElementById("kyhan").textContent = get("kyhan");
+    document.getElementById("qua").textContent = get("qua");
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
