@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PHIẾU TÍNH TIỀN</title>
+  <title>PHIẾU NHẬN QUÀ KHUYẾN MẠI</title>
   <style>
     :root { --maxw: 480px; }
     body { font-family: Arial, sans-serif; margin:0; background:#fff; }
@@ -55,24 +55,31 @@
 
   <div class="wrap" id="invoice">
     <div class="head">
-      <img src="https://i.ibb.co/gZpWr7wD/FLC-SS.png" alt="Logo" />
+      <img src="https://i.ibb.co/Xf5qv9pg/vnpost.jpg" alt="Logo" />
       <div class="shop">
-      <b>VILLA FLC NGỌC TRAI</b><br/>
-       <u> NT60 Sầm Sơn, Thanh Hóa, ĐT: 0919050618 </u>
+      <b>CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM</b><br/>
+       <u> Độc Lập – Tự Do – Hạnh Phúc </u>
 
       </div>
     </div>
 
-    <h1>PHIẾU TÍNH TIỀN</h1>
+    <h1>PHIẾU NHẬN QUÀ KHUYẾN MẠI</h1>
 
     <div class="info">
-      <p><b>Số giao dịch:</b> <span id="id"></span></p>
-      <p><b>Ngày, giờ:</b> <span id="time"></span></p>
-      <p><b>Tên Khách hàng:</b> <span id="cust"></span></p>
-      <p><b>Ngày vào:</b> <span id="start"></span></p>
-      <p><b>Ngày ra:</b> <span id="end"></span></p>
-      <p><b>Số ngày lưu trú:</b> <span id="tongngay"></span></p>
-    </div>
+      <p><b>Tôi là:</b> <span id="id"></span></p>
+      <p><b>Là chủ sổ tiết kiệm số:</b> <span id="time"></span></p>
+      <p><b>Phát hành ngày:</b> <span id="cust"></span></p>
+      <p><b>Tại Bưu điện Thiệu hoá</b></p>
+      <p><b>Số tiền gửi:</b> <span id="end"></span></p>
+      <p><b>đồng - Kỳ hạn:</b> <span id="tongngay"></span></p>
+      <p><b>Tôi đồng ý tham gia chương trình khuyến mại ''Tiết kiệm hè vàng - Ngập tràn ưu đãi''
+của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là:</b> <span id="tongngay"></span></p>
+      <p><b>Tôi cam kết sẽ không tất toán trước hạn. Nếu tất toán trước thời gian cam kết, tôi xin hoàn lại
+giá trị quà tặng đã nhận theo quy định của chương trình khuyến mại.</b></p>
+      <p><b>Xác nhận của khách hàng</b></p>
+      <p>(Ký và ghi rõ họ tên)</p>
+
+</div>
 
     <table>
       <thead>
