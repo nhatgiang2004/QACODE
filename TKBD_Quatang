@@ -58,13 +58,13 @@
     <h1>PHIẾU NHẬN QUÀ KHUYẾN MẠI</h1>
 
     <div class="info">
-      <p><b>Tôi là:</b> <span id="tenkh"></span></p>
-      <p><b>Là chủ sổ tiết kiệm số:</b> <i id="sotietkiem"></i></p>
-      <p><b>Phát hành ngày:</b> <i id="ngayph"></i></p>
-      <p><b>Tại Bưu điện:</b> <span id="buudien">Thiệu Hoá</span></p>
-      <p><b>Số tiền gửi:</b> <b><i id="sotien"></i> đồng</b> - Kỳ hạn: <b><i id="kyhan"></i></b></p>
+      <p><b>Tôi là:</b> <span id="Tên Khách hàng"></span></p>
+      <p><b>Là chủ sổ tiết kiệm số:</b> <i id="Sổ sổ thẻ"></i></p>
+      <p><b>Phát hành ngày:</b> <i id="Ngày gửi"></i></p>
+      <p><b>Tại Bưu điện:</b></p>
+      <p><b>Số tiền gửi:</b> <b><i id="Số tiền gửi"></i> đồng</b> - Kỳ hạn: <b><i id="Kỳ hạn"></i></b></p>
       <p>Tôi đồng ý tham gia chương trình khuyến mại <i>"Tiết kiệm hè vàng - Ngập tràn ưu đãi"</i> 
-      của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là: <b><i id="qua"></i></b></p>
+      của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là: <b><i id="Loại quà tặng"></i></b></p>
       <p>Tôi cam kết sẽ không tất toán trước hạn. Nếu tất toán trước thời gian cam kết, 
       tôi xin hoàn lại giá trị quà tặng đã nhận theo quy định của chương trình khuyến mại.</p>
     </div>
