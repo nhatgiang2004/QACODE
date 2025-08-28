@@ -60,32 +60,30 @@
     <h1>PHIẾU NHẬN QUÀ KHUYẾN MẠI</h1>
 
     <div class="info">
-  <p>Tôi là: <b><span id="Tên Khách hàng" style="text-transform: uppercase;"></span></b></p>
-<p>
-  Là chủ sổ tiết kiệm số: 
-  <b><span id="Sổ sổ thẻ"></span></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  Phát hành ngày: <b><span id="Ngày gửi"></span></b>
-</p>
+      <p>Tôi là: <b><span id="Tên Khách hàng" style="text-transform: uppercase;"></span></b></p>
+      <p>
+        Là chủ sổ tiết kiệm số: 
+        <b><span id="Sổ sổ thẻ"></span></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Phát hành ngày: <b><span id="Ngày gửi"></span></b>
+      </p>
 
-
-    <p>Tại Bưu điện Thiệu Hóa</p>
-<p>
-  Số tiền gửi: <b><span id="Số tiền gửi"></span> đồng</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  Kỳ hạn: <b><span id="Kỳ hạn"></span></b>
-</p> 
+      <p>Tại Bưu điện Thiệu Hóa</p>
+      <p>
+        Số tiền gửi: <b><span id="Số tiền gửi"></span> đồng</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        Kỳ hạn: <b><span id="Kỳ hạn"></span></b>
+      </p> 
       <p>Tôi đồng ý tham gia chương trình khuyến mại <i>"Tiết kiệm hè vàng - Ngập tràn ưu đãi"</i> 
       của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là: <b><i id="Loại quà tặng"></i></b></p>
       <p>Tôi cam kết sẽ không tất toán trước hạn. Nếu tất toán trước thời gian cam kết, 
       tôi xin hoàn lại giá trị quà tặng đã nhận theo quy định của chương trình khuyến mại.</p>
     </div>
 
-<div style="text-align:right; margin-right:2cm;">
-  <b>Xác nhận của khách hàng</b><br>
-  <i>(Ký và ghi rõ họ tên)</i><br><br><br><br>
-  ........................................
-</div>
-
-
+    <div style="text-align:right; margin-right:2cm;">
+      <b>Xác nhận của khách hàng</b><br>
+      <i>(Ký và ghi rõ họ tên)</i><br><br><br><br>
+      ........................................
+    </div>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
@@ -109,11 +107,20 @@
     document.getElementById("Ngày gửi").textContent = get("Ngayphathanh");
     
     const total = parseFloat(get("total") || 0);
-document.getElementById("Số tiền gửi").textContent = 
-    new Intl.NumberFormat("vi-VN").format(total);
+    document.getElementById("Số tiền gửi").textContent = 
+        new Intl.NumberFormat("vi-VN").format(total);
     
     document.getElementById("Kỳ hạn").textContent = get("texttotal");
     document.getElementById("Loại quà tặng").textContent = get("qua");
+
+    // 🔔 Tự động bật Print View khi trang tải xong
+    window.onload = function() {
+      window.print();
+      // Sau khi in hoặc huỷ in thì tự động đóng tab
+      window.onafterprint = function() {
+        window.close();
+      };
+    };
   </script>
 </body>
-</html> 
+</html>
