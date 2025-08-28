@@ -94,12 +94,12 @@
     // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
-    document.getElementById("tenkh").textContent = get("tenkh");
-    document.getElementById("sotietkiem").textContent = get("stk");
-    document.getElementById("ngayph").textContent = get("date");
-    document.getElementById("sotien").textContent = get("sotien");
-    document.getElementById("kyhan").textContent = get("kyhan");
-    document.getElementById("qua").textContent = get("qua");
+    document.getElementById("Tên Khách hàng").textContent = get("tenkh");
+    document.getElementById("Sổ sổ thẻ").textContent = get("Sosothe");
+    document.getElementById("ngayph").textContent = get("Ngayphathanh");
+    document.getElementById("Số tiền gửi").textContent = get("total");
+    document.getElementById("Kỳ hạn").textContent = get("texttotal");
+    document.getElementById("Loại quà tặng").textContent = get("qua");
   </script>
 </body>
 </html>
