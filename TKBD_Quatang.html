@@ -107,7 +107,11 @@
     document.getElementById("Tên Khách hàng").textContent = get("tenkh");
     document.getElementById("Sổ sổ thẻ").textContent = get("Sosothe");
     document.getElementById("Ngày gửi").textContent = get("Ngayphathanh");
-    document.getElementById("Số tiền gửi").textContent = get("total");
+    
+    const total = parseFloat(get("total") || 0);
+document.getElementById("Số tiền gửi").textContent = 
+    new Intl.NumberFormat("vi-VN").format(total);
+    
     document.getElementById("Kỳ hạn").textContent = get("texttotal");
     document.getElementById("Loại quà tặng").textContent = get("qua");
   </script>
