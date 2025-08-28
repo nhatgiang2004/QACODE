@@ -6,14 +6,14 @@
   <title>PHIẾU NHẬN QUÀ KHUYẾN MẠI</title>
   <style>
     body { font-family: Times New Roman, serif; margin: 0; background: #fff; }
-    .wrap { max-width: 100%; margin: 0 auto; padding: 20px 40px; background: #fff; }
+    .wrap { max-width: 800px; margin: 20px auto; padding: 20px 40px;  background: #fff; }
     .head { display: flex; justify-content: space-between; align-items: center; }
     .head img { width: 100px; height: auto; }
     .head .title { text-align: center; flex: 1; }
     .head .title b { font-size: 20px; }
     .head .title u { display: block; margin-top: 4px; }
 
-    h1 { text-align: center; margin: 24px 0 16px; font-size: 26px; font-weight: bold; }
+    h1 { text-align: center; margin: 24px 0 14px; font-size: 26px; font-weight: bold; }
 
     .info p { margin: 6px 0; font-size: 16px; line-height: 1.5; }
     .info b { font-weight: bold; }
@@ -37,17 +37,7 @@
       border-radius: 6px;
       background: #f9f9f9;
     }
-
-    /* Cấu hình khổ giấy A5 khi in */
-    @page {
-      size: A5 portrait;
-      margin: 1cm;
-    }
-
-    @media print { 
-      .actions { display: none; } 
-      body, .wrap { width: 100%; }
-    }
+    @media print { .actions { display: none; } }
   </style>
 </head>
 <body>
@@ -68,34 +58,33 @@
     <h1>PHIẾU NHẬN QUÀ KHUYẾN MẠI</h1>
 
     <div class="info">
-      <p>Tôi là: <b><span id="Tên Khách hàng" style="text-transform: uppercase;"></span></b></p>
-      <p>
-        Là chủ sổ tiết kiệm số: 
-        <b><span id="Sổ sổ thẻ"></span></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Phát hành ngày: <b><span id="Ngày gửi"></span></b>
-      </p>
-      <p>Tại Bưu điện Thiệu Hóa</p>
-      <p>
-        Số tiền gửi: <b><span id="Số tiền gửi"></span> đồng</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Kỳ hạn: <b><span id="Kỳ hạn"></span></b>
-      </p>
-      <br>    
-      <p>
-        Tôi đồng ý tham gia chương trình khuyến mại <i>"Tiết kiệm hè vàng - Ngập tràn ưu đãi"</i> 
-        của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là: <b><i id="Loại quà tặng"></i></b>
-      </p>
-      <p>
-        Tôi cam kết sẽ không tất toán trước hạn. Nếu tất toán trước thời gian cam kết, 
-        tôi xin hoàn lại giá trị quà tặng đã nhận theo quy định của chương trình khuyến mại.
-      </p>
+  <p>Tôi là: <b><span id="Tên Khách hàng" style="text-transform: uppercase;"></span></b></p>
+<p>
+  Là chủ sổ tiết kiệm số: 
+  <b><span id="Sổ sổ thẻ"></span></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Phát hành ngày: <b><span id="Ngày gửi"></span></b>
+</p>
+
+
+    <p>Tại Bưu điện Thiệu Hóa</p>
+<p>
+  Số tiền gửi: <b><span id="Số tiền gửi"></span> đồng</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  Kỳ hạn: <b><span id="Kỳ hạn"></span></b>
+</p>
+<br>    
+      <p>Tôi đồng ý tham gia chương trình khuyến mại <i>"Tiết kiệm hè vàng - Ngập tràn ưu đãi"</i> 
+      của Bưu điện tỉnh Thanh Hoá và nhận quà khuyến mại là: <b><i id="Loại quà tặng"></i></b></p>
+      <p>Tôi cam kết sẽ không tất toán trước hạn. Nếu tất toán trước thời gian cam kết, 
+      tôi xin hoàn lại giá trị quà tặng đã nhận theo quy định của chương trình khuyến mại.</p>
     </div>
 
-    <div style="text-align:right; margin-right:5cm;">
-      <b>Xác nhận của khách hàng</b><br>
-      <i>(Ký và ghi rõ họ tên)</i><br><br><br><br>
-      ........................................
-    </div>
-  </div>
+<div style="text-align:right; margin-right:5cm;">
+  <b>Xác nhận của khách hàng</b><br>
+  <i>(Ký và ghi rõ họ tên)</i><br><br><br><br>
+  ........................................
+</div>
+
+
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
@@ -106,7 +95,7 @@
         filename: 'phieu-nhan-qua.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a5', orientation: 'portrait' } // Xuất PDF khổ A5
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
       html2pdf().set(opt).from(element).save();
     }
