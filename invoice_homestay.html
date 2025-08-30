@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+sửa đoạn code này yêu cầu dịch xuống 1 dòng để nội dung (Print và xuất FDF) không che đi: <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -68,6 +68,7 @@
       .actions{display:none} 
     }
   </style>
+
 </head>
 <body>
   <!-- Nút in và xuất PDF -->
@@ -80,8 +81,9 @@
     <div class="head">
       <img src="https://i.ibb.co/gZpWr7wD/FLC-SS.png" alt="Logo" />
       <div class="shop">
-        <b>VILLA FLC NGỌC TRAI</b><br/>
-        <u> NT60 Sầm Sơn, Thanh Hóa, ĐT: 0919050618 </u>
+      <b>VILLA FLC NGỌC TRAI</b><br/>
+       <u> NT60 Sầm Sơn, Thanh Hóa, ĐT: 0919050618 </u>
+
       </div>
     </div>
 
@@ -129,19 +131,21 @@
   <!-- Load html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <script>
-    function exportPDF() {
-      const element = document.getElementById("invoice");
-      const opt = {
-        margin: 0.5,
-        filename: 'phieu-tinh-tien.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
+<script>
+  function exportPDF() {
+    const element = document.getElementById("invoice");
+    const opt = {
+      margin: 0.5,
+      filename: 'phieu-tinh-tien.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+</script>
 
+  <script>
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
 
@@ -176,4 +180,46 @@
     }
 
     let grand = 0;
-    tbody.i
+    tbody.innerHTML = rows.map(r => {
+      const line = (r.qty || 0) * (r.price || 0);
+      grand += line;
+      return `<tr>
+        <td class="tl">${r.name}</td>
+        <td>${r.qty || 0}</td>
+        <td class="tr">${fmt(r.price)}</td>
+        <td class="tr">${fmt(line)}</td>
+      </tr>`;
+    }).join("");
+
+    const totalParam2 = toNumber(get("total2"));
+    const total2 = totalParam2 > 0 ? totalParam2 : grand;
+    document.getElementById("total2").textContent = fmt(total2);
+
+    const totalParam1 = toNumber(get("total1"));
+    const total1 = totalParam1 > 0 ? totalParam1 : grand;
+    document.getElementById("total1").textContent = fmt(total1);
+
+    const totalParam = toNumber(get("total"));
+    const total = totalParam > 0 ? totalParam : grand;
+    document.getElementById("total").textContent = fmt(total);
+    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
+
+    
+    const qr = get("img") || get("qr");
+    if (qr) document.getElementById("qr").src = qr;
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
