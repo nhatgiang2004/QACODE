@@ -6,26 +6,45 @@
   <title>PHI&#7870;U TÍNH TI&#7872;N</title>
   <style>
     :root { --maxw: 480px; }
-    body { font-family: Arial, sans-serif; margin:0; background:#fff; }
-    .wrap { max-width: var(--maxw); margin: 16px auto; padding: 16px 18px; border:1px solid #000; background:#fff; }
+
+    body { 
+      font-family: Arial, sans-serif; 
+      margin:0; 
+      background:#fff; 
+      padding-top:60px; /* chừa khoảng trống cho nút */
+    }
+
+    .wrap { 
+      max-width: var(--maxw); 
+      margin: 16px auto; 
+      padding: 16px 18px; 
+      border:1px solid #000; 
+      background:#fff; 
+    }
+
     .head { display:flex; gap:12px; align-items:center; }
     .head img { width:64px; height:auto; }
     .shop { line-height:1.25; }
     .shop b { font-size:18px; }
+
     h1 { text-align:center; margin:18px 0 8px; font-size:24px; letter-spacing:1px; }
     .info p { margin:4px 0; font-size:14px; }
+
     table { width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
     th, td { border:1px solid #000; padding:6px 8px; text-align:center; }
     th { background:#f2f2f2; }
     td.tl { text-align:left; }
     td.tr { text-align:right; }
+
     .sum { margin-top:10px; font-size:15px; }
     .sum p { margin:6px 0; }
+
     .qr { text-align:center; margin:16px 0 6px; }
     .qr img { width:180px; height:auto; }
+
     .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
 
-    /* Nút trên cùng bên ph&#7843;i */
+    /* Nút trên cùng bên phải */
     .actions {
       position: fixed;
       top: 10px;
@@ -43,8 +62,13 @@
     }
 
     @media (max-width: 520px) { .wrap { margin:0; border:none; } }
-    @media print { body{ background:#fff } .wrap{ border:none; margin:0; } .actions{display:none} }
+    @media print { 
+      body{ background:#fff; padding-top:0 } 
+      .wrap{ border:none; margin:0; } 
+      .actions{display:none} 
+    }
   </style>
+
 </head>
 <body>
   <!-- Nút in và xu&#7845;t PDF -->
@@ -186,6 +210,7 @@
   </script>
 </body>
 </html>
+
 
 
 
