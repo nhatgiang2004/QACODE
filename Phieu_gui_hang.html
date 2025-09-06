@@ -63,11 +63,11 @@
       <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
       <p>Địa chỉ: <b>SN 729 Bà Triệu, P. Hạc Thành, tỉnh Thanh Hóa</b></p>
       <p>Điện thoại: <b>0919050618</b></p>
-
-      <p><b>Người nhận:</b> <span id="hovaten"></span></p>
-      <p><b>Người nhận:</b> <span id="hovaten"></span></p>
-      <p><b>Người nhận:</b> <span id="hovaten"></span></p>
-      
+<p>
+      <p><b>Người nhận:</b> <span id="Hotenkh"></span></p>
+      <p><b>Địa chỉ:</b> <span id="Diachi"></span></p>
+      <p><b>Điện thoại:</b> <span id="sdt"></span></p>
+</p>      
     </div>
 
     <div class="foot">
@@ -96,6 +96,7 @@
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
     document.getElementById("id").textContent = get("Makh");
+
 
 
     
