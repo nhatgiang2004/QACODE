@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PHIẾU GỬI HÀNG</title>
+  <style>
+    :root { --maxw: 480px; }
+
+    body { 
+      font-family: Arial, sans-serif; 
+      margin:0; 
+      background:#fff; 
+      padding-top:60px; /* chừa khoảng trống cho nút */
+    }
+
+    .wrap { 
+      max-width: var(--maxw); 
+      margin: 16px auto; 
+      padding: 16px 18px; 
+      border:1px solid #000; 
+      background:#fff; 
+    }
+
+    .head { display:flex; gap:12px; align-items:center; }
+    .head img { width:64px; height:auto; }
+    .shop { line-height:1.25; }
+    .shop b { font-size:18px; }
+
+    h1 { text-align:center; margin:18px 0 8px; font-size:24px; letter-spacing:1px; }
+    .info p { margin:4px 0; font-size:14px; }
+
+    table { width:100%; border-collapse:collapse; font-size:14px; margin-top:12px; }
+    th, td { border:1px solid #000; padding:6px 8px; text-align:center; }
+    th { background:#f2f2f2; }
+    td.tl { text-align:left; }
+    td.tr { text-align:right; }
+
+    .sum { margin-top:10px; font-size:15px; }
+    .sum p { margin:6px 0; }
+
+    .qr { text-align:center; margin:16px 0 6px; }
+    .qr img { width:180px; height:auto; }
+
+    .foot { text-align:center; font-size:14px; margin-top:10px; font-style:italic; }
+
+    /* Nút trên cùng bên phải */
+    .actions {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 999;
+    }
+    .actions button {
+      margin: 4px;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      border:1px solid #333;
+      border-radius:6px;
+      background:#f9f9f9;
+    }
+
+    @media (max-width: 520px) { .wrap { margin:0; border:none; } }
+    @media print { 
+      body{ background:#fff; padding-top:0 } 
+      .wrap{ border:none; margin:0; } 
+      .actions{display:none} 
+    }
+  </style>
+
+</head>
+<body>
+  <!-- Nút in và xuất PDF -->
+  <div class="actions">
+    <button onclick="window.print()">🖨 Print</button>
+    <button onclick="exportPDF()">📄 Xuất PDF</button>
+  </div>
+
+  <div class="wrap" id="invoice">
+    <div class="head">
+      <img src="https://i.ibb.co/TWw8vN7/5a60e014cea76af933b6.jpg" alt="Logo" />
+      <div class="shop">
+      <b>NHAT GIANG STORE</b><br/>
+       <u> SN 729 Bà Triệu, P. Hạc Thành, tỉnh Thanh Hóa - ĐT: 0919050618 </u>
+
+      </div>
+    </div>
+
+    <h1>PHIẾU GỬI HÀNG</h1>
+
+    <div class="info">
+      <p><b>Người gửi:</b> <span ĐỖ THU HƯỜNG</span></p>
+      <p><b>Người nhận:</b> <span id="Hotenkh"></span></p>
+      <p><b>Địa chỉ:</b> <span id="Diachi"></span></p>
+      <p><b>Điện thoại:</b> <span id="SDT"></span></p>
+    </div>
+
+
+
+    <div class="foot">
+      <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+      <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
+    </div>
+  </div>
+
+  <!-- Load html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+  function exportPDF() {
+    const element = document.getElementById("invoice");
+    const opt = {
+      margin: 0.5,
+      filename: 'phieu-tinh-tien.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+</script>
+
+  <script>
+    const qp = new URLSearchParams(location.search);
+    const get = k => qp.get(k) || "";
+
+    const toNumber = v => {
+      if (typeof v === "number") return v;
+      let s = String(v || "").trim();
+      s = s.replace(/[^\d-]/g, "");
+      return s ? parseInt(s, 10) : 0;
+    };
+    const fmt = n => Number(n || 0).toLocaleString("vi-VN");
+
+    document.getElementById("id").textContent = get("Makh");
+ 
+    const tbody = document.getElementById("tbody");
+    let rows = [];
+    const itemsParam = get("items");
+
+    if (itemsParam) {
+      itemsParam.split(";").forEach(one => {
+        if (!one) return;
+        const parts = one.split("|");
+        const name = (parts[0] || "").trim();
+        const qty  = toNumber(parts[1]);
+        const price= toNumber(parts[2]);
+        rows.push({ name, qty, price });
+      });
+    }
+
+    let grand = 0;
+    tbody.innerHTML = rows.map(r => {
+      const line = (r.qty || 0) * (r.price || 0);
+      grand += line;
+      return `<tr>
+        <td class="tl">${r.name}</td>
+        <td>${r.qty || 0}</td>
+        <td class="tr">${fmt(r.price)}</td>
+        <td class="tr">${fmt(line)}</td>
+      </tr>`;
+    }).join("");
+
+    const totalParam2 = toNumber(get("total2"));
+    const total2 = totalParam2 > 0 ? totalParam2 : grand;
+    document.getElementById("total2").textContent = fmt(total2);
+
+    const totalParam1 = toNumber(get("total1"));
+    const total1 = totalParam1 > 0 ? totalParam1 : grand;
+    document.getElementById("total1").textContent = fmt(total1);
+
+    const totalParam = toNumber(get("total"));
+    const total = totalParam > 0 ? totalParam : grand;
+    document.getElementById("total").textContent = fmt(total);
+    document.getElementById("totalText").textContent = get("texttotal") || get("bangchu") || "";
+
+    
+    const qr = get("img") || get("qr");
+    if (qr) document.getElementById("qr").src = qr;
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
