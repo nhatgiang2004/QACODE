@@ -95,10 +95,9 @@
     // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
-    document.getElementById("id").textContent = get("Makh");
-    document.getElementById("idHotenkh").textContent = get("Hotenkh");
-    document.getElementById("idDiachi").textContent = get("Diachi");
-    document.getElementById("idsdt").textContent = get("sdt");
+    document.getElementById("Hotenkh").textContent = get("idHotenkh");
+    document.getElementById("Diachi").textContent = get("idDiachi");
+    document.getElementById("sdt").textContent = get("idsdt");
 
 
 
