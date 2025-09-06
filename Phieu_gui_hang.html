@@ -61,13 +61,18 @@
 
     <div class="info">
       <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
+      <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
+      <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
 
+      <p><b>Người nhận:</b> <span id="hovaten"></span></p>
+      <p><b>Người nhận:</b> <span id="hovaten"></span></p>
+      <p><b>Người nhận:</b> <span id="hovaten"></span></p>
       
     </div>
 
     <div style="text-align:right; margin-right:2cm;">
-      <b>Xác nhận của khách hàng</b><br>
-      <i>(Ký và ghi rõ họ tên)</i><br><br><br><br>
+      <b>Xin cảm ơn và hẹn gặp lại!</b><br>
+      <i>RẤT BIẾT ƠN KHI TIẾP NHẬN PHẢN HỒI CỦA QUÝ KHÁCH.</i><br><br><br><br>
       ........................................
     </div>
   </div>
@@ -89,9 +94,9 @@
     // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
-    document.getElementById("Tên Khách hàng").textContent = get("tenkh");
-    document.getElementById("Sổ sổ thẻ").textContent = get("Sosothe");
-    document.getElementById("Ngày gửi").textContent = get("Ngayphathanh");
+    document.getElementById("Tên Khách hàng").textContent = get("hovaten");
+
+
     
     const total = parseFloat(get("total") || 0);
     document.getElementById("Số tiền gửi").textContent = 
