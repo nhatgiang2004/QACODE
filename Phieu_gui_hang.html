@@ -61,8 +61,8 @@
 
     <div class="info">
       <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
-      <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
-      <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
+      <p>Địa chỉ: <b>SN 729 Bà Triệu, P. Hạc Thành, tỉnh Thanh Hóa</b></p>
+      <p>Điện thoại: <b>0919050618</b></p>
 
       <p><b>Người nhận:</b> <span id="hovaten"></span></p>
       <p><b>Người nhận:</b> <span id="hovaten"></span></p>
@@ -70,11 +70,12 @@
       
     </div>
 
-    <div style="text-align:right; margin-right:2cm;">
-      <b>Xin cảm ơn và hẹn gặp lại!</b><br>
-      <i>RẤT BIẾT ƠN KHI TIẾP NHẬN PHẢN HỒI CỦA QUÝ KHÁCH.</i><br><br><br><br>
-      ........................................
+    <div class="foot">
+      <p><b><i>---------------------------------------------------</i></b></p>
+      <p><b><i>Xin cảm ơn và hẹn gặp lại!</i></b></p>
+      <p><b><i>Cảm ơn khi tiếp nhận phản hồi của quý khách.</i></b></p>
     </div>
+
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -94,7 +95,7 @@
     // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
-    document.getElementById("Tên Khách hàng").textContent = get("hovaten");
+    document.getElementById("id").textContent = get("Makh");
 
 
     
