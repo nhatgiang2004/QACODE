@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PHIẾU GỬI HÀNG</title>
   <style>
-    body { font-family: Times New Roman, serif; margin: 0; background: #fff; }
+    body { font-family: "Times New Roman", serif; margin: 0; background: #fff; }
  
     .wrap { max-width: 800px; margin: 0 auto; padding: 5px 40px 20px 40px;  }
 
@@ -63,11 +63,10 @@
       <p>Người gửi: <b>ĐỖ THU HƯỜNG</b></p>
       <p>Địa chỉ: <b>SN 729 Bà Triệu, P. Hạc Thành, Thanh hóa - ĐT: 0919050618</b></p>
       <p>Điện thoại: <b>0919050618</b></p>
-<br>
+      <br>
       <p>Người nhận: <b><span id="tenkh"></span></b></p>
       <p>Địa chỉ: <span id="diachikh"></span></p>
       <p>Điện thoại: <span id="dienthoai"></span></p>
-     
     </div>
 
     <div class="foot">
@@ -92,37 +91,23 @@
       html2pdf().set(opt).from(element).save();
     }
 
-    // L&#7845;y d&#7919; li&#7879;u t&#7915; URL
+    // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
-    document.getElementById("Makh").textContent = get("Makh");
-    document.getElementById("tenkh").textContent = get("Hotenkh");
-    document.getElementById("diachikh").textContent = get("Diachi");
-    document.getElementById("dienthoai").textContent = get("sdt");
-
-
-
     
-    const total = parseFloat(get("total") || 0);
-    document.getElementById("S&#7889; ti&#7873;n g&#7917;i").textContent = 
-        new Intl.NumberFormat("vi-VN").format(total);
-    
-    document.getElementById("K&#7923; h&#7841;n").textContent = get("texttotal");
-    document.getElementById("Lo&#7841;i quà t&#7863;ng").textContent = get("qua");
+    // Sửa lỗi: Sử dụng đúng tên tham số từ URL
+    document.getElementById("tenkh").textContent = get("tenkh"); // Thay vì "Hotenkh"
+    document.getElementById("diachikh").textContent = get("diachikh");
+    document.getElementById("dienthoai").textContent = get("dienthoai");
 
-    // &#128276; T&#7921; &#273;&#7897;ng b&#7853;t Print View khi trang t&#7843;i xong
+    // Tự động bật Print View khi trang tải xong
     window.onload = function() {
       window.print();
-      // Sau khi in ho&#7863;c hu&#7927; in thì t&#7921; &#273;&#7897;ng &#273;óng tab
+      // Sau khi in hoặc huỷ in thì tự động đóng tab
       window.onafterprint = function() {
         window.close();
       };
     };
   </script>
 </body>
-
 </html>
-
-
-
-
