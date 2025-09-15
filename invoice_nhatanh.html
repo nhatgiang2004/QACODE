@@ -101,8 +101,7 @@
         <tr>
            <th style="width:46%">Dịch vụ</th>
           <th style="width:10%">SL</th>
-          <th style="width:22%">Đơn giá</th>
-          <th style="width:22%">Thành tiền</th>
+          <th style="width:22%">Ghi chú</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -160,8 +159,7 @@
     document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
     document.getElementById("start").textContent = get("start");
     document.getElementById("end").textContent = get("end");
-    document.getElementById("dongia").textContent = get("giathue");
-    document.getElementById("thanhtien").textContent = get("Tongthanhtoan");
+
 
     const tbody = document.getElementById("tbody");
     
@@ -200,6 +198,7 @@
   </script>
 </body>
 </html>
+
 
 
 
