@@ -101,7 +101,8 @@
         <tr>
            <th style="width:46%">Dịch vụ</th>
           <th style="width:10%">SL</th>
-          <th style="width:22%">Ghi chú</th>
+          <th style="width:22%">Đơn giá</th>
+          <th style="width:22%">Thành tiền</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -160,14 +161,16 @@
     document.getElementById("start").textContent = get("start");
     document.getElementById("end").textContent = get("end");
 
-
     const tbody = document.getElementById("tbody");
     
+    // Lấy giá trị từ URL parameters
+    const unitPrice = toNumber(get("Giathue"));
+    const lineTotal = toNumber(get("Tongthanhtoan"));
     
     // Tạo hàng cho dịch vụ thuê xe
     tbody.innerHTML = `
       <tr>
-        <td class="tl">Dịch vụ Thuê xe</td>
+        <td class="tl">Thuê xe</td>
         <td>1</td>
         <td class="tr">${fmt(unitPrice)}</td>
         <td class="tr">${fmt(lineTotal)}</td>
@@ -195,9 +198,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
