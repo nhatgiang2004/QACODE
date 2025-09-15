@@ -163,14 +163,11 @@
 
     const tbody = document.getElementById("tbody");
     
-    // Lấy giá trị từ URL parameters
-    const unitPrice = toNumber(get("Giathue"));
-    const lineTotal = toNumber(get("Tongthanhtoan"));
     
     // Tạo hàng cho dịch vụ thuê xe
     tbody.innerHTML = `
       <tr>
-        <td class="tl">Thuê xe</td>
+        <td class="tl">Dịch vụ Thuê xe</td>
         <td>1</td>
         <td class="tr">${fmt(unitPrice)}</td>
         <td class="tr">${fmt(lineTotal)}</td>
@@ -198,6 +195,7 @@
   </script>
 </body>
 </html>
+
 
 
 
