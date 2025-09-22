@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đồng hồ</title>
+  <style>
+    html,body{
+      height:100%;
+      width:100%;
+      margin:0;
+      padding:0;
+      overflow:hidden;
+      background:transparent;
+    }
+    .wrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100%;
+      width:100%;
+    }
+    .clock{
+      font-family:"Segoe UI", Roboto, Arial, sans-serif;
+      font-weight:700;
+      color:#ff3b3b;
+      font-size:calc(24px + 6vw);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+
+  <script>
+    const use24Hour = true;  // true = 24h, false = 12h
+    const showSeconds = true;
+
+    function pad(n){return n<10?'0'+n:n;}
+    function updateClock(){
+      const d = new Date();
+      let h = d.getHours();
+      let m = d.getMinutes();
+      let s = d.getSeconds();
+      let suffix = '';
+      if(!use24Hour){
+        suffix = h>=12?' PM':' AM';
+        h = h%12; if(h===0) h=12;
+      }
+      const timeStr = pad(h)+':'+pad(m)+(showSeconds?':'+pad(s):'')+suffix;
+      document.getElementById('clock').textContent = timeStr;
+    }
+    setInterval(updateClock, 200);
+    updateClock();
+  </script>
+</body>
+</html>
