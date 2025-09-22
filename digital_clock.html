@@ -2,139 +2,160 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta http-equiv="Cache-control" content="no-store">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Digital Clock for XSplit</title>
+  <meta http-equiv="Cache-control" content="no-store, no-cache, must-revalidate, max-age=0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Äá»“ng há»“ - no scroll (for XSplit)</title>
   <style>
-    /* Thiết kế tối giản, dễ tùy chỉnh */
+    /* ===== Reset & disable scrollbars ===== */
     html,body{
       height:100%;
+      width:100%;
       margin:0;
-      background:transparent;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+      padding:0;
+      overflow:hidden !important; /* KHÃ”NG HIá»‚N THá»Š thanh cuá»™n */
+      -webkit-overflow-scrolling: touch;
+      background: transparent; /* Ä‘á»ƒ XSplit cÃ³ thá»ƒ set transparency */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
+
+    /* ===== Container centered and scales ===== */
     .wrap{
       box-sizing:border-box;
       height:100%;
+      width:100%;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:10px;
+      padding:6px;
     }
+
+    /* ===== Clock styling (responsive) ===== */
     .clock{
+      display:inline-block;
       font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       font-weight:700;
-      font-size:6vw; /* scalable with container */
       line-height:1;
-      padding:12px 20px;
-      border-radius:12px;
-      background: rgba(255,255,255,0.05); /* nhẹ, có thể set thành transparent */
-      color:#ff3b3b; /* màu đỏ chủ đạo — thay đổi nếu muốn */
-      text-shadow: 0 2px 6px rgba(0,0,0,0.35);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      min-width:220px;
       text-align:center;
+      padding:10px 18px;
+      border-radius:10px;
+      min-width:160px;
+      transform-origin:center;
+      /* default visual - change color if you want */
+      color:#ff3b3b;
+      background: rgba(0,0,0,0.10); /* set to transparent if undesired */
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
     }
-    .small{
-      font-size:0.35em;
+
+    /* time text responsive sizing using viewport width but clamped */
+    .time {
+      font-size: calc(18px + 5vw);
+      letter-spacing: 0.02em;
+      display:block;
+    }
+    .sub {
+      font-size: calc(10px + 0.8vw);
+      opacity:0.9;
+      margin-top:6px;
       display:block;
       font-weight:600;
-      opacity:0.85;
-      margin-top:6px;
     }
-    /* Responsive caps */
-    @media (min-width:1200px){ .clock{ font-size:60px; } }
-    @media (max-width:420px){ .clock{ font-size:28px; padding:8px 12px; } }
+
+    /* force no scrollbars on any child elements too */
+    * { box-sizing:border-box; overflow:visible; }
+
+    /* small-screen tweaks */
+    @media (max-width:420px){
+      .time { font-size: 28px; }
+      .sub  { font-size: 12px; }
+      .clock{ padding:8px 12px; border-radius:8px;}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div id="clock" class="clock" aria-live="polite">
-      --:--:--
-      <span id="zone" class="small"></span>
+  <div class="wrap" id="wrap">
+    <div class="clock" id="clock" role="img" aria-label="Äá»“ng há»“">
+      <span class="time" id="time">--:--:--</span>
+      <span class="sub" id="sub">GMT+7 â€¢ 24h</span>
     </div>
   </div>
 
   <script>
-    // Cấu hình:
-    const use24Hour = true;        // true = 24h, false = 12h
-    const showSeconds = true;      // hiển thị giây
-    const transparentBackground = true; // nếu false, sẽ dùng nền mờ (CSS ở trên)
-    // Nếu muốn cố định timezone, đặt timezoneOverride = 'Asia/Bangkok' hoặc null để dùng giờ hệ thống
-    const timezoneOverride = null; // ví dụ: 'Asia/Bangkok' hoặc null
+    // ---------- Config ----------
+    const use24Hour = true;         // true = 24h, false = 12h
+    const showSeconds = true;       // show seconds
+    const transparentBackground = true; // if true, remove background box
+    const timezoneOverride = 'Asia/Bangkok'; // set to null to use system timezone
 
-    // Áp dụng nền trong JS (tiện cho XSplit nếu cần nền trong suốt)
+    // Apply transparent background if requested
     if (transparentBackground) {
-      document.body.style.background = "transparent";
-      document.querySelector('.clock').style.background = "transparent";
-      document.querySelector('.clock').style.boxShadow = "none";
-      document.querySelector('.clock').style.textShadow = "0 1px 3px rgba(0,0,0,0.25)";
+      const el = document.getElementById('clock');
+      el.style.background = 'transparent';
+      el.style.boxShadow = 'none';
     }
 
-    function pad(n){ return (n<10? '0':'') + n; }
+    function pad(n){ return n < 10 ? '0' + n : '' + n; }
 
-    function formatTime(date){
+    function getTimePartsForTZ(tz) {
+      try {
+        const opts = { timeZone: tz, hour12: !use24Hour, hour: '2-digit', minute: '2-digit' };
+        if (showSeconds) opts.second = '2-digit';
+        const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(new Date());
+        const hh = parts.find(p=>p.type==='hour')?.value || '00';
+        const mm = parts.find(p=>p.type==='minute')?.value || '00';
+        const ss = parts.find(p=>p.type==='second')?.value || '00';
+        const dayPeriod = parts.find(p=>p.type==='dayPeriod')?.value || '';
+        return {hh,mm,ss,dayPeriod};
+      } catch(e){
+        return null;
+      }
+    }
+
+    function formatTime(date) {
       let h = date.getHours();
       let m = date.getMinutes();
       let s = date.getSeconds();
       let suffix = '';
-      if (!use24Hour){
+      if (!use24Hour) {
         suffix = h >= 12 ? ' PM' : ' AM';
         h = h % 12;
         if (h === 0) h = 12;
       }
-      const timeStr = use24Hour
-        ? pad(h) + ':' + pad(m) + (showSeconds ? (':' + pad(s)) : '')
-        : pad(h) + ':' + pad(m) + (showSeconds ? (':' + pad(s)) : '') + suffix;
-      return timeStr;
+      return (use24Hour ? pad(h) : pad(h)) + ':' + pad(m) + (showSeconds ? (':'+pad(s)) : '') + (use24Hour ? '' : suffix);
     }
 
-    function update(){
-      let now;
+    function updateClock(){
+      let timeStr = '--:--:--';
+      let zoneText = 'GMT' + (-(new Date()).getTimezoneOffset()/60 >= 0 ? '+' + (-(new Date()).getTimezoneOffset()/60) : (-(new Date()).getTimezoneOffset()/60));
       if (timezoneOverride && typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
-        // Tạo time ở timezone bằng cách dùng toLocaleString và parse lại (workaround)
-        try {
-          const parts = new Intl.DateTimeFormat('en-US', {
-            timeZone: timezoneOverride,
-            hour12: !use24Hour,
-            hour: '2-digit', minute: '2-digit', second: showSeconds ? '2-digit' : undefined
-          }).formatToParts(new Date());
-          let hh = parts.find(p=>p.type==='hour')?.value || '00';
-          let mm = parts.find(p=>p.type==='minute')?.value || '00';
-          let ss = parts.find(p=>p.type==='second')?.value || '00';
-          now = new Date();
-          now.setHours(parseInt(hh,10));
-          now.setMinutes(parseInt(mm,10));
-          now.setSeconds(parseInt(ss,10));
-        } catch (e){
-          now = new Date();
+        const parts = getTimePartsForTZ(timezoneOverride);
+        if (parts){
+          timeStr = (use24Hour ? parts.hh : parts.hh) + ':' + parts.mm + (showSeconds ? (':'+parts.ss) : '') + (use24Hour ? '' : (' ' + parts.dayPeriod));
+          zoneText = timezoneOverride + ' â€¢ ' + zoneText;
+        } else {
+          timeStr = formatTime(new Date());
         }
       } else {
-        now = new Date();
+        timeStr = formatTime(new Date());
       }
 
-      document.getElementById('clock').firstChild && document.getElementById('clock').firstChild.remove();
-      const txt = document.createTextNode(formatTime(now));
-      document.getElementById('clock').insertBefore(txt, document.getElementById('zone'));
-
-      // Zone text
-      const zoneEl = document.getElementById('zone');
-      if (timezoneOverride){
-        zoneEl.textContent = timezoneOverride;
-      } else {
-        // cố gắng lấy offset theo GMT
-        const offset = -now.getTimezoneOffset()/60;
-        zoneEl.textContent = 'GMT' + (offset >= 0 ? '+'+offset : offset);
-      }
+      document.getElementById('time').textContent = timeStr;
+      document.getElementById('sub').textContent = zoneText + (use24Hour ? ' â€¢ 24h' : ' â€¢ 12h');
     }
 
-    // Update mỗi 200ms để đảm bảo đồng hồ mượt
-    setInterval(update, 200);
-    update();
+    // Update at 200ms interval to keep seconds smooth when shown
+    setInterval(updateClock, 200);
+    updateClock();
 
-    // Prevent right-click context menu (optional - useful when embedding)
-    document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, false);
+    // Prevent context menu (optional)
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    // Ensure the wrap fills exactly and no scrollbars appear even if XSplit resizes
+    window.addEventListener('resize', () => {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }, {passive:true});
   </script>
 </body>
 </html>
