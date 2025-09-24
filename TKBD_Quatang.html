@@ -102,6 +102,7 @@
     // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
+    document.getElementById("id").textContent = get("i_d");
     document.getElementById("Tên Khách hàng").textContent = get("tenkh");
     document.getElementById("Sổ sổ thẻ").textContent = get("Sosothe");
     document.getElementById("Ngày gửi").textContent = get("Ngayphathanh");
