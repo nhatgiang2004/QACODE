@@ -102,10 +102,12 @@
     // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
-    document.getElementById("id").textContent = get("i_d");
-    document.getElementById("Tên Khách hàng").textContent = get("tenkh");
-    document.getElementById("Sổ sổ thẻ").textContent = get("Sosothe");
-    document.getElementById("Ngày gửi").textContent = get("Ngayphathanh");
+
+    document.getElementById("id").textContent = get("id");
+    document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
+    document.getElementById("start").textContent = get("Sosothe");
+    document.getElementById("end").textContent = get("Ngayphathanh");
+
     
     const total = parseFloat(get("total") || 0);
     document.getElementById("Số tiền gửi").textContent = 
