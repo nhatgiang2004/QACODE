@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PHIẾU NHẬN QUÀ KHUYẾN MẠI</title>
+  <title>PHIẾU NHẬN QUÀ</title>
   <style>
-    body { font-family: Times New Roman, serif; margin: 0; background: #fff; }
+    body { font-family: "Times New Roman", serif; margin: 0; background: #fff; }
  
     .wrap { max-width: 800px; margin: 0 auto; padding: 5px 40px 20px 40px;  }
 
@@ -44,8 +44,8 @@
 </head>
 <body>
   <div class="actions">
-    <button onclick="window.print()">🖨 In</button>
-    <button onclick="exportPDF()">📄 Xuất PDF</button>
+    <button onclick="window.print()">&#128424; In</button>
+    <button onclick="exportPDF()">&#128196; Xu&#7845;t PDF</button>
   </div>
 
   <div class="wrap" id="voucher">
@@ -58,6 +58,7 @@
     </div>
 
     <h1>PHIẾU NHẬN QUÀ KHUYẾN MẠI</h1>
+
 
     <div class="info">
       <p>Tôi là: <b><span id="Tên Khách hàng" style="text-transform: uppercase;"></span></b></p>
@@ -85,6 +86,7 @@
     </div>
   </div>
 
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
     function exportPDF() {
@@ -102,21 +104,13 @@
     // Lấy dữ liệu từ URL
     const qp = new URLSearchParams(location.search);
     const get = k => qp.get(k) || "";
-
+    
+    // Sửa lỗi: Sử dụng đúng tên tham số từ URL
     document.getElementById("id").textContent = get("id");
-    document.getElementById("cust").textContent = get("tenkh") || get("customer") || "";
-    document.getElementById("start").textContent = get("Sosothe");
-    document.getElementById("end").textContent = get("Ngayphathanh");
+    document.getElementById("cust").textContent = get("tenkh");
 
-    
-    const total = parseFloat(get("total") || 0);
-    document.getElementById("Số tiền gửi").textContent = 
-        new Intl.NumberFormat("vi-VN").format(total);
-    
-    document.getElementById("Kỳ hạn").textContent = get("texttotal");
-    document.getElementById("Loại quà tặng").textContent = get("qua");
 
-    // 🔔 Tự động bật Print View khi trang tải xong
+    // Tự động bật Print View khi trang tải xong
     window.onload = function() {
       window.print();
       // Sau khi in hoặc huỷ in thì tự động đóng tab
@@ -127,3 +121,4 @@
   </script>
 </body>
 </html>
+
