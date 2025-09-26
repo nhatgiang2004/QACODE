@@ -29,7 +29,8 @@
 </div>
 
 <script>
-const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1abcXYZ.../pub?gid=654780441&single=true&output=csv'; // dán link CSV ở đây
+// DÁN LINK CSV TỪ GOOGLE SHEETS CỦA BẠN Ở ĐÂY:
+const sheetURL = 'docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false&delayms=5000														';
 
 async function loadScores() {
   try {
@@ -37,7 +38,8 @@ async function loadScores() {
     const text = await res.text();
     // Chuyển CSV thành mảng
     const rows = text.trim().split('\n').map(r=>r.split(','));
-    // Ví dụ: hàng 2 cột 1 = tên đội A, hàng 2 cột 2 = tên đội B
+    // Hàng 1 cột 1 = tên đội A, cột 2 = tên đội B
+    // Hàng 2 cột 1 = điểm A, cột 2 = điểm B
     const teamAName = rows[0][0];
     const teamBName = rows[0][1];
     const scoreA = rows[1][0];
@@ -58,5 +60,3 @@ setInterval(loadScores,5000);
 </script>
 </body>
 </html>
-
-
