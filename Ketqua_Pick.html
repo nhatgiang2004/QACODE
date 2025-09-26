@@ -1,5 +1,12 @@
 
+  <!-- Logo nằm trên, không dính vào bảng -->
+<div id="logo" style="margin:10px; text-align:left;">
+  <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:150px;height:auto;">
+</div>
+
+<!-- Bảng dữ liệu -->
 <div id="table"></div>
+
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
   google.charts.load('current', {'packages':['table']});
@@ -13,44 +20,19 @@
   function drawTable() {
     var query = new google.visualization.Query(
       'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
-    );
+   );
     query.send(function(response) {
       if (response.isError()) {
         alert('Error: ' + response.getMessage());
         return;
       }
 
-      var originalData = response.getDataTable();
+      var data = response.getDataTable();
 
-      // ✅ Tạo DataTable mới
-      var data = new google.visualization.DataTable();
-      for (var i = 0; i < originalData.getNumberOfColumns(); i++) {
-        data.addColumn('string', originalData.getColumnLabel(i));
-      }
+      // Nếu cột đầu chứa link ảnh → hiển thị ảnh
+      var formatter = new google.visualization.PatternFormat('<img src="{0}" style="width:80px;height:auto;">');
+      formatter.format(data, [0]);
 
-      // ✅ Thêm 2 dòng đầu tiên chỉ chứa logo ở cột 1
-      var logo = '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:120px;height:auto;">';
-      var emptyRow = new Array(originalData.getNumberOfColumns()).fill('');
-      emptyRow[0] = logo;
-      data.addRow(emptyRow);
-      data.addRow(emptyRow);
-
-      // ✅ Copy dữ liệu từ Google Sheets vào
-      for (var r = 0; r < originalData.getNumberOfRows(); r++) {
-        var row = [];
-        for (var c = 0; c < originalData.getNumberOfColumns(); c++) {
-          var cell = originalData.getValue(r, c);
-          if (c === 0 && cell && cell.startsWith("http")) {
-            // Nếu cột đầu chứa link ảnh thì hiển thị ảnh
-            row.push('<img src="' + cell + '" style="width:80px;height:auto;">');
-          } else {
-            row.push(cell ? cell.toString() : '');
-          }
-        }
-        data.addRow(row);
-      }
-
-      // ✅ Vẽ bảng
       var table = new google.visualization.Table(document.getElementById('table'));
       table.draw(data, {
         showRowNumber: false,
@@ -65,7 +47,7 @@
 <style>
   #table {
     max-width: 600px;
-    margin: 10px;       /* căn trái */
+    margin: 10px;
     font-size: 14px;
     text-align: left;
   }
