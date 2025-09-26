@@ -5,60 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bảng điểm Pickleball</title>
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    font-family: Arial, sans-serif;
-  }
-  .container {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: auto;
-  }
-  #content {
-    width: 100%;
-    height: 100%;
-  }
-  .loading {
-    text-align: center;
-    padding: 20px;
-    font-size: 1.2em;
-    color: #555;
-  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <div id="content" class="loading">Đang tải bảng điểm...</div>
+  <iframe id="sheetFrame"
+    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false">
+  </iframe>
 </div>
 
 <script>
-async function fetchAndDisplaySheet() {
-  const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false";
-  const contentDiv = document.getElementById('content');
-  
-  try {
-    const response = await fetch(sheetUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const html = await response.text();
-    contentDiv.innerHTML = html;
-    contentDiv.classList.remove('loading');
-  } catch (error) {
-    console.error("Không thể tải bảng tính:", error);
-    contentDiv.innerHTML = `<p style="color:red; text-align:center;">Lỗi: Không thể tải bảng điểm. Vui lòng kiểm tra lại đường link.</p>`;
-  }
-}
+const frame = document.getElementById('sheetFrame');
 
-// Tải dữ liệu lần đầu
-fetchAndDisplaySheet();
-
-// Tự động tải lại mỗi 10 giây để cập nhật dữ liệu
-setInterval(fetchAndDisplaySheet, 10000);
+// Tải lại iframe mỗi 5 giây để làm mới dữ liệu
+setInterval(() => {
+  // Thêm tham số ngẫu nhiên vào URL để tránh cache
+  const url = frame.src.split('?')[0] + '?gid=654780441&widget=true&chrome=false&t=' + Date.now();
+  frame.src = url;
+}, 5000);
 </script>
 
 </body>
