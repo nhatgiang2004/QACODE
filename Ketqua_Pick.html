@@ -21,7 +21,7 @@
 <body>
 
 <iframe id="sheetFrame" 
-  src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&single=true&widget=false&headers=false">
+  src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false">
 </iframe>
 
 <script>
@@ -29,10 +29,11 @@ const frame = document.getElementById('sheetFrame');
 
 // reload lại dữ liệu trong iframe mỗi 5 giây
 setInterval(() => {
-  const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&single=true&widget=false&headers=false";
+  const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false";
   frame.src = base + "&t=" + Date.now(); // tránh cache
 }, 5000);
 </script>
 
 </body>
 </html>
+
