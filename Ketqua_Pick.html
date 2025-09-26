@@ -32,16 +32,16 @@
 
     // Logo rowspan=2
     html += '<tr>';
-    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;width:60px;padding:4px;border:1px solid #fff;">' +
-            '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:50px;height:50px;border-radius:50%;">' +
+    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;width:60px;padding:2px;border:1px solid #fff;">' +
+            '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:70px;height:70px;border-radius:50%;">' +
             '</td>';
 
     // Dòng 1
     table.rows[0].c.slice(1).forEach((cell, i) => {
-      let style = "text-align:left;padding:8px 8px;border:1px solid #fff;";
-      if (i === 0) style += "background:#555;color:white;text-transform:uppercase;"; // Cột 2
-      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:45px;"; // Cột 3
-      if (i === 2) style += "width:220px;"; // Cột 4
+      let style = "padding:8px 8px;border:1px solid #fff;";
+      if (i === 0) style += "background:#555;color:white;text-transform:uppercase;text-align:left;"; // Cột 2
+      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:45px;text-align:center;"; // Cột 3
+      if (i === 2) style += "width:220px;text-align:left;"; // Cột 4
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
@@ -49,10 +49,10 @@
     // Dòng 2
     html += "<tr>";
     table.rows[1].c.slice(1).forEach((cell, i) => {
-      let style = "text-align:left;padding:8px 8px;border:1px solid #fff;";
-      if (i === 0) style += "background:#555;color:white;text-transform:uppercase;"; // Cột 2
-      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:45px;"; // Cột 3
-      if (i === 2) style += "width:220px;"; // Cột 4
+      let style = "padding:8px 8px;border:1px solid #fff;";
+      if (i === 0) style += "background:#555;color:white;text-transform:uppercase;text-align:left;"; // Cột 2
+      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:45px;text-align:center;"; // Cột 3
+      if (i === 2) style += "width:220px;text-align:left;"; // Cột 4
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
