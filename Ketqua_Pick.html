@@ -40,7 +40,7 @@
     table.rows[0].c.slice(1).forEach((cell, i) => {
       let style = "text-align:left;padding:12px 10px;border:1px solid #fff;";
       if (i === 0) style += "background:#555;color:white;text-transform:uppercase;"; // Cột 2
-      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:220px;"; // Cột 3
+      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:45px;"; // Cột 3 = 1/2 cột 1
       if (i === 2) style += "width:220px;"; // Cột 4
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
@@ -51,7 +51,7 @@
     table.rows[1].c.slice(1).forEach((cell, i) => {
       let style = "text-align:left;padding:12px 10px;border:1px solid #fff;";
       if (i === 0) style += "background:#555;color:white;text-transform:uppercase;"; // Cột 2
-      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:220px;"; // Cột 3
+      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:45px;"; // Cột 3 = 1/2 cột 1
       if (i === 2) style += "width:220px;"; // Cột 4
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
