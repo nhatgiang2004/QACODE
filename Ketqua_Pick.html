@@ -7,7 +7,8 @@
     fetch(url)
       .then(res => res.text())
       .then(rep => {
-        const json = JSON.parse(rep.substring(47).slice(0, -2));
+        // Cắt bỏ phần thừa để lấy JSON đúng
+        const json = JSON.parse(rep.substring(47, rep.length - 2));
         renderTable(json.table);
       })
       .catch(err => {
@@ -16,21 +17,21 @@
   }
 
   function renderTable(table) {
-    if (table.rows.length < 2) {
+    if (!table.rows || table.rows.length < 2) {
       document.getElementById('table').innerHTML = "⚠️ Sheet HIENTHI chưa có đủ 2 dòng dữ liệu.";
       return;
     }
 
     let html = '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;text-align:left;">';
 
-    // Lấy header
+    // Header
     html += "<tr><th>Logo</th>";
     table.cols.slice(1).forEach(col => {
       html += "<th>" + (col.label || "") + "</th>";
     });
     html += "</tr>";
 
-    // Logo rowspan = 2
+    // Logo rowspan=2
     html += '<tr>';
     html += '<td rowspan="2" style="text-align:center;vertical-align:middle;">' +
             '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">' +
@@ -38,14 +39,14 @@
 
     // Dòng 1
     table.rows[0].c.slice(1).forEach(cell => {
-      html += "<td>" + (cell ? cell.v : "") + "</td>";
+      html += "<td>" + (cell && cell.v ? cell.v : "") + "</td>";
     });
     html += "</tr>";
 
     // Dòng 2
     html += "<tr>";
     table.rows[1].c.slice(1).forEach(cell => {
-      html += "<td>" + (cell ? cell.v : "") + "</td>";
+      html += "<td>" + (cell && cell.v ? cell.v : "") + "</td>";
     });
     html += "</tr>";
 
@@ -54,7 +55,7 @@
     document.getElementById('table').innerHTML = html;
   }
 
-  // Tải lần đầu + tự động refresh sau 5s
+  // Load lần đầu + refresh sau 5 giây
   fetchData();
   setInterval(fetchData, 5000);
 </script>
