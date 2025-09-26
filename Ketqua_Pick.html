@@ -1,10 +1,4 @@
 
-<!-- Logo phía trên -->
-<div id="logo" style="margin:10px; text-align:left;">
-  <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:150px;height:auto;">
-</div>
-
-<!-- Bảng dữ liệu -->
 <div id="table"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -20,7 +14,6 @@
   function drawTable() {
     var query = new google.visualization.Query(
       'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
-
     );
     query.send(function(response) {
       if (response.isError()) {
@@ -30,15 +23,21 @@
 
       var originalData = response.getDataTable();
 
-      // ✅ Tạo DataTable mới bỏ cột đầu
+      // ✅ Tạo DataTable mới (thêm cột Logo + dữ liệu từ cột 2 trở đi)
       var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Logo'); // cột logo
+
       for (var i = 1; i < originalData.getNumberOfColumns(); i++) {
         data.addColumn('string', originalData.getColumnLabel(i));
       }
 
-      // ✅ Copy dữ liệu từ cột 2 trở đi
+      // ✅ Thêm logo vào từng hàng
       for (var r = 0; r < originalData.getNumberOfRows(); r++) {
         var row = [];
+        // ô logo (dùng HTML img)
+        row.push('<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">');
+
+        // copy dữ liệu cột 2 trở đi
         for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
           var cell = originalData.getValue(r, c);
           row.push(cell ? cell.toString() : '');
@@ -46,12 +45,12 @@
         data.addRow(row);
       }
 
-      // ✅ Vẽ bảng
+      // ✅ Vẽ bảng (cho phép HTML trong ô)
       var table = new google.visualization.Table(document.getElementById('table'));
       table.draw(data, {
         showRowNumber: false,
         allowHtml: true,
-        width: 'auto',
+        width: '100%',
         height: 'auto'
       });
     });
@@ -60,7 +59,6 @@
 
 <style>
   #table {
-    max-width: 800px;
     margin: 10px;
     font-size: 14px;
     text-align: left;
