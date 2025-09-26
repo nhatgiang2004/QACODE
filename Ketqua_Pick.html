@@ -6,7 +6,7 @@
 
   function init() {
     drawTable();
-    setInterval(drawTable, 5000); // tự cập nhật sau 5 giây
+    setInterval(drawTable, 5000); // tự động reload sau 5 giây
   }
 
   function drawTable() {
@@ -14,25 +14,51 @@
       'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
     );
     query.send(function(response) {
-      if (response.isError()) return;
+      if (response.isError()) {
+        alert('Error: ' + response.getMessage());
+        return;
+      }
 
-      var data = response.getDataTable();
+      // Lấy dữ liệu gốc từ Google Sheets
+      var originalData = response.getDataTable();
 
-      // ✅ Biến cột 0 thành ảnh (nếu trong sheet chứa link ảnh)
-      var formatter = new google.visualization.PatternFormat('<img src="{0}" style="width:80px;height:auto;">');
-      formatter.format(data, [0]);
+      // ✅ Tạo DataTable mới
+      var data = new google.visualization.DataTable();
 
-      // ✅ Thêm 2 dòng logo ở trên cùng (chỉ cột 1 có logo, các cột khác để trống)
+      // Copy lại cấu trúc cột từ sheet
+      for (var i = 0; i < originalData.getNumberOfColumns(); i++) {
+        data.addColumn('string', originalData.getColumnLabel(i));
+      }
+
+      // ✅ Thêm 2 dòng logo ở đầu
       var logo = '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:120px;height:auto;">';
-      data.insertRows(0, [[logo, '', '', '']]);
-      data.insertRows(0, [[logo, '', '', '']]);
+      var emptyRow = new Array(originalData.getNumberOfColumns()).fill('');
+      emptyRow[0] = logo;
+      data.addRow(emptyRow);
+      data.addRow(emptyRow);
 
+      // ✅ Copy dữ liệu từ sheet vào (có thể format cột 1 thành ảnh nếu chứa link)
+      for (var r = 0; r < originalData.getNumberOfRows(); r++) {
+        var row = [];
+        for (var c = 0; c < originalData.getNumberOfColumns(); c++) {
+          var cell = originalData.getValue(r, c);
+          if (c === 0 && cell && cell.startsWith("http")) {
+            // Nếu cột đầu chứa link ảnh → chuyển thành thẻ <img>
+            row.push('<img src="' + cell + '" style="width:80px;height:auto;">');
+          } else {
+            row.push(cell ? cell.toString() : '');
+          }
+        }
+        data.addRow(row);
+      }
+
+      // ✅ Vẽ bảng
       var table = new google.visualization.Table(document.getElementById('table'));
       table.draw(data, {
         showRowNumber: false,
         width: 'auto',
         height: 'auto',
-        allowHtml: true  // cần để hiển thị <img>
+        allowHtml: true   // cần để hiển thị hình ảnh
       });
     });
   }
