@@ -3,66 +3,22 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
   google.charts.load('current', {'packages':['table']});
-  google.charts.setOnLoadCallback(init);
-
-  function init() {
-    drawTable();
-    setInterval(drawTable, 5000); // reload sau 5 giây
-  }
+  google.charts.setOnLoadCallback(drawTable);
 
   function drawTable() {
     var query = new google.visualization.Query(
       'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
     );
-    query.send(handleResponse);
-  }
-
-  function handleResponse(response) {
-    if (response.isError()) {
-      document.getElementById('table').innerHTML =
-        "❌ Không tải được dữ liệu. Kiểm tra lại Publish to the web.";
-      console.error('Error: ' + response.getMessage());
-      return;
-    }
-
-    var originalData = response.getDataTable();
-    var data = new google.visualization.DataTable();
-
-    // Cột đầu: Logo
-    data.addColumn('string', 'Logo');
-    for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-      data.addColumn('string', originalData.getColumnLabel(c));
-    }
-
-    // Thêm từng dòng từ Google Sheet
-    for (var r = 0; r < originalData.getNumberOfRows(); r++) {
-      var row = [];
-      if (r === 0) {
-        row.push('<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">');
-      } else {
-        row.push('');
+    query.send(function(response) {
+      if (response.isError()) {
+        document.getElementById('table').innerHTML = 
+          "❌ Lỗi: " + response.getMessage();
+        return;
       }
-      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-        row.push(originalData.getValue(r, c) || '');
-      }
-      data.addRow(row);
-    }
 
-    var table = new google.visualization.Table(document.getElementById('table'));
-    table.draw(data, {
-      showRowNumber: false,
-      allowHtml: true,
-      width: 'auto',
-      height: 'auto'
+      var data = response.getDataTable();
+      var table = new google.visualization.Table(document.getElementById('table'));
+      table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
     });
   }
 </script>
-
-<style>
-  #table {
-    margin: 10px;
-    font-size: 13px;
-    text-align: left;
-    max-width: 600px;
-  }
-</style>
