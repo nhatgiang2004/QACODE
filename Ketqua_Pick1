@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả Pick</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: bold;
+    }
+    table {
+      border-collapse: collapse;
+      width: 470px;
+      height: 74px;
+      font-size: 14px;
+    }
+    td {
+      border: 1px solid #fff;
+      padding: 4px 6px;
+      vertical-align: middle;
+    }
+    /* Cột logo */
+    .logo {
+      width: 60px;
+      text-align: center;
+    }
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+    /* Cột 2 */
+    .col2 {
+      background: #555;
+      color: white;
+      text-transform: uppercase;
+      text-align: left;
+    }
+    /* Cột 3 */
+    .col3 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      width: 45px;
+    }
+    /* Cột 4 */
+    .col4 {
+      text-align: center;
+      width: 45px;
+    }
+  </style>
+</head>
+<body>
+  <div id="table"></div>
+
+  <script>
+    function fetchData() {
+      const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
+
+      fetch(url)
+        .then(res => res.text())
+        .then(rep => {
+          const json = JSON.parse(rep.substring(47, rep.length - 2));
+          renderTable(json.table);
+        })
+        .catch(err => {
+          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+        });
+    }
+
+    function renderTable(table) {
+      if (!table.rows || table.rows.length < 2) return;
+
+      let html = '<table><tr>';
+      html += '<td class="logo" rowspan="2">' +
+              '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
+              '</td>';
+
+      // Dòng 1
+      table.rows[0].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += '</tr><tr>';
+
+      // Dòng 2
+      table.rows[1].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += '</tr></table>';
+
+      document.getElementById('table').innerHTML = html;
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
