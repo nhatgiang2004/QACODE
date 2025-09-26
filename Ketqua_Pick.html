@@ -12,7 +12,6 @@
   function drawTable() {
     var query = new google.visualization.Query(
       'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
-
     );
     query.send(function(response) {
       if (response.isError()) return;
@@ -20,21 +19,20 @@
       var data = response.getDataTable();
 
       // ✅ Biến cột 0 thành ảnh (nếu trong sheet chứa link ảnh)
-      var formatter = new google.visualization.PatternFormat('<img src="{0}" style="width:50px;height:auto;">');
+      var formatter = new google.visualization.PatternFormat('<img src="{0}" style="width:80px;height:auto;">');
       formatter.format(data, [0]);
 
-      // ✅ Thêm 2 dòng ảnh trên cùng
-      data.insertRows(0, [
-        ['https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg', 'Hàng mẫu 1'],
-        ['https://upload.wikimedia.org/wikipedia/commons/4/4f/Icono_Sistema_de_gesti%C3%B3n.png', 'Hàng mẫu 2']
-      ]);
+      // ✅ Thêm 2 dòng logo ở trên cùng (chỉ cột 1 có logo, các cột khác để trống)
+      var logo = '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:120px;height:auto;">';
+      data.insertRows(0, [[logo, '', '', '']]);
+      data.insertRows(0, [[logo, '', '', '']]);
 
       var table = new google.visualization.Table(document.getElementById('table'));
       table.draw(data, {
         showRowNumber: false,
         width: 'auto',
         height: 'auto',
-        allowHtml: true  // Quan trọng để hiển thị <img>
+        allowHtml: true  // cần để hiển thị <img>
       });
     });
   }
@@ -43,8 +41,8 @@
 <style>
   #table {
     max-width: 600px;
-    margin: 10px;       /* Căn trái */
+    margin: 10px;       /* căn trái */
     font-size: 14px;
-    text-align: left;   /* Nội dung căn trái */
+    text-align: left;   /* nội dung sang trái */
   }
-</styl
+</style>
