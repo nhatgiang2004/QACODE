@@ -3,107 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bảng điểm Pickleball</title>
+<title>Bảng điểm Pickleball (Google Sheet)</title>
 <style>
-  body {
-    background: transparent;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    color: #fff;
-  }
+  body {background:transparent; color:#fff; font-family:Arial; text-align:center;}
   .scoreboard {
-    display: inline-block;
-    background: rgba(0,0,0,0.6);
-    padding: 20px;
-    border-radius: 15px;
+    display:inline-block;
+    background:rgba(0,0,0,0.6);
+    padding:20px; border-radius:15px;
   }
-  .title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  .teams {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-  }
-  .team {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .team-name {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  .score {
-    font-size: 48px;
-    margin-bottom: 5px;
-  }
-  .buttons button {
-    font-size: 16px;
-    margin: 2px;
-    padding: 5px 12px;
-    border: none;
-    border-radius: 6px;
-    background: teal;
-    color: white;
-    cursor: pointer;
-  }
-  .buttons button:hover {
-    background: #009999;
-  }
-  .name-input {
-    width: 100px;
-    text-align: center;
-    margin-bottom: 5px;
-  }
+  .team {display:inline-block; margin:0 40px;}
+  .team-name {font-size:24px; font-weight:bold;}
+  .score {font-size:48px;}
 </style>
 </head>
 <body>
 <div class="scoreboard">
-  <div class="title">PICKLEBALL</div>
-  <div class="teams">
-    <div class="team">
-      <input class="name-input" type="text" value="Đội A" oninput="changeName('A',this.value)">
-      <div class="team-name" id="teamAname">Đội A</div>
-      <div class="score" id="scoreA">0</div>
-      <div class="buttons">
-        <button onclick="addScore('A',1)">+1</button>
-        <button onclick="addScore('A',-1)">-1</button>
-      </div>
-    </div>
-    <div class="team">
-      <input class="name-input" type="text" value="Đội B" oninput="changeName('B',this.value)">
-      <div class="team-name" id="teamBname">Đội B</div>
-      <div class="score" id="scoreB">0</div>
-      <div class="buttons">
-        <button onclick="addScore('B',1)">+1</button>
-        <button onclick="addScore('B',-1)">-1</button>
-      </div>
-    </div>
+  <div class="team">
+    <div class="team-name" id="teamAname">Đội A</div>
+    <div class="score" id="scoreA">0</div>
+  </div>
+  <div class="team">
+    <div class="team-name" id="teamBname">Đội B</div>
+    <div class="score" id="scoreB">0</div>
   </div>
 </div>
 
 <script>
-let scoreA = 0;
-let scoreB = 0;
+const sheetURL = '16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0'; // dán link CSV ở đây
 
-function addScore(team, point){
-  if(team==='A'){ 
-    scoreA += point; if(scoreA<0) scoreA=0; 
-    document.getElementById('scoreA').textContent=scoreA; 
-  } else {
-    scoreB += point; if(scoreB<0) scoreB=0; 
-    document.getElementById('scoreB').textContent=scoreB; 
+async function loadScores() {
+  try {
+    const res = await fetch(sheetURL);
+    const text = await res.text();
+    // Chuyển CSV thành mảng
+    const rows = text.trim().split('\n').map(r=>r.split(','));
+    // Ví dụ: hàng 2 cột 1 = tên đội A, hàng 2 cột 2 = tên đội B
+    const teamAName = rows[0][0];
+    const teamBName = rows[0][1];
+    const scoreA = rows[1][0];
+    const scoreB = rows[1][1];
+    document.getElementById('teamAname').textContent = teamAName;
+    document.getElementById('teamBname').textContent = teamBName;
+    document.getElementById('scoreA').textContent = scoreA;
+    document.getElementById('scoreB').textContent = scoreB;
+  } catch(e) {
+    console.error(e);
   }
 }
 
-function changeName(team, newName){
-  if(team==='A'){document.getElementById('teamAname').textContent=newName;}
-  else {document.getElementById('teamBname').textContent=newName;}
-}
+// tải lần đầu
+loadScores();
+// cập nhật mỗi 5 giây
+setInterval(loadScores,5000);
 </script>
 </body>
 </html>
