@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tự động load trang</title>
+<title>Bảng điểm Pickleball</title>
 <style>
   html, body {
     margin:0;
@@ -20,18 +20,19 @@
 </head>
 <body>
 
-<iframe id="sheetFrame" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false"></iframe>
-
+<iframe id="sheetFrame" 
+  src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&single=true&widget=false&headers=false">
+</iframe>
 
 <script>
 const frame = document.getElementById('sheetFrame');
 
-// mỗi 5 giây load lại trang bên trong iframe
+// reload lại dữ liệu trong iframe mỗi 5 giây
 setInterval(() => {
-  frame.src = frame.src.split('?')[0] + '?t=' + Date.now() + '#gid=654780441'; 
+  const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&single=true&widget=false&headers=false";
+  frame.src = base + "&t=" + Date.now(); // tránh cache
 }, 5000);
 </script>
 
 </body>
 </html>
-
