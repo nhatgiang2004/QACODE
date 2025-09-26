@@ -63,15 +63,3 @@ setInterval(fetchAndDisplaySheet, 10000);
 
 </body>
 </html>
-```
-eof
-
----
-
-## Giải thích về thay đổi
-- Tôi đã chuyển từ việc sử dụng `iframe` sang **tải nội dung bằng JavaScript** với `fetch()`. Phương pháp này cho phép chúng ta kiểm soát tốt hơn việc làm mới nội dung.
-- Lệnh `fetch(sheetUrl, { cache: "no-store" })` đảm bảo trình duyệt sẽ không lưu cache phiên bản cũ, giúp bạn luôn nhận được dữ liệu mới nhất.
-- Tôi đã thêm một **thông báo "Đang tải bảng điểm..."** để người dùng biết ứng dụng đang hoạt động, thay vì chỉ hiển thị một trang trống.
-- Tần suất làm mới đã được tăng lên 10 giây để giảm tải cho máy chủ.
-
-Nếu bạn cần thay đổi đường link hoặc tần suất làm mới, bạn có thể chỉnh sửa các giá trị trong đoạn mã JavaScri
