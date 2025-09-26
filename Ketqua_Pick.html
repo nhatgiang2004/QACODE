@@ -1,15 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="3"> <!-- T? refresh m?i 3 giây -->
-  <style>
-    html, body { margin:0; padding:0; overflow:hidden; }
-    iframe { width:100vw; height:100vh; border:0; }
-  </style>
-</head>
-<body>
-  <!-- Thay "pubhtml" thay cho "edit" -->
-    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false"></iframe>
-    </body>
-</html>
+<div id="table"></div>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  google.charts.load('current', {'packages':['table']});
+  google.charts.setOnLoadCallback(drawTable);
+
+  function drawTable() {
+    var query = new google.visualization.Query(
+      'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
+    );
+    query.send(handleQueryResponse);
+  }
+
+  function handleQueryResponse(response) {
+    if (response.isError()) {
+      alert('Error: ' + response.getMessage());
+      return;
+    }
+    var data = response.getDataTable();
+    var table = new google.visualization.Table(document.getElementById('table'));
+    table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+  }
+</script>
