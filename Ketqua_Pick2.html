@@ -1,55 +1,119 @@
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    font-family: 'Lexend', sans-serif;
-    font-weight: bold;
+<div id="table"></div>
+
+<script>
+  function fetchData() {
+    const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI';
+
+    fetch(url)
+      .then(res => res.text())
+      .then(rep => {
+        const json = JSON.parse(rep.substring(47, rep.length - 2));
+        renderTable(json.table);
+      })
+      .catch(err => {
+        document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu: " + err;
+      });
   }
-  table {
-    border-collapse: collapse;
-    width: 470px;
-    height: 74px;
-    font-size: 14px;
+
+  function renderTable(table) {
+    if (!table.rows || table.rows.length < 2) {
+      document.getElementById('table').innerHTML = "⚠️ Sheet HIENTHI chưa có đủ 2 dòng dữ liệu.";
+      return;
+    }
+
+    let html = `
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          background: transparent;
+          font-family: 'Lexend', sans-serif;
+          font-weight: bold;
+        }
+        table {
+          border-collapse: collapse;
+          width: 470px;
+          height: 74px;
+          font-size: 14px;
+        }
+        td {
+          border: 1px solid #fff;
+          padding: 4px 6px;
+          vertical-align: middle;
+        }
+        /* Logo */
+        .logo {
+          width: 50px;
+          text-align: center;
+        }
+        .logo img {
+          width: 70px;
+          height: 70px;
+        }
+        /* Cột 2 */
+        .col2 {
+          background: #555;
+          color: white;
+          text-transform: uppercase;
+          text-align: left;
+        }
+        /* Cột 3 */
+        .col3 {
+          background: #FFD700;
+          color: black;
+          font-size: 16px;
+          font-weight: bold;
+          text-align: center;
+          width: 80px;
+        }
+        /* Cột 4 */
+        .col4 {
+          text-align: center;
+          width: 80px;
+        }
+        .col4 img {
+          width: 90px;   /* to hơn 1.5 lần */
+          height: 90px;
+          border-radius: 50%;
+        }
+      </style>
+    `;
+
+    html += '<table>';
+
+    // Logo rowspan=2
+    html += '<tr>';
+    html += '<td class="logo" rowspan="2"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg"></td>';
+
+    // Dòng 1
+    table.rows[0].c.slice(1).forEach((cell, idx) => {
+      let val = (cell && cell.v) ? cell.v : "";
+      if (idx === 1 && val.startsWith("http")) { 
+        // Cột 4 nếu là link ảnh
+        html += `<td class="col${idx+2}"><img src="${val}"></td>`;
+      } else {
+        html += `<td class="col${idx+2}">${val}</td>`;
+      }
+    });
+    html += "</tr>";
+
+    // Dòng 2
+    html += "<tr>";
+    table.rows[1].c.slice(1).forEach((cell, idx) => {
+      let val = (cell && cell.v) ? cell.v : "";
+      if (idx === 1 && val.startsWith("http")) { 
+        html += `<td class="col${idx+2}"><img src="${val}"></td>`;
+      } else {
+        html += `<td class="col${idx+2}">${val}</td>`;
+      }
+    });
+    html += "</tr>";
+
+    html += "</table>";
+
+    document.getElementById('table').innerHTML = html;
   }
-  td {
-    border: 1px solid #fff;
-    padding: 4px 6px;
-    vertical-align: middle;
-  }
-  /* Cột logo */
-  .logo {
-    width: 60px;
-    text-align: center;
-  }
-  .logo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-  }
-  /* Cột 2 */
-  .col2 {
-    background: #555;
-    color: white;
-    text-transform: uppercase;
-    text-align: left;
-  }
-  /* Cột 3 */
-  .col3 {
-    background: #FFD700;
-    color: black;
-    font-size: 16px;
-    text-align: center;
-    width: 45px;
-  }
-  /* Cột 4 */
-  .col4 {
-    text-align: center;
-    width: 45px;
-  }
-  .col4 img {
-    width: 90px;   /* to hơn 1.5 lần */
-    height: 90px;
-    border-radius: 50%;
-  }
-</style>
+
+  fetchData();
+  setInterval(fetchData, 5000);
+</script>
