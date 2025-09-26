@@ -2,7 +2,6 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng điểm Pickleball</title>
     <style>
@@ -20,18 +19,23 @@
 </head>
 <body>
 
-    <iframe 
+    <iframe
         id="sheetFrame"
         src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false">
     </iframe>
 
     <script>
         const frame = document.getElementById('sheetFrame');
+        let lastSrc = ""; // Lưu trữ URL iframe trước đó
 
-        // Reload dữ liệu trong iframe mỗi 5 giây, tránh cache
         setInterval(() => {
             const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false";
-            frame.src = base + "&t=" + Math.random();
+            const newSrc = base + "&t=" + Math.random();
+
+            if (newSrc !== lastSrc) { // Kiểm tra xem URL có thay đổi không
+                frame.src = newSrc;
+                lastSrc = newSrc;
+            }
         }, 5000);
     </script>
 
