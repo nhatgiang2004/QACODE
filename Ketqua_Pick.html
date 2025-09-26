@@ -1,51 +1,60 @@
 <div id="table"></div>
 
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
-  google.charts.load('current', {'packages':['table']});
-  google.charts.setOnLoadCallback(init);
+  function fetchData() {
+    const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI';
 
-  function init() {
-    drawTable();
-    setInterval(drawTable, 5000); // reload sau 5 giây
+    fetch(url)
+      .then(res => res.text())
+      .then(rep => {
+        const json = JSON.parse(rep.substring(47).slice(0, -2));
+        renderTable(json.table);
+      })
+      .catch(err => {
+        document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu: " + err;
+      });
   }
 
-  function drawTable() {
-    var query = new google.visualization.Query(
-      'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
-    );
-    query.send(handleResponse);
-  }
-
-  function handleResponse(response) {
-    if (response.isError()) {
-      document.getElementById('table').innerHTML =
-        "❌ Không tải được dữ liệu. Kiểm tra lại Publish to the web.";
-      console.error('Error: ' + response.getMessage());
+  function renderTable(table) {
+    if (table.rows.length < 2) {
+      document.getElementById('table').innerHTML = "⚠️ Sheet HIENTHI chưa có đủ 2 dòng dữ liệu.";
       return;
     }
 
-    var originalData = response.getDataTable();
-    if (originalData.getNumberOfRows() < 2) {
-      document.getElementById('table').innerHTML =
-        "⚠️ Sheet HIENTHI chưa có đủ 2 dòng dữ liệu.";
-      return;
-    }
+    let html = '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;text-align:left;">';
 
-    // ✅ Tạo bảng mới với logo + dữ liệu 2 dòng
-    var data = new google.visualization.DataTable();
-    data.addColumn('string', 'Logo');
-    for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-      data.addColumn('string', originalData.getColumnLabel(c));
-    }
+    // Lấy header
+    html += "<tr><th>Logo</th>";
+    table.cols.slice(1).forEach(col => {
+      html += "<th>" + (col.label || "") + "</th>";
+    });
+    html += "</tr>";
 
-    // Dòng 1 (có logo)
-    var row1 = ['<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">'];
-    for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-      row1.push(originalData.getValue(0, c) || '');
-    }
-    data.addRow(row1);
+    // Logo rowspan = 2
+    html += '<tr>';
+    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;">' +
+            '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">' +
+            '</td>';
 
-    // Dòng 2 (không logo)
-    var row2 = [''];
-    for (var c = 1; c < ori
+    // Dòng 1
+    table.rows[0].c.slice(1).forEach(cell => {
+      html += "<td>" + (cell ? cell.v : "") + "</td>";
+    });
+    html += "</tr>";
+
+    // Dòng 2
+    html += "<tr>";
+    table.rows[1].c.slice(1).forEach(cell => {
+      html += "<td>" + (cell ? cell.v : "") + "</td>";
+    });
+    html += "</tr>";
+
+    html += "</table>";
+
+    document.getElementById('table').innerHTML = html;
+  }
+
+  // Tải lần đầu + tự động refresh sau 5s
+  fetchData();
+  setInterval(fetchData, 5000);
+</script>
