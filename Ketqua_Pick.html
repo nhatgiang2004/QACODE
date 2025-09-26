@@ -1,4 +1,5 @@
 
+
 <div id="table"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -22,28 +23,24 @@
       }
 
       var originalData = response.getDataTable();
+      if (originalData.getNumberOfRows() === 0) return;
 
-      // ✅ Tạo DataTable mới (thêm cột Logo + dữ liệu từ cột 2 trở đi)
+      // ✅ Tạo DataTable mới: 1 cột logo + các cột dữ liệu
       var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Logo'); // cột logo
+      data.addColumn('string', 'Logo');
 
       for (var i = 1; i < originalData.getNumberOfColumns(); i++) {
         data.addColumn('string', originalData.getColumnLabel(i));
       }
 
-      // ✅ Thêm logo vào từng hàng
-      for (var r = 0; r < originalData.getNumberOfRows(); r++) {
-        var row = [];
-        // ô logo (dùng HTML img)
-        row.push('<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">');
-
-        // copy dữ liệu cột 2 trở đi
-        for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-          var cell = originalData.getValue(r, c);
-          row.push(cell ? cell.toString() : '');
-        }
-        data.addRow(row);
+      // ✅ Lấy chỉ 1 dòng dữ liệu (ví dụ: dòng đầu tiên)
+      var row = [];
+      row.push('<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:80px;height:auto;">');
+      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
+        var cell = originalData.getValue(0, c); // lấy dòng đầu tiên
+        row.push(cell ? cell.toString() : '');
       }
+      data.addRow(row);
 
       // ✅ Vẽ bảng (cho phép HTML trong ô)
       var table = new google.visualization.Table(document.getElementById('table'));
