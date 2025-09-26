@@ -25,23 +25,23 @@
     }
 
     let html = `
-      <table cellspacing="0" cellpadding="8"
+      <table cellspacing="0" cellpadding="10"
              style="border-collapse:collapse;font-family:Lexend,sans-serif;font-weight:bold;
-                    font-size:16px;width:auto;text-align:left;border:1px solid #ccc;">
+                    font-size:16px;width:auto;text-align:left;border:1px solid #fff;">
     `;
 
     // Logo rowspan=2
     html += '<tr>';
-    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;width:90px;padding:6px;border:1px solid #ccc;">' +
+    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;width:90px;padding:6px;border:1px solid #fff;">' +
             '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:70px;height:70px;border-radius:50%;">' +
             '</td>';
 
     // Dòng 1
     table.rows[0].c.slice(1).forEach((cell, i) => {
-      let style = "text-align:left;padding:10px 8px;border:1px solid #ccc;";
+      let style = "text-align:left;padding:12px 10px;border:1px solid #fff;";
       if (i === 0) style += "background:#555;color:white;text-transform:uppercase;"; // Cột 2
-      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;"; // Cột 3
-      if (i === 2) style += "min-width:70px;width:70px;"; // Cột 4
+      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:220px;"; // Cột 3
+      if (i === 2) style += "width:220px;"; // Cột 4
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
@@ -49,10 +49,10 @@
     // Dòng 2
     html += "<tr>";
     table.rows[1].c.slice(1).forEach((cell, i) => {
-      let style = "text-align:left;padding:10px 8px;border:1px solid #ccc;";
+      let style = "text-align:left;padding:12px 10px;border:1px solid #fff;";
       if (i === 0) style += "background:#555;color:white;text-transform:uppercase;"; // Cột 2
-      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;"; // Cột 3
-      if (i === 2) style += "min-width:70px;width:70px;"; // Cột 4
+      if (i === 1) style += "background:#FFD700;color:black;font-size:18px;font-weight:bold;width:220px;"; // Cột 3
+      if (i === 2) style += "width:220px;"; // Cột 4
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
