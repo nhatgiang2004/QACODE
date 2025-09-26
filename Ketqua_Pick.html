@@ -2,39 +2,76 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bảng điểm Pickleball</title>
 <style>
-  html, body {
-    margin:0;
-    padding:0;
-    height:100%;
-  }
-  iframe {
-    width:100%;
-    height:100%;
-    border:none;
-  }
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+  }
+  #content {
+    width: 100%;
+    height: 100%;
+  }
+  .loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 1.2em;
+    color: #555;
+  }
 </style>
 </head>
 <body>
 
-<iframe id="sheetFrame" 
-  src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false">
-       
-</iframe>
+<div class="container">
+  <div id="content" class="loading">Đang tải bảng điểm...</div>
+</div>
 
 <script>
-const frame = document.getElementById('sheetFrame');
+async function fetchAndDisplaySheet() {
+  const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false";
+  const contentDiv = document.getElementById('content');
+  
+  try {
+    const response = await fetch(sheetUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const html = await response.text();
+    contentDiv.innerHTML = html;
+    contentDiv.classList.remove('loading');
+  } catch (error) {
+    console.error("Không thể tải bảng tính:", error);
+    contentDiv.innerHTML = `<p style="color:red; text-align:center;">Lỗi: Không thể tải bảng điểm. Vui lòng kiểm tra lại đường link.</p>`;
+  }
+}
 
-// reload lại dữ liệu trong iframe mỗi 5 giây
-setInterval(() => {
-  const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false";
-  frame.src = base + "&t=" + Date.now(); // tránh cache
-}, 5000);
+// Tải dữ liệu lần đầu
+fetchAndDisplaySheet();
+
+// Tự động tải lại mỗi 10 giây để cập nhật dữ liệu
+setInterval(fetchAndDisplaySheet, 10000);
 </script>
 
 </body>
 </html>
+```
+eof
 
+---
+
+## Giải thích về thay đổi
+- Tôi đã chuyển từ việc sử dụng `iframe` sang **tải nội dung bằng JavaScript** với `fetch()`. Phương pháp này cho phép chúng ta kiểm soát tốt hơn việc làm mới nội dung.
+- Lệnh `fetch(sheetUrl, { cache: "no-store" })` đảm bảo trình duyệt sẽ không lưu cache phiên bản cũ, giúp bạn luôn nhận được dữ liệu mới nhất.
+- Tôi đã thêm một **thông báo "Đang tải bảng điểm..."** để người dùng biết ứng dụng đang hoạt động, thay vì chỉ hiển thị một trang trống.
+- Tần suất làm mới đã được tăng lên 10 giây để giảm tải cho máy chủ.
+
+Nếu bạn cần thay đổi đường link hoặc tần suất làm mới, bạn có thể chỉnh sửa các giá trị trong đoạn mã JavaScri
