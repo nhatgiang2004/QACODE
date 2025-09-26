@@ -16,11 +16,11 @@
   }
 
   function renderTable(table) {
-    // Bỏ dòng đầu tiên
+    // Bỏ dòng đầu tiên trong sheet
     const rows = table.rows.slice(1);
 
     if (rows.length < 2) {
-      document.getElementById('table').innerHTML = "⚠️ Sheet HIENTHI cần ít nhất 2 dòng dữ liệu.";
+      document.getElementById('table').innerHTML = "⚠️ Sheet HIENTHI cần ít nhất 2 dòng dữ liệu (sau khi bỏ dòng đầu).";
       return;
     }
 
@@ -33,24 +33,33 @@
     });
     html += "</tr>";
 
-    // Logo rowspan=2
+    // Logo rowspan=2 (dòng 1 và 2 sau khi bỏ dòng đầu tiên gốc)
     html += '<tr>';
     html += '<td rowspan="2" style="text-align:center;vertical-align:middle;">' +
             '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">' +
             '</td>';
 
-    // Dòng 1 (sau khi bỏ dòng đầu tiên)
+    // Dòng đầu tiên (sau khi bỏ)
     rows[0].c.slice(1).forEach(cell => {
       html += "<td>" + (cell && cell.v ? cell.v : "") + "</td>";
     });
     html += "</tr>";
 
-    // Dòng 2
+    // Dòng thứ hai
     html += "<tr>";
     rows[1].c.slice(1).forEach(cell => {
       html += "<td>" + (cell && cell.v ? cell.v : "") + "</td>";
     });
     html += "</tr>";
+
+    // Các dòng tiếp theo (nếu có)
+    for (let i = 2; i < rows.length; i++) {
+      html += "<tr><td></td>"; // để cột logo trống
+      rows[i].c.slice(1).forEach(cell => {
+        html += "<td>" + (cell && cell.v ? cell.v : "") + "</td>";
+      });
+      html += "</tr>";
+    }
 
     html += "</table>";
 
