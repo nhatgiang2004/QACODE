@@ -2,73 +2,34 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bảng điểm Pickleball (Google Sheet)</title>
+<title>Tự động load trang</title>
 <style>
-  body {
-    background:transparent;
-    color:#fff;
-    font-family:Arial, sans-serif;
-    text-align:center;
+  html, body {
+    margin:0;
+    padding:0;
+    height:100%;
   }
-  .scoreboard {
-    display:inline-block;
-    background:rgba(0,0,0,0.6);
-    padding:20px;
-    border-radius:15px;
-  }
-  .team {
-    display:inline-block;
-    margin:0 40px;
-  }
-  .team-name {
-    font-size:24px;
-    font-weight:bold;
-  }
-  .score {
-    font-size:48px;
+  iframe {
+    width:100%;
+    height:100%;
+    border:none;
   }
 </style>
 </head>
 <body>
-<div class="scoreboard">
-  <div class="team">
-    <div class="team-name" id="teamAname">Đội A</div>
-    <div class="score" id="scoreA">0</div>
-  </div>
-  <div class="team">
-    <div class="team-name" id="teamBname">Đội B</div>
-    <div class="score" id="scoreB">0</div>
-  </div>
-</div>
+
+<iframe id="sheetFrame" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&single=true"></iframe>
 
 <script>
-// Link CSV công khai từ Google Sheets của bạn:
-const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false';
+const frame = document.getElementById('sheetFrame');
 
-async function loadScores() {
-  try {
-    const res = await fetch(sheetURL);
-    const text = await res.text();
-    const rows = text.trim().split('\n').map(r=>r.split(','));
-    // Hàng 1: tên đội, Hàng 2: điểm
-    const teamAName = rows[0][0] || 'Đội A';
-    const teamBName = rows[0][1] || 'Đội B';
-    const scoreA = rows[1][0] || '0';
-    const scoreB = rows[1][1] || '0';
-    document.getElementById('teamAname').textContent = teamAName;
-    document.getElementById('teamBname').textContent = teamBName;
-    document.getElementById('scoreA').textContent = scoreA;
-    document.getElementById('scoreB').textContent = scoreB;
-  } catch(e) {
-    console.error('Lỗi tải dữ liệu:', e);
-  }
-}
-
-// tải lần đầu
-loadScores();
-// cập nhật mỗi 5 giây
-setInterval(loadScores,5000);
+// mỗi 5 giây load lại trang bên trong iframe
+setInterval(() => {
+  frame.src = frame.src.split('?')[0] + '?t=' + Date.now() + '#gid=654780441'; 
+}, 5000);
 </script>
+
 </body>
 </html>
