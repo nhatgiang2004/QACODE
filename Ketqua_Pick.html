@@ -5,15 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bảng điểm Pickleball (Google Sheet)</title>
 <style>
-  body {background:transparent; color:#fff; font-family:Arial; text-align:center;}
+  body {
+    background:transparent;
+    color:#fff;
+    font-family:Arial, sans-serif;
+    text-align:center;
+  }
   .scoreboard {
     display:inline-block;
     background:rgba(0,0,0,0.6);
-    padding:20px; border-radius:15px;
+    padding:20px;
+    border-radius:15px;
   }
-  .team {display:inline-block; margin:0 40px;}
-  .team-name {font-size:24px; font-weight:bold;}
-  .score {font-size:48px;}
+  .team {
+    display:inline-block;
+    margin:0 40px;
+  }
+  .team-name {
+    font-size:24px;
+    font-weight:bold;
+  }
+  .score {
+    font-size:48px;
+  }
 </style>
 </head>
 <body>
@@ -29,27 +43,25 @@
 </div>
 
 <script>
-// DÁN LINK CSV TỪ GOOGLE SHEETS CỦA BẠN Ở ĐÂY:
-const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pub?gid=654780441&single=true&output=csv';
+// Link CSV công khai từ Google Sheets của bạn:
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&widget=true&chrome=false';
 
 async function loadScores() {
   try {
     const res = await fetch(sheetURL);
     const text = await res.text();
-    // Chuyển CSV thành mảng
     const rows = text.trim().split('\n').map(r=>r.split(','));
-    // Hàng 1 cột 1 = tên đội A, cột 2 = tên đội B
-    // Hàng 2 cột 1 = điểm A, cột 2 = điểm B
-    const teamAName = rows[0][0];
-    const teamBName = rows[0][1];
-    const scoreA = rows[1][0];
-    const scoreB = rows[1][1];
+    // Hàng 1: tên đội, Hàng 2: điểm
+    const teamAName = rows[0][0] || 'Đội A';
+    const teamBName = rows[0][1] || 'Đội B';
+    const scoreA = rows[1][0] || '0';
+    const scoreB = rows[1][1] || '0';
     document.getElementById('teamAname').textContent = teamAName;
     document.getElementById('teamBname').textContent = teamBName;
     document.getElementById('scoreA').textContent = scoreA;
     document.getElementById('scoreB').textContent = scoreB;
   } catch(e) {
-    console.error(e);
+    console.error('Lỗi tải dữ liệu:', e);
   }
 }
 
@@ -60,4 +72,3 @@ setInterval(loadScores,5000);
 </script>
 </body>
 </html>
-
