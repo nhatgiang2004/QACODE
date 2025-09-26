@@ -1,8 +1,16 @@
+
 <div id="table"></div>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
   google.charts.load('current', {'packages':['table']});
-  google.charts.setOnLoadCallback(drawTable);
+  google.charts.setOnLoadCallback(init);
+
+  function init() {
+    // Gọi lần đầu
+    drawTable();
+    // Cứ 5 giây gọi lại drawTable
+    setInterval(drawTable, 5000);
+  }
 
   function drawTable() {
     var query = new google.visualization.Query(
