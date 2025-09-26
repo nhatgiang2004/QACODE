@@ -6,7 +6,7 @@
 <title>Bảng điểm Pickleball</title>
 <style>
   body {
-    background: transparent; /* nền trong suốt cho XSplit */
+    background: transparent;
     font-family: Arial, sans-serif;
     text-align: center;
     color: #fff;
@@ -17,45 +17,92 @@
     padding: 20px;
     border-radius: 15px;
   }
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .teams {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+  }
   .team {
-    display: inline-block;
-    margin: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .team-name {
     font-size: 24px;
     font-weight: bold;
+    margin-bottom: 5px;
   }
   .score {
     font-size: 48px;
+    margin-bottom: 5px;
   }
-  button {
+  .buttons button {
     font-size: 16px;
-    margin: 5px;
+    margin: 2px;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 6px;
+    background: teal;
+    color: white;
+    cursor: pointer;
+  }
+  .buttons button:hover {
+    background: #009999;
+  }
+  .name-input {
+    width: 100px;
+    text-align: center;
+    margin-bottom: 5px;
   }
 </style>
 </head>
 <body>
 <div class="scoreboard">
-  <div class="team" id="teamA">
-    <div class="team-name">Đội A</div>
-    <div class="score" id="scoreA">0</div>
-    <button onclick="addScore('A',1)">+1</button>
-    <button onclick="addScore('A',-1)">-1</button>
-  </div>
-  <div class="team" id="teamB">
-    <div class="team-name">Đội B</div>
-    <div class="score" id="scoreB">0</div>
-    <button onclick="addScore('B',1)">+1</button>
-    <button onclick="addScore('B',-1)">-1</button>
+  <div class="title">PICKLEBALL</div>
+  <div class="teams">
+    <div class="team">
+      <input class="name-input" type="text" value="Đội A" oninput="changeName('A',this.value)">
+      <div class="team-name" id="teamAname">Đội A</div>
+      <div class="score" id="scoreA">0</div>
+      <div class="buttons">
+        <button onclick="addScore('A',1)">+1</button>
+        <button onclick="addScore('A',-1)">-1</button>
+      </div>
+    </div>
+    <div class="team">
+      <input class="name-input" type="text" value="Đội B" oninput="changeName('B',this.value)">
+      <div class="team-name" id="teamBname">Đội B</div>
+      <div class="score" id="scoreB">0</div>
+      <div class="buttons">
+        <button onclick="addScore('B',1)">+1</button>
+        <button onclick="addScore('B',-1)">-1</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 let scoreA = 0;
 let scoreB = 0;
+
 function addScore(team, point){
-  if(team==='A'){ scoreA += point; if(scoreA<0) scoreA=0; document.getElementById('scoreA').textContent=scoreA; }
-  else{ scoreB += point; if(scoreB<0) scoreB=0; document.getElementById('scoreB').textContent=scoreB; }
+  if(team==='A'){ 
+    scoreA += point; if(scoreA<0) scoreA=0; 
+    document.getElementById('scoreA').textContent=scoreA; 
+  } else {
+    scoreB += point; if(scoreB<0) scoreB=0; 
+    document.getElementById('scoreB').textContent=scoreB; 
+  }
+}
+
+function changeName(team, newName){
+  if(team==='A'){document.getElementById('teamAname').textContent=newName;}
+  else {document.getElementById('teamBname').textContent=newName;}
 }
 </script>
 </body>
