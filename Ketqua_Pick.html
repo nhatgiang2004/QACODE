@@ -24,19 +24,19 @@
       return;
     }
 
-    let html = '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;font-family:Lexend,sans-serif;width:100%;">';
+    let html = '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;font-family:Lexend,sans-serif;font-weight:bold;font-size:14px;width:auto;">';
 
     // Logo rowspan=2
     html += '<tr>';
-    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;width:80px;">' +
-            '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">' +
+    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;width:70px;padding:4px;">' +
+            '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:50px;height:auto;">' +
             '</td>';
 
     // Dòng 1
     table.rows[0].c.slice(1).forEach((cell, i) => {
-      let style = "text-align:left;";
+      let style = "text-align:left;padding:4px;";
       if (i === 0) style += "background:#555;color:white;text-transform:uppercase;";
-      if (i === 1) style += "background:#FFD700;color:black;font-weight:bold;";
+      if (i === 1) style += "background:#FFD700;color:black;";
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
@@ -44,9 +44,9 @@
     // Dòng 2
     html += "<tr>";
     table.rows[1].c.slice(1).forEach((cell, i) => {
-      let style = "text-align:left;";
+      let style = "text-align:left;padding:4px;";
       if (i === 0) style += "background:#555;color:white;text-transform:uppercase;";
-      if (i === 1) style += "background:#FFD700;color:black;font-weight:bold;";
+      if (i === 1) style += "background:#FFD700;color:black;";
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
