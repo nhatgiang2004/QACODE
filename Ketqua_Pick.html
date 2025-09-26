@@ -1,5 +1,8 @@
 <div id="table"></div>
 
+<!-- Link font Lexend -->
+<link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+
 <script>
   function fetchData() {
     const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI';
@@ -21,19 +24,19 @@
       return;
     }
 
-    let html = '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;text-align:center;">';
+    let html = '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;font-family:Lexend,sans-serif;width:100%;">';
 
     // Logo rowspan=2
     html += '<tr>';
-    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;">' +
+    html += '<td rowspan="2" style="text-align:center;vertical-align:middle;width:80px;">' +
             '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">' +
             '</td>';
 
     // Dòng 1
     table.rows[0].c.slice(1).forEach((cell, i) => {
-      let style = "";
-      if (i === 0) style = "background:#555;color:white;text-transform:uppercase;"; // cột 2
-      if (i === 1) style = "background:#FFD700;color:black;font-weight:bold;";      // cột 3
+      let style = "text-align:left;";
+      if (i === 0) style += "background:#555;color:white;text-transform:uppercase;";
+      if (i === 1) style += "background:#FFD700;color:black;font-weight:bold;";
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
@@ -41,9 +44,9 @@
     // Dòng 2
     html += "<tr>";
     table.rows[1].c.slice(1).forEach((cell, i) => {
-      let style = "";
-      if (i === 0) style = "background:#555;color:white;text-transform:uppercase;";
-      if (i === 1) style = "background:#FFD700;color:black;font-weight:bold;";
+      let style = "text-align:left;";
+      if (i === 0) style += "background:#555;color:white;text-transform:uppercase;";
+      if (i === 1) style += "background:#FFD700;color:black;font-weight:bold;";
       html += `<td style="${style}">${cell && cell.v ? cell.v : ""}</td>`;
     });
     html += "</tr>";
