@@ -18,11 +18,23 @@
       if (response.isError()) return;
 
       var data = response.getDataTable();
+
+      // ✅ Biến cột 0 thành ảnh (nếu trong sheet chứa link ảnh)
+      var formatter = new google.visualization.PatternFormat('<img src="{0}" style="width:50px;height:auto;">');
+      formatter.format(data, [0]);
+
+      // ✅ Thêm 2 dòng ảnh trên cùng
+      data.insertRows(0, [
+        ['https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg', 'Hàng mẫu 1'],
+        ['https://upload.wikimedia.org/wikipedia/commons/4/4f/Icono_Sistema_de_gesti%C3%B3n.png', 'Hàng mẫu 2']
+      ]);
+
       var table = new google.visualization.Table(document.getElementById('table'));
       table.draw(data, {
         showRowNumber: false,
         width: 'auto',
-        height: 'auto'
+        height: 'auto',
+        allowHtml: true  // Quan trọng để hiển thị <img>
       });
     });
   }
@@ -30,8 +42,9 @@
 
 <style>
   #table {
-    max-width: 600px;   /* Giới hạn chiều rộng */
-    margin: 10px auto;  /* Căn giữa */
-    font-size: 14px;    /* Chữ nhỏ gọn hơn */
+    max-width: 600px;
+    margin: 10px;       /* Căn trái */
+    font-size: 14px;
+    text-align: left;   /* Nội dung căn trái */
   }
-</style>
+</styl
