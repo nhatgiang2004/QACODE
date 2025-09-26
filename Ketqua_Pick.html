@@ -13,6 +13,7 @@
       if (response.isError()) {
         document.getElementById('table').innerHTML = 
           "❌ Lỗi: " + response.getMessage();
+        console.error("Chi tiết lỗi:", response);
         return;
       }
 
