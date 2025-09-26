@@ -7,7 +7,6 @@
     fetch(url)
       .then(res => res.text())
       .then(rep => {
-        // Cắt bỏ phần thừa để lấy JSON đúng
         const json = JSON.parse(rep.substring(47, rep.length - 2));
         renderTable(json.table);
       })
@@ -17,8 +16,11 @@
   }
 
   function renderTable(table) {
-    if (!table.rows || table.rows.length < 2) {
-      document.getElementById('table').innerHTML = "⚠️ Sheet HIENTHI chưa có đủ 2 dòng dữ liệu.";
+    // Bỏ dòng đầu tiên
+    const rows = table.rows.slice(1);
+
+    if (rows.length < 2) {
+      document.getElementById('table').innerHTML = "⚠️ Sheet HIENTHI cần ít nhất 2 dòng dữ liệu.";
       return;
     }
 
@@ -37,15 +39,15 @@
             '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">' +
             '</td>';
 
-    // Dòng 1
-    table.rows[0].c.slice(1).forEach(cell => {
+    // Dòng 1 (sau khi bỏ dòng đầu tiên)
+    rows[0].c.slice(1).forEach(cell => {
       html += "<td>" + (cell && cell.v ? cell.v : "") + "</td>";
     });
     html += "</tr>";
 
     // Dòng 2
     html += "<tr>";
-    table.rows[1].c.slice(1).forEach(cell => {
+    rows[1].c.slice(1).forEach(cell => {
       html += "<td>" + (cell && cell.v ? cell.v : "") + "</td>";
     });
     html += "</tr>";
