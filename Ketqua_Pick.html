@@ -12,52 +12,48 @@
 
   function drawTable() {
     var query = new google.visualization.Query(
-      'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ7yBnpYJuQU00WJDTFp1lGFOFF8UVnbTy8KeIS-hEYd5zdyGyeAmCDkUb1namxwjG-mrUsnYsQexu4/pubhtml?gid=654780441&single=true'
+      'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
     );
-    query.send(function(response) {
-      if (response.isError()) {
-        document.getElementById('table').innerHTML =
-          "❌ Không tải được dữ liệu. Hãy kiểm tra Publish to the web.";
-        console.error('Error: ' + response.getMessage());
-        return;
-      }
+    query.send(handleResponse);
+  }
 
-      var originalData = response.getDataTable();
-      if (originalData.getNumberOfRows() < 2) {
-        document.getElementById('table').innerHTML =
-          "⚠️ Sheet HIENTHI không đủ 2 dòng dữ liệu.";
-        return;
-      }
+  function handleResponse(response) {
+    if (response.isError()) {
+      document.getElementById('table').innerHTML =
+        "❌ Không tải được dữ liệu. Kiểm tra lại Publish to the web.";
+      console.error('Error: ' + response.getMessage());
+      return;
+    }
 
-      // ✅ Tạo bảng mới: Logo + dữ liệu
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Logo');
+    var originalData = response.getDataTable();
+    var data = new google.visualization.DataTable();
+
+    // Cột đầu: Logo
+    data.addColumn('string', 'Logo');
+    for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
+      data.addColumn('string', originalData.getColumnLabel(c));
+    }
+
+    // Thêm từng dòng từ Google Sheet
+    for (var r = 0; r < originalData.getNumberOfRows(); r++) {
+      var row = [];
+      if (r === 0) {
+        row.push('<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">');
+      } else {
+        row.push('');
+      }
       for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-        data.addColumn('string', originalData.getColumnLabel(c));
+        row.push(originalData.getValue(r, c) || '');
       }
+      data.addRow(row);
+    }
 
-      // Dòng 1 (có logo)
-      var row1 = ['<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">'];
-      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-        row1.push(originalData.getValue(0, c) || '');
-      }
-      data.addRow(row1);
-
-      // Dòng 2 (không logo)
-      var row2 = [''];
-      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-        row2.push(originalData.getValue(1, c) || '');
-      }
-      data.addRow(row2);
-
-      // Vẽ bảng
-      var table = new google.visualization.Table(document.getElementById('table'));
-      table.draw(data, {
-        showRowNumber: false,
-        allowHtml: true,
-        width: 'auto',
-        height: 'auto'
-      });
+    var table = new google.visualization.Table(document.getElementById('table'));
+    table.draw(data, {
+      showRowNumber: false,
+      allowHtml: true,
+      width: 'auto',
+      height: 'auto'
     });
   }
 </script>
@@ -70,4 +66,3 @@
     max-width: 600px;
   }
 </style>
-
