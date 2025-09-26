@@ -1,4 +1,3 @@
-
 <div id="table"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -12,14 +11,13 @@
   }
 
   function drawTable() {
-    // ⚠️ Thay YOUR_SHEET_ID bằng ID thật trong Google Sheet của bạn
     var query = new google.visualization.Query(
-      'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
+      'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=Sheet1'
     );
     query.send(function(response) {
       if (response.isError()) {
         document.getElementById('table').innerHTML =
-          "❌ Không tải được dữ liệu. Kiểm tra lại link & quyền chia sẻ.";
+          "❌ Không tải được dữ liệu. Hãy kiểm tra Publish to the web.";
         console.error('Error: ' + response.getMessage());
         return;
       }
