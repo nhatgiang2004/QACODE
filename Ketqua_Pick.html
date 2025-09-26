@@ -1,5 +1,4 @@
 
-
 <div id="table"></div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -25,39 +24,28 @@
       var originalData = response.getDataTable();
       if (originalData.getNumberOfRows() === 0) return;
 
-      // ✅ Tạo DataTable mới: 1 cột logo + các cột dữ liệu
+      // ✅ Tạo DataTable mới: Logo + 1 dòng dữ liệu tổng hợp
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Logo');
+      data.addColumn('string', 'Kết quả');
 
-      for (var i = 1; i < originalData.getNumberOfColumns(); i++) {
-        data.addColumn('string', originalData.getColumnLabel(i));
+      // Gom tất cả giá trị trong sheet thành 1 chuỗi
+      var allValues = [];
+      for (var r = 0; r < originalData.getNumberOfRows(); r++) {
+        for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
+          var cell = originalData.getValue(r, c);
+          if (cell) allValues.push(cell.toString());
+        }
       }
 
-      // ✅ Lấy chỉ 1 dòng dữ liệu (ví dụ: dòng đầu tiên)
-      var row = [];
-      row.push('<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:80px;height:auto;">');
-      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-        var cell = originalData.getValue(0, c); // lấy dòng đầu tiên
-        row.push(cell ? cell.toString() : '');
-      }
-      data.addRow(row);
+      // Thêm logo và toàn bộ dữ liệu trên 1 dòng
+      data.addRow([
+        '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:80px;height:auto;">',
+        allValues.join(' | ')
+      ]);
 
-      // ✅ Vẽ bảng (cho phép HTML trong ô)
+      // Vẽ bảng
       var table = new google.visualization.Table(document.getElementById('table'));
       table.draw(data, {
         showRowNumber: false,
-        allowHtml: true,
-        width: '100%',
-        height: 'auto'
-      });
-    });
-  }
-</script>
-
-<style>
-  #table {
-    margin: 10px;
-    font-size: 14px;
-    text-align: left;
-  }
-</style>
+        allowHtml: tru
