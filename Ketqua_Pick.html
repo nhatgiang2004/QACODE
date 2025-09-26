@@ -14,38 +14,55 @@
   function drawTable() {
     var query = new google.visualization.Query(
       'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI'
+
     );
     query.send(function(response) {
       if (response.isError()) {
-        alert('Error: ' + response.getMessage());
+        console.error('Error: ' + response.getMessage());
         return;
       }
 
       var originalData = response.getDataTable();
-      if (originalData.getNumberOfRows() === 0) return;
+      if (originalData.getNumberOfRows() < 2) return;
 
-      // ✅ Tạo DataTable mới: Logo + 1 dòng dữ liệu tổng hợp
+      // Tạo bảng mới: Logo + các cột dữ liệu
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Logo');
-      data.addColumn('string', 'Kết quả');
-
-      // Gom tất cả giá trị trong sheet thành 1 chuỗi
-      var allValues = [];
-      for (var r = 0; r < originalData.getNumberOfRows(); r++) {
-        for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
-          var cell = originalData.getValue(r, c);
-          if (cell) allValues.push(cell.toString());
-        }
+      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
+        data.addColumn('string', originalData.getColumnLabel(c));
       }
 
-      // Thêm logo và toàn bộ dữ liệu trên 1 dòng
-      data.addRow([
-        '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:80px;height:auto;">',
-        allValues.join(' | ')
-      ]);
+      // Dòng 1: có logo
+      var row1 = ['<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" style="width:60px;height:auto;">'];
+      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
+        row1.push(originalData.getValue(0, c) || '');
+      }
+      data.addRow(row1);
+
+      // Dòng 2: bỏ logo
+      var row2 = [''];
+      for (var c = 1; c < originalData.getNumberOfColumns(); c++) {
+        row2.push(originalData.getValue(1, c) || '');
+      }
+      data.addRow(row2);
 
       // Vẽ bảng
       var table = new google.visualization.Table(document.getElementById('table'));
       table.draw(data, {
         showRowNumber: false,
-        allowHtml: tru
+        allowHtml: true,
+        width: 'auto',
+        height: 'auto'
+      });
+    });
+  }
+</script>
+
+<style>
+  #table {
+    margin: 10px;
+    font-size: 13px;
+    text-align: left;   /* ✅ căn trái */
+    max-width: 600px;   /* ✅ bảng gọn lại */
+  }
+</style>
