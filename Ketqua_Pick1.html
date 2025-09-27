@@ -21,42 +21,14 @@
       border: 1px solid #fff;
       padding: 4px 6px;
       vertical-align: middle;
-    }
-    .logo {
-      width: 60px;
       text-align: center;
     }
-    .logo img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-    }
-    .col2 {
-      background: #555;
-      color: white;
-      text-transform: uppercase;
-      text-align: left;
-    }
-    .col3 {
-      background: #FFD700;
-      color: black;
-      font-size: 16px;
-      text-align: center;
-      width: 45px;
-    }
-    .col4 {
-      text-align: center;
-      width: 60px;
-    }
-    /* Hàng thứ 3: dữ liệu ở cột 2 nhưng gộp 3 cột */
-    .row3 td.data {
-      background: #2E8B57;
+    /* Ô dữ liệu gộp cột 2 + 3 */
+    .merged {
+      background: #2E8B57; /* bạn đổi màu tùy thích */
       color: #FFFFFF;
       font-size: 16px;
-      text-align: center;
       font-weight: bold;
-      padding: 4px 6px; /* giống hai hàng trên */
-      height: auto;
     }
   </style>
 </head>
@@ -81,31 +53,22 @@
     function renderTable(table) {
       if (!table.rows || table.rows.length < 3) return;
 
-      let html = '<table><tr>';
-      html += '<td class="logo" rowspan="2">' +
-              '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
-              '</td>';
+      let html = '<table>';
 
       // Dòng 1
-      table.rows[0].c.slice(1).forEach((cell, i) => {
-        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
-      });
-      html += '</tr><tr>';
+      let val1 = ((table.rows[0].c[1] && table.rows[0].c[1].v) ? table.rows[0].c[1].v : "") + " " +
+                 ((table.rows[0].c[2] && table.rows[0].c[2].v) ? table.rows[0].c[2].v : "");
+      html += `<tr><td class="merged">${val1}</td></tr>`;
 
       // Dòng 2
-      table.rows[1].c.slice(1).forEach((cell, i) => {
-        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
-      });
-      html += '</tr>';
+      let val2 = ((table.rows[1].c[1] && table.rows[1].c[1].v) ? table.rows[1].c[1].v : "") + " " +
+                 ((table.rows[1].c[2] && table.rows[1].c[2].v) ? table.rows[1].c[2].v : "");
+      html += `<tr><td class="merged">${val2}</td></tr>`;
 
-      // Dòng 3 – logo ô trống, dữ liệu ở cột 2 gộp 3 cột
-      const val = table.rows[2].c[1] && table.rows[2].c[1].v ? table.rows[2].c[1].v : "";
-      html += `<tr class="row3">
-                 <td class="logo"></td>
-                 <td class="data" colspan="3">${val}</td>
-               </tr>`;
+      // Dòng 3
+      let val3 = ((table.rows[2].c[1] && table.rows[2].c[1].v) ? table.rows[2].c[1].v : "") + " " +
+                 ((table.rows[2].c[2] && table.rows[2].c[2].v) ? table.rows[2].c[2].v : "");
+      html += `<tr><td class="merged">${val3}</td></tr>`;
 
       html += '</table>';
 
