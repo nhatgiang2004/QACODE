@@ -46,7 +46,7 @@
     }
     .col4 {
       text-align: center;
-      width: 90px;
+      width: 60px;
     }
     /* Dòng 3: chỉ ô dữ liệu cột 2+3 */
     .row3 td.data {
@@ -65,7 +65,7 @@
   <script>
     function fetchData() {
       const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI2';
-      
+
       fetch(url)
         .then(res => res.text())
         .then(rep => {
@@ -116,6 +116,3 @@
   </script>
 </body>
 </html>
-
-
-
