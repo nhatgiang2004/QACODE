@@ -15,7 +15,6 @@
     table {
       border-collapse: collapse;
       width: 470px;
-      height: 74px;
       font-size: 14px;
     }
     td {
@@ -23,7 +22,6 @@
       padding: 4px 6px;
       vertical-align: middle;
     }
-    /* Cột logo */
     .logo {
       width: 60px;
       text-align: center;
@@ -33,14 +31,12 @@
       height: 60px;
       border-radius: 50%;
     }
-    /* Cột 2 */
     .col2 {
       background: #555;
       color: white;
       text-transform: uppercase;
       text-align: left;
     }
-    /* Cột 3 */
     .col3 {
       background: #FFD700;
       color: black;
@@ -48,10 +44,34 @@
       text-align: center;
       width: 45px;
     }
-    /* Cột 4 */
     .col4 {
       text-align: center;
       width: 60px;
+    }
+    /* 3 lựa chọn phối màu cho hàng thứ 3 */
+    .row3-green td {
+      background: #2E8B57; /* xanh lá dịu */
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+      padding: 8px;
+    }
+    .row3-blue td {
+      background: #1E90FF; /* xanh dương */
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+      padding: 8px;
+    }
+    .row3-orange td {
+      background: #FF8C00; /* cam sáng */
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+      padding: 8px;
     }
   </style>
 </head>
@@ -61,7 +81,6 @@
   <script>
     function fetchData() {
       const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
-
       fetch(url)
         .then(res => res.text())
         .then(rep => {
@@ -74,7 +93,7 @@
     }
 
     function renderTable(table) {
-      if (!table.rows || table.rows.length < 2) return;
+      if (!table.rows || table.rows.length < 3) return;
 
       let html = '<table><tr>';
       html += '<td class="logo" rowspan="2">' +
@@ -93,6 +112,12 @@
         let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
         html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
       });
+      html += '</tr>';
+
+      // Dòng 3 – tách riêng, đổi class ở đây để đổi màu
+      html += '<tr class="row3-green">';
+      // gộp ô để hiển thị toàn bộ nội dung dòng 3
+      html += `<td colspan="4">${table.rows[2].c[0] && table.rows[2].c[0].v ? table.rows[2].c[0].v : ""}</td>`;
       html += '</tr></table>';
 
       document.getElementById('table').innerHTML = html;
@@ -103,6 +128,3 @@
   </script>
 </body>
 </html>
-
-
-
