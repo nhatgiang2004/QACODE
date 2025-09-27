@@ -48,15 +48,15 @@
       text-align: center;
       width: 60px;
     }
-    /* Hàng thứ 3 gộp 4 cột */
-    .row3 td {
+    /* Hàng thứ 3: dữ liệu ở cột 2 nhưng gộp 3 cột */
+    .row3 td.data {
       background: #2E8B57;
       color: #FFFFFF;
       font-size: 16px;
       text-align: center;
       font-weight: bold;
-      padding: 4px 6px; /* thu gọn bằng các hàng trên */
-      height: auto;     /* chiều cao tự động */
+      padding: 4px 6px; /* giống hai hàng trên */
+      height: auto;
     }
   </style>
 </head>
@@ -100,9 +100,12 @@
       });
       html += '</tr>';
 
-      // Dòng 3 – gộp cả 4 cột
+      // Dòng 3 – logo ô trống, dữ liệu ở cột 2 gộp 3 cột
       const val = table.rows[2].c[1] && table.rows[2].c[1].v ? table.rows[2].c[1].v : "";
-      html += `<tr class="row3"><td colspan="4">${val}</td></tr>`;
+      html += `<tr class="row3">
+                 <td class="logo"></td>
+                 <td class="data" colspan="3">${val}</td>
+               </tr>`;
 
       html += '</table>';
 
