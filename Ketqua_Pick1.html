@@ -23,12 +23,12 @@
     border: none; /* bỏ border mặc định */
   }
 
-  /* ✅ Chỉ kẻ viền màu xám nhạt cho hàng 1, 2 ở cột 2 và 3 */
+  /* ✅ Chỉ kẻ viền xám nhạt cho hàng 1 và 2, cột 2 và 3 */
   tr:nth-child(1) td:nth-child(2),
   tr:nth-child(1) td:nth-child(3),
   tr:nth-child(2) td:nth-child(2),
   tr:nth-child(2) td:nth-child(3) {
-    border: 1px solid #ccc;
+    border: 1px solid #ccc;  /* viền xám nhạt */
   }
 
   .logo {
@@ -67,7 +67,6 @@
     padding: 4px 6px;
   }
 </style>
-
 
 </head>
 <body>
