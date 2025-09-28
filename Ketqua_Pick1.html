@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+```html
+<!DOCTYPE html> 
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Sân 1</title>
+  <title>Kết quả Sân 2</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
@@ -18,7 +19,7 @@
       font-size: 14px;
     }
     td {
-      border: 1px solid #fff;
+      border: 1px solid #ccc; /* viền xám nhạt */
       padding: 4px 6px;
       vertical-align: middle;
     }
@@ -47,6 +48,7 @@
     .col4 {
       text-align: center;
       width: 60px;
+      border: none !important; /* bỏ viền cột 4 */
     }
     /* Dòng 3: chỉ ô dữ liệu cột 2+3 */
     .row3 td.data {
@@ -64,7 +66,7 @@
 
   <script>
     function fetchData() {
-      const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
+      const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI2';
 
       fetch(url)
         .then(res => res.text())
@@ -116,6 +118,4 @@
   </script>
 </body>
 </html>
-
-
-
+```
