@@ -1,155 +1,121 @@
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Bảng đấu - lấy từ Google Sheet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Web Chấm Điểm Bảng Đấu</title>
   <style>
-    body{font-family:'Lexend',sans-serif;background:#f4f6f8;padding:18px;margin:0}
-    .wrap{max-width:980px;margin:0 auto}
-    h1{font-size:20px;margin:6px 0;text-align:center}
-    .status{margin:8px 0;text-align:center;color:#666}
-    table{width:100%;border-collapse:collapse;background:white;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
-    th,td{padding:8px;border:1px solid #ddd;text-align:center;font-size:14px}
-    th{background:#333;color:#fff}
-    .title-row{background:#2E8B57;color:#fff;font-weight:700;font-size:16px;text-align:left;padding:12px}
-    .small{font-size:12px;color:#888}
-    @media (max-width:640px){th,td{font-size:12px;padding:6px}}
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f9;
+    }
+    h2 {
+      margin-top: 20px;
+      text-align: center;
+      color: #333;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    th {
+      background: #eee;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Bảng đấu (lấy từ Google Sheet)</h1>
-    <div id="status" class="status">Đang tải dữ liệu…</div>
-
-    <div id="container"></div>
-    <p class="small">Lưu ý: nếu bạn thấy thông báo lỗi về quyền truy cập, hãy đặt file Google Sheet ở chế độ "Anyone with the link can view" hoặc dùng "Publish to web" (xem hướng dẫn trong phần trợ giúp Google).</p>
-  </div>
+  <h1 style="text-align:center;">Kết quả bảng đấu</h1>
+  <div id="data"></div>
 
   <script>
-    // Thay link này bằng link sheet của bạn (đã dùng gid bạn gửi)
-    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?gid=37490152';
+    // Link Google Sheets: thay ID & gid nếu cần
+    const sheetURL = "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?tqx=out:json&gid=37490152";
 
-    // Parse response từ gviz: google.visualization.Query.setResponse({...});
-    function extractJSONFromGviz(text){
-      const m = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?/);
-      if(!m) {
-        // fallback (cũ): cắt phần bắt đầu/ending
-        try{
-          return JSON.parse(text.substr(47).slice(0,-2));
-        }catch(e){
-          throw new Error('Không tìm thấy JSON gviz trong phản hồi');
+    fetch(sheetURL)
+      .then(res => res.text())
+      .then(rep => {
+        // Parse JSON từ phản hồi gviz
+        const json = JSON.parse(rep.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1]);
+        const rows = json.table.rows;
+
+        // Chuyển đổi rows thành mảng dữ liệu đơn giản
+        let data = rows.map(r => r.c ? r.c.map(c => c ? c.v : "") : []);
+
+        let tableTitle = "";
+        let header = [];
+        let startIndex = 0;
+
+        // Tìm tiêu đề bảng (ví dụ: I Bảng A)
+        for (let i = 0; i < data.length; i++) {
+          let nonEmpty = data[i].filter(x => x !== "");
+          if (nonEmpty.length === 1 && nonEmpty[0].toString().includes("Bảng")) {
+            tableTitle = nonEmpty[0];
+            startIndex = i + 1;
+            break;
+          }
         }
-      }
-      return JSON.parse(m[1]);
-    }
 
-    function cellVal(row, idx){
-      if(!row || !row.c) return '';
-      const cell = row.c[idx];
-      if(!cell) return '';
-      if(cell.v !== undefined && cell.v !== null) return String(cell.v).trim();
-      if(cell.f !== undefined && cell.f !== null) return String(cell.f).trim();
-      return '';
-    }
-
-    function findHeaderAndTitle(json){
-      const rows = json.table.rows || [];
-      const colsMeta = json.table.cols || [];
-      const maxCols = Math.max(colsMeta.length || 0, rows.reduce((m,r)=>Math.max(m,(r.c? r.c.length:0)),0));
-
-      const headerKeywords = ['tt','tên vđv','tên vdv','tên','trận','đôi','gặp','tỷ','tỷ số','tỷ-số'];
-      let headerRowIndex = -1;
-      for(let i=0;i<rows.length;i++){
-        const vals = [];
-        for(let j=0;j<maxCols;j++) vals.push(cellVal(rows[i],j).toLowerCase());
-        // nếu ít nhất 2 từ khóa header xuất hiện -> coi là hàng tiêu đề
-        const found = headerKeywords.filter(k=> vals.some(v => v && v.includes(k))).length;
-        if(found >= 2){ headerRowIndex = i; break; }
-      }
-      if(headerRowIndex === -1){
-        // fallback: tìm hàng có >= 2 ô không rỗng trong 6 dòng đầu
-        for(let i=0;i<Math.min(6,rows.length);i++){
-          const nonEmpty = Array.from({length:maxCols}).filter((_,j)=> cellVal(rows[i],j) !== '').length;
-          if(nonEmpty >= 2){ headerRowIndex = i; break; }
+        // Lấy header từ dòng kế tiếp
+        if (startIndex < data.length) {
+          header = data[startIndex];
+          startIndex++;
         }
-      }
-      if(headerRowIndex === -1) headerRowIndex = 1; // fallback
 
-      // tìm tiêu đề (dòng phía trên hàng header) — tìm ô không rỗng đầu tiên phía trên
-      let title = '';
-      for(let k = headerRowIndex-1; k>=0; k--){
-        // ưu tiên ô cột 0
-        const first = cellVal(rows[k], 0);
-        if(first) { title = first; break; }
-        // nếu không có, ghép tất cả ô trong hàng
-        const rowText = Array.from({length:maxCols}).map((_,j)=>cellVal(rows[k],j)).filter(Boolean).join(' ').trim();
-        if(rowText){ title = rowText; break; }
-      }
+        // Dữ liệu thực
+        let tableData = data.slice(startIndex);
 
-      // build headers
-      const headerRow = rows[headerRowIndex] || {c:[]};
-      const headers = [];
-      for(let j=0;j<maxCols;j++){
-        const h = cellVal(headerRow, j) || (colsMeta[j] && colsMeta[j].label) || `C${j+1}`;
-        headers.push(h);
-      }
+        // Tạo HTML
+        const container = document.getElementById("data");
 
-      // data rows
-      const data = [];
-      for(let i=headerRowIndex+1;i<rows.length;i++){
-        const r = rows[i];
-        const any = Array.from({length:maxCols}).some((_,j)=> cellVal(r,j) !== '');
-        if(!any) continue;
-        const arr = [];
-        for(let j=0;j<maxCols;j++) arr.push(cellVal(r,j));
-        data.push(arr);
-      }
+        if (tableTitle) {
+          const h2 = document.createElement("h2");
+          h2.textContent = tableTitle;
+          container.appendChild(h2);
+        }
 
-      return { title, headers, data };
-    }
+        const table = document.createElement("table");
+        if (header.length) {
+          const thead = document.createElement("thead");
+          const tr = document.createElement("tr");
+          header.forEach(h => {
+            const th = document.createElement("th");
+            th.textContent = h;
+            tr.appendChild(th);
+          });
+          thead.appendChild(tr);
+          table.appendChild(thead);
+        }
 
-    function renderTable(extracted){
-      const container = document.getElementById('container');
-      const status = document.getElementById('status');
-      status.textContent = 'Đã tải thành công.';
+        const tbody = document.createElement("tbody");
+        tableData.forEach(row => {
+          if (row.join("").trim() !== "") {
+            const tr = document.createElement("tr");
+            row.forEach(cell => {
+              const td = document.createElement("td");
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          }
+        });
+        table.appendChild(tbody);
 
-      const {title, headers, data} = extracted;
-      let html = '';
-      if(title) html += `<div class="title-row" style="padding:8px;margin-bottom:8px">${title}</div>`;
-
-      html += '<table><thead><tr>';
-      headers.forEach(h => html += `<th>${h || ''}</th>`);
-      html += '</tr></thead><tbody>';
-
-      data.forEach(row => {
-        html += '<tr>';
-        headers.forEach((_,j) => html += `<td>${row[j] !== undefined ? row[j] : ''}</td>`);
-        html += '</tr>';
-      });
-      html += '</tbody></table>';
-
-      container.innerHTML = html;
-    }
-
-    async function main(){
-      const status = document.getElementById('status');
-      try{
-        status.textContent = 'Đang lấy dữ liệu từ Google Sheet...';
-        const res = await fetch(SHEET_URL);
-        const text = await res.text();
-        const json = extractJSONFromGviz(text);
-        const extracted = findHeaderAndTitle(json);
-        renderTable(extracted);
-      }catch(err){
+        container.appendChild(table);
+      })
+      .catch(err => {
+        document.getElementById("data").textContent = "Không thể tải dữ liệu. Vui lòng kiểm tra quyền chia sẻ Google Sheet.";
         console.error(err);
-        document.getElementById('status').textContent = '❌ Lỗi: không thể tải dữ liệu. Có thể file chưa chia sẻ công khai (Anyone with the link).';
-      }
-    }
-
-    main();
-    setInterval(main, 7000); // refresh mỗi 7s
+      });
   </script>
 </body>
 </html>
+```
