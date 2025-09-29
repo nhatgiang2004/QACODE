@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -18,7 +19,7 @@
     table {
       border-collapse: collapse;
       margin: 10px auto;
-      width: 90%;
+      width: 95%;
       background: white;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
@@ -31,21 +32,15 @@
       background: #333;
       color: white;
     }
-    .winner {
-      font-weight: bold;
-      color: green;
-    }
   </style>
 </head>
 <body>
-  <h2>Danh sách trận đấu</h2>
-  <div id="matches"></div>
-
-  <h2>Bảng xếp hạng</h2>
-  <div id="ranking"></div>
+  <h2 id="tenBang"></h2>
+  <div id="bangDau"></div>
 
   <script>
-    const SHEET_URL = "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=Vong_loai";
+    // Link sheet của bạn với gid=37490152
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?gid=37490152";
 
     async function fetchData() {
       const res = await fetch(SHEET_URL);
@@ -54,73 +49,38 @@
       return json.table.rows.map(r => r.c.map(c => (c ? c.v : "")));
     }
 
-    function renderMatches(data) {
-      let html = "<table><tr><th>Trận</th><th>Đôi 1</th><th>Đôi 2</th><th>Tỷ số</th></tr>";
-      data.forEach(row => {
-        html += `<tr>
-          <td>${row[0]}</td>
-          <td>${row[1]}</td>
-          <td>${row[2]}</td>
-          <td>${row[3]}</td>
-        </tr>`;
+    function renderTable(data) {
+      if (!data || data.length === 0) return;
+
+      // Dòng đầu tiên = tên bảng đấu
+      document.getElementById("tenBang").innerText = data[0][0] || "Bảng đấu";
+
+      // Dòng thứ 2 = tiêu đề cột
+      let header = data[1];
+
+      let html = "<table><tr>";
+      header.forEach(col => {
+        html += `<th>${col}</th>`;
       });
+      html += "</tr>";
+
+      // Các dòng tiếp theo = dữ liệu
+      data.slice(2).forEach(row => {
+        if (row.every(cell => cell === "")) return; // bỏ dòng trống
+        html += "<tr>";
+        row.forEach(cell => {
+          html += `<td>${cell}</td>`;
+        });
+        html += "</tr>";
+      });
+
       html += "</table>";
-      document.getElementById("matches").innerHTML = html;
-    }
-
-    function calculateRanking(data) {
-      let ranking = {};
-
-      data.forEach(row => {
-        const doi1 = row[1];
-        const doi2 = row[2];
-        const score = row[3];
-        if (!score) return;
-
-        let [s1, s2] = score.split("-").map(Number);
-        if (isNaN(s1) || isNaN(s2)) return;
-
-        if (!ranking[doi1]) ranking[doi1] = { doi: doi1, diem: 0, hieuSo: 0 };
-        if (!ranking[doi2]) ranking[doi2] = { doi: doi2, diem: 0, hieuSo: 0 };
-
-        // tính điểm
-        if (s1 > s2) {
-          ranking[doi1].diem += 2;
-          ranking[doi2].diem += 1;
-        } else {
-          ranking[doi2].diem += 2;
-          ranking[doi1].diem += 1;
-        }
-
-        // hiệu số set
-        ranking[doi1].hieuSo += (s1 - s2);
-        ranking[doi2].hieuSo += (s2 - s1);
-      });
-
-      return Object.values(ranking).sort((a, b) =>
-        b.diem - a.diem || b.hieuSo - a.hieuSo
-      );
-    }
-
-    function renderRanking(rank) {
-      let html = "<table><tr><th>Hạng</th><th>Đôi</th><th>Điểm</th><th>Hiệu số</th></tr>";
-      rank.forEach((r, i) => {
-        html += `<tr>
-          <td>${i+1}</td>
-          <td>${r.doi}</td>
-          <td>${r.diem}</td>
-          <td>${r.hieuSo}</td>
-        </tr>`;
-      });
-      html += "</table>";
-      document.getElementById("ranking").innerHTML = html;
+      document.getElementById("bangDau").innerHTML = html;
     }
 
     async function main() {
       const data = await fetchData();
-      renderMatches(data);
-      const ranking = calculateRanking(data);
-      renderRanking(ranking);
+      renderTable(data);
     }
 
     main();
@@ -128,3 +88,4 @@
   </script>
 </body>
 </html>
+```
