@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -45,6 +45,21 @@
     }
     .teamA { background: #4caf50; }
     .teamB { background: #2196f3; }
+    .buttons {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-around;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: bold;
+    }
+    .btnA { background: #4caf50; }
+    .btnB { background: #2196f3; }
   </style>
 </head>
 <body>
@@ -71,35 +86,45 @@
       detailDiv.innerHTML = `
         <div class="match-info">
           <h3>Trận ${match[0]}: ${teamA} vs ${teamB}</h3>
-          <p><b>Tỷ số:</b> ${score}</p>
+          <p><b>Tỷ số ban đầu:</b> ${score}</p>
           <div class="progress">
             <span class="teamA" style="width:50%">0</span>
             <span class="teamB" style="width:50%">0</span>
           </div>
+          <div class="buttons">
+            <button class="btnA">+1 cho ${teamA}</button>
+            <button class="btnB">+1 cho ${teamB}</button>
+          </div>
         </div>
       `;
 
-      // Giả lập cập nhật tiến trình
+      // Thanh tiến trình
       const progressA = detailDiv.querySelector(".teamA");
       const progressB = detailDiv.querySelector(".teamB");
 
       let scoreA = 0, scoreB = 0;
-      setInterval(() => {
-        if (scoreA + scoreB < 10) {
-          if (Math.random() > 0.5) scoreA++;
-          else scoreB++;
 
-          const total = scoreA + scoreB || 1;
-          const percentA = (scoreA / total) * 100;
-          const percentB = (scoreB / total) * 100;
+      function updateProgress() {
+        const total = scoreA + scoreB || 1;
+        const percentA = (scoreA / total) * 100;
+        const percentB = (scoreB / total) * 100;
 
-          progressA.style.width = percentA + "%";
-          progressB.style.width = percentB + "%";
+        progressA.style.width = percentA + "%";
+        progressB.style.width = percentB + "%";
 
-          progressA.textContent = scoreA;
-          progressB.textContent = scoreB;
-        }
-      }, 1500);
+        progressA.textContent = scoreA;
+        progressB.textContent = scoreB;
+      }
+
+      detailDiv.querySelector(".btnA").addEventListener("click", () => {
+        scoreA++;
+        updateProgress();
+      });
+
+      detailDiv.querySelector(".btnB").addEventListener("click", () => {
+        scoreB++;
+        updateProgress();
+      });
     }
 
     fetch(csvURL)
@@ -129,3 +154,4 @@
   </script>
 </body>
 </html>
+```
