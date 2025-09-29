@@ -1,9 +1,9 @@
-
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Web Chấm Điểm Bảng Đấu</title>
+  <title>Kết quả Bảng Đấu</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,14 +11,14 @@
       background: #f9f9f9;
     }
     h2 {
-      margin-top: 30px;
+      margin-top: 25px;
       text-align: center;
       color: #222;
     }
     table {
       border-collapse: collapse;
       width: 100%;
-      margin: 10px auto;
+      margin: 15px auto;
       background: #fff;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
@@ -41,36 +41,33 @@
   <div id="data"></div>
 
   <script>
-    const sheetURL = "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?tqx=out:json&gid=37490152";
+    const sheetURL =
+      "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?tqx=out:json&gid=37490152";
 
     fetch(sheetURL)
       .then(res => res.text())
       .then(rep => {
         const json = JSON.parse(rep.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1]);
         const rows = json.table.rows;
-
-        let data = rows.map(r => r.c ? r.c.map(c => c ? c.v : "") : []);
+        const data = rows.map(r => r.c ? r.c.map(c => (c ? c.v : "")) : []);
 
         const container = document.getElementById("data");
-        let table = null, tbody = null;
+        let table = null;
+        let tbody = null;
 
-        data.forEach((row, idx) => {
+        data.forEach(row => {
           const nonEmpty = row.filter(x => x !== "");
 
-          // Nếu là tiêu đề bảng (ví dụ: "I Bảng A")
+          // Nếu là dòng tiêu đề bảng đấu (có chữ "Bảng")
           if (nonEmpty.length === 1 && nonEmpty[0].toString().includes("Bảng")) {
-            // Đóng bảng cũ nếu có
-            if (table) container.appendChild(table);
-
+            if (table) container.appendChild(table); // gắn bảng cũ
             const h2 = document.createElement("h2");
             h2.textContent = nonEmpty[0];
             container.appendChild(h2);
-
-            // Tạo bảng mới
             table = document.createElement("table");
             tbody = document.createElement("tbody");
           }
-          // Nếu là dòng tiêu đề cột
+          // Nếu là dòng tiêu đề cột (có "TT" hoặc "Tên VĐV")
           else if (row[0] === "TT" || row.includes("Tên VĐV")) {
             const thead = document.createElement("thead");
             const tr = document.createElement("tr");
@@ -83,7 +80,7 @@
             table.appendChild(thead);
             table.appendChild(tbody);
           }
-          // Nếu là dữ liệu
+          // Dòng dữ liệu
           else if (nonEmpty.length > 0) {
             const tr = document.createElement("tr");
             row.forEach(cell => {
@@ -95,11 +92,10 @@
           }
         });
 
-        // Gắn bảng cuối cùng
-        if (table) container.appendChild(table);
+        if (table) container.appendChild(table); // bảng cuối
       })
       .catch(err => {
-        document.getElementById("data").textContent = "❌ Lỗi tải dữ liệu. Kiểm tra quyền chia sẻ Google Sheet.";
+        document.getElementById("data").textContent = "❌ Lỗi tải dữ liệu.";
         console.error(err);
       });
   </script>
