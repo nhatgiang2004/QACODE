@@ -2,69 +2,81 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Hiển thị Google Sheet</title>
+  <title>Hiển thị Google Sheet với Checkbox</title>
   <style>
     table, th, td {
       border: 1px solid #333;
       border-collapse: collapse;
       padding: 4px;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f0;
     }
   </style>
 </head>
 <body>
-  <h1>Dữ liệu từ Google Sheets</h1>
+  <h1>Dữ liệu từ Google Sheets (có cột Chọn)</h1>
   <table id="sheetTable">
     <thead></thead>
     <tbody></tbody>
   </table>
 
   <script>
-    // URL CSV của sheet
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/export?format=csv&gid=37490152';
+    const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?gid=37490152&tqx=out:json&tq=SELECT *';
 
-    // Hàm parse CSV đơn giản (mỗi dòng tách bằng newline, mỗi cột tách bằng dấu phẩy)
-    function parseCSV(text) {
-      const rows = text.trim().split('\n');
-      return rows.map(row => {
-        // Nếu có nội dung chứa dấu phẩy trong ô, nên dùng thư viện CSV chuyên dụng
-        return row.split(',');
-      });
-    }
+    fetch(url)
+      .then(response => response.text())
+      .then(text => {
+        // Google trả về JSON trong hàm callback — cần lọc ra phần JSON thuần
+        const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}')+1);
+        const json = JSON.parse(jsonText);
 
-    fetch(sheetUrl)
-      .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
-        return response.text();
-      })
-      .then(csvText => {
-        const data = parseCSV(csvText);
+        const cols = json.table.cols;   // thông tin cột
+        const rows = json.table.rows;   // dữ liệu từng hàng
+
         const thead = document.querySelector('#sheetTable thead');
         const tbody = document.querySelector('#sheetTable tbody');
 
-        if (data.length > 0) {
-          // Header (hàng đầu)
-          const headerRow = document.createElement('tr');
-          data[0].forEach(cell => {
-            const th = document.createElement('th');
-            th.textContent = cell;
-            headerRow.appendChild(th);
-          });
-          thead.appendChild(headerRow);
+        // ===== Header =====
+        const trHead = document.createElement('tr');
 
-          // Các dòng dữ liệu tiếp theo
-          for (let i = 1; i < data.length; i++) {
-            const tr = document.createElement('tr');
-            data[i].forEach(cell => {
-              const td = document.createElement('td');
-              td.textContent = cell;
-              tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-          }
-        }
+        // Cột "Chọn" thêm vào đầu tiên
+        const thSelect = document.createElement('th');
+        thSelect.textContent = "Chọn";
+        trHead.appendChild(thSelect);
+
+        // Các cột dữ liệu gốc
+        cols.forEach(c => {
+          const th = document.createElement('th');
+          th.textContent = c.label || c.id;
+          trHead.appendChild(th);
+        });
+        thead.appendChild(trHead);
+
+        // ===== Body =====
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+
+          // Cột checkbox
+          const tdCheckbox = document.createElement('td');
+          const checkbox = document.createElement('input');
+          checkbox.type = "checkbox";
+          tdCheckbox.appendChild(checkbox);
+          tr.appendChild(tdCheckbox);
+
+          // Các ô dữ liệu
+          r.c.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = (cell && cell.v !== null && cell.v !== undefined) ? cell.v : '';
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
       })
       .catch(error => {
-        console.error('Lỗi khi lấy dữ liệu sheet:', error);
+        console.error('Lỗi khi fetch JSON:', error);
       });
   </script>
 </body>
