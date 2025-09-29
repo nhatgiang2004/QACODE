@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -8,18 +8,19 @@
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background: #f4f4f9;
+      background: #f9f9f9;
     }
     h2 {
-      margin-top: 20px;
+      margin-top: 30px;
       text-align: center;
-      color: #333;
+      color: #222;
     }
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-top: 10px;
+      margin: 10px auto;
       background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     th, td {
       border: 1px solid #ccc;
@@ -30,74 +31,60 @@
       background: #eee;
       font-weight: bold;
     }
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
   </style>
 </head>
 <body>
-  <h1 style="text-align:center;">Kết quả bảng đấu</h1>
+  <h1 style="text-align:center;">Kết quả Bảng Đấu</h1>
   <div id="data"></div>
 
   <script>
-    // Link Google Sheets: thay ID & gid nếu cần
     const sheetURL = "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?tqx=out:json&gid=37490152";
 
     fetch(sheetURL)
       .then(res => res.text())
       .then(rep => {
-        // Parse JSON từ phản hồi gviz
         const json = JSON.parse(rep.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1]);
         const rows = json.table.rows;
 
-        // Chuyển đổi rows thành mảng dữ liệu đơn giản
         let data = rows.map(r => r.c ? r.c.map(c => c ? c.v : "") : []);
 
-        let tableTitle = "";
-        let header = [];
-        let startIndex = 0;
-
-        // Tìm tiêu đề bảng (ví dụ: I Bảng A)
-        for (let i = 0; i < data.length; i++) {
-          let nonEmpty = data[i].filter(x => x !== "");
-          if (nonEmpty.length === 1 && nonEmpty[0].toString().includes("Bảng")) {
-            tableTitle = nonEmpty[0];
-            startIndex = i + 1;
-            break;
-          }
-        }
-
-        // Lấy header từ dòng kế tiếp
-        if (startIndex < data.length) {
-          header = data[startIndex];
-          startIndex++;
-        }
-
-        // Dữ liệu thực
-        let tableData = data.slice(startIndex);
-
-        // Tạo HTML
         const container = document.getElementById("data");
+        let table = null, tbody = null;
 
-        if (tableTitle) {
-          const h2 = document.createElement("h2");
-          h2.textContent = tableTitle;
-          container.appendChild(h2);
-        }
+        data.forEach((row, idx) => {
+          const nonEmpty = row.filter(x => x !== "");
 
-        const table = document.createElement("table");
-        if (header.length) {
-          const thead = document.createElement("thead");
-          const tr = document.createElement("tr");
-          header.forEach(h => {
-            const th = document.createElement("th");
-            th.textContent = h;
-            tr.appendChild(th);
-          });
-          thead.appendChild(tr);
-          table.appendChild(thead);
-        }
+          // Nếu là tiêu đề bảng (ví dụ: "I Bảng A")
+          if (nonEmpty.length === 1 && nonEmpty[0].toString().includes("Bảng")) {
+            // Đóng bảng cũ nếu có
+            if (table) container.appendChild(table);
 
-        const tbody = document.createElement("tbody");
-        tableData.forEach(row => {
-          if (row.join("").trim() !== "") {
+            const h2 = document.createElement("h2");
+            h2.textContent = nonEmpty[0];
+            container.appendChild(h2);
+
+            // Tạo bảng mới
+            table = document.createElement("table");
+            tbody = document.createElement("tbody");
+          }
+          // Nếu là dòng tiêu đề cột
+          else if (row[0] === "TT" || row.includes("Tên VĐV")) {
+            const thead = document.createElement("thead");
+            const tr = document.createElement("tr");
+            row.forEach(cell => {
+              const th = document.createElement("th");
+              th.textContent = cell;
+              tr.appendChild(th);
+            });
+            thead.appendChild(tr);
+            table.appendChild(thead);
+            table.appendChild(tbody);
+          }
+          // Nếu là dữ liệu
+          else if (nonEmpty.length > 0) {
             const tr = document.createElement("tr");
             row.forEach(cell => {
               const td = document.createElement("td");
@@ -107,12 +94,12 @@
             tbody.appendChild(tr);
           }
         });
-        table.appendChild(tbody);
 
-        container.appendChild(table);
+        // Gắn bảng cuối cùng
+        if (table) container.appendChild(table);
       })
       .catch(err => {
-        document.getElementById("data").textContent = "Không thể tải dữ liệu. Vui lòng kiểm tra quyền chia sẻ Google Sheet.";
+        document.getElementById("data").textContent = "❌ Lỗi tải dữ liệu. Kiểm tra quyền chia sẻ Google Sheet.";
         console.error(err);
       });
   </script>
