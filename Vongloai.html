@@ -1,202 +1,71 @@
-```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Danh sách cặp đấu</title>
+  <meta charset="UTF-8" />
+  <title>Hiển thị Google Sheet</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f9f9f9;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    table {
+    table, th, td {
+      border: 1px solid #333;
       border-collapse: collapse;
-      width: 100%;
-      background: #fff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 4px;
     }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 6px 10px;
-      text-align: center;
-    }
-    th {
-      background: #f1f1f1;
-    }
-    .match-info {
-      margin-top: 20px;
-      padding: 15px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    .progress {
-      margin-top: 10px;
-      height: 24px;
-      background: #eee;
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-    }
-    .progress span {
-      display: block;
-      height: 100%;
-      color: #fff;
-      text-align: center;
-      line-height: 24px;
-      font-size: 13px;
-    }
-    .teamA { background: #4caf50; }
-    .teamB { background: #2196f3; }
-    .buttons {
-      margin-top: 12px;
-      display: flex;
-      justify-content: space-around;
-    }
-    button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      color: #fff;
-      font-weight: bold;
-    }
-    .btnA { background: #4caf50; }
-    .btnB { background: #2196f3; }
-    .btnReset { background: #f44336; }
   </style>
 </head>
 <body>
-  <h1>Danh sách cặp đấu</h1>
-
-  <table id="matchesTable">
-    <thead>
-      <tr>
-        <th>Chọn</th>
-        <th>Trận</th>
-        <th>Đôi A</th>
-        <th>vs</th>
-        <th>Đôi B</th>
-        <th>Tỷ số</th>
-      </tr>
-    </thead>
+  <h1>Dữ liệu từ Google Sheets</h1>
+  <table id="sheetTable">
+    <thead></thead>
     <tbody></tbody>
   </table>
 
-  <div id="matchDetail"></div>
-
   <script>
-    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8Yo2g9wRCVZ26SLi6M2hHTvVZ6TDRe7GVKyq02lYfthxzxnM4QnBq2gYZ48I7oT7kjEYqkM9bpmYrk/pub?gid=37490152&single=true&output=csv";
-    let matches = [];
+    // URL CSV của sheet
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/export?format=csv&gid=37490152';
 
-    function renderMatch(matchIndex) {
-      const match = matches[matchIndex];
-      if (!match) return;
-
-      const teamA = match[2] || "";
-      const teamB = match[4] || "";
-      const score = match[5] || "";
-
-      const detailDiv = document.getElementById("matchDetail");
-      detailDiv.innerHTML = `
-        <div class="match-info">
-          <h3>Trận ${match[0]}: ${teamA} vs ${teamB}</h3>
-          <p><b>Tỷ số ban đầu:</b> ${score}</p>
-          <div class="progress">
-            <span class="teamA" style="width:50%">0</span>
-            <span class="teamB" style="width:50%">0</span>
-          </div>
-          <div class="buttons">
-            <button class="btnA">+1 cho ${teamA}</button>
-            <button class="btnB">+1 cho ${teamB}</button>
-            <button class="btnReset">Reset</button>
-          </div>
-        </div>
-      `;
-
-      const progressA = detailDiv.querySelector(".teamA");
-      const progressB = detailDiv.querySelector(".teamB");
-
-      let scoreA = 0, scoreB = 0;
-
-      function updateProgress() {
-        const total = scoreA + scoreB || 1;
-        const percentA = (scoreA / total) * 100;
-        const percentB = (scoreB / total) * 100;
-
-        progressA.style.width = percentA + "%";
-        progressB.style.width = percentB + "%";
-
-        progressA.textContent = scoreA;
-        progressB.textContent = scoreB;
-      }
-
-      detailDiv.querySelector(".btnA").addEventListener("click", () => {
-        scoreA++;
-        updateProgress();
-      });
-
-      detailDiv.querySelector(".btnB").addEventListener("click", () => {
-        scoreB++;
-        updateProgress();
-      });
-
-      detailDiv.querySelector(".btnReset").addEventListener("click", () => {
-        scoreA = 0;
-        scoreB = 0;
-        updateProgress();
+    // Hàm parse CSV đơn giản (mỗi dòng tách bằng newline, mỗi cột tách bằng dấu phẩy)
+    function parseCSV(text) {
+      const rows = text.trim().split('\n');
+      return rows.map(row => {
+        // Nếu có nội dung chứa dấu phẩy trong ô, nên dùng thư viện CSV chuyên dụng
+        return row.split(',');
       });
     }
 
-    fetch(csvURL)
-      .then(res => res.text())
-      .then(csv => {
-        const rows = csv.split("\n").map(r => r.split(","));
-        matches = rows.filter(r => r[0] && !isNaN(r[0])); // lọc các dòng có số TT
-
-        const tbody = document.querySelector("#matchesTable tbody");
-        tbody.innerHTML = "";
-
-        matches.forEach((match, i) => {
-          const tr = document.createElement("tr");
-
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.addEventListener("change", () => {
-            if (checkbox.checked) {
-              renderMatch(i);
-              // Bỏ chọn checkbox khác để chỉ chọn 1 trận tại 1 thời điểm
-              document.querySelectorAll("#matchesTable input[type=checkbox]").forEach(cb => {
-                if (cb !== checkbox) cb.checked = false;
-              });
-            } else {
-              document.getElementById("matchDetail").innerHTML = "";
-            }
-          });
-
-          tr.innerHTML = `
-            <td></td>
-            <td>${match[0]}</td>
-            <td>${match[2]}</td>
-            <td>x</td>
-            <td>${match[4]}</td>
-            <td>${match[5] || ""}</td>
-          `;
-          tr.cells[0].appendChild(checkbox);
-
-          tbody.appendChild(tr);
-        });
+    fetch(sheetUrl)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.text();
       })
-      .catch(err => {
-        document.querySelector("#matchesTable tbody").innerHTML = `<tr><td colspan="6">❌ Lỗi tải dữ liệu</td></tr>`;
-        console.error(err);
+      .then(csvText => {
+        const data = parseCSV(csvText);
+        const thead = document.querySelector('#sheetTable thead');
+        const tbody = document.querySelector('#sheetTable tbody');
+
+        if (data.length > 0) {
+          // Header (hàng đầu)
+          const headerRow = document.createElement('tr');
+          data[0].forEach(cell => {
+            const th = document.createElement('th');
+            th.textContent = cell;
+            headerRow.appendChild(th);
+          });
+          thead.appendChild(headerRow);
+
+          // Các dòng dữ liệu tiếp theo
+          for (let i = 1; i < data.length; i++) {
+            const tr = document.createElement('tr');
+            data[i].forEach(cell => {
+              const td = document.createElement('td');
+              td.textContent = cell;
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Lỗi khi lấy dữ liệu sheet:', error);
       });
   </script>
 </body>
 </html>
-```
