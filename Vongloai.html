@@ -2,21 +2,26 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Hiển thị Google Sheet với Checkbox</title>
+  <title>Bảng đấu từ Google Sheet</title>
   <style>
-    table, th, td {
+    table {
       border: 1px solid #333;
       border-collapse: collapse;
-      padding: 4px;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 6px;
       text-align: center;
     }
-    th {
+    thead th {
       background: #f0f0f0;
+      font-weight: bold;   /* chữ đậm */
     }
   </style>
 </head>
 <body>
-  <h1>Dữ liệu từ Google Sheets (có cột Chọn)</h1>
+  <h1>Bảng đấu (dữ liệu từ Google Sheets)</h1>
   <table id="sheetTable">
     <thead></thead>
     <tbody></tbody>
@@ -28,12 +33,11 @@
     fetch(url)
       .then(response => response.text())
       .then(text => {
-        // Google trả về JSON trong hàm callback — cần lọc ra phần JSON thuần
         const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}')+1);
         const json = JSON.parse(jsonText);
 
-        const cols = json.table.cols;   // thông tin cột
-        const rows = json.table.rows;   // dữ liệu từng hàng
+        const cols = json.table.cols;
+        const rows = json.table.rows;
 
         const thead = document.querySelector('#sheetTable thead');
         const tbody = document.querySelector('#sheetTable tbody');
@@ -41,12 +45,12 @@
         // ===== Header =====
         const trHead = document.createElement('tr');
 
-        // Cột "Chọn" thêm vào đầu tiên
+        // Cột "Chọn"
         const thSelect = document.createElement('th');
         thSelect.textContent = "Chọn";
         trHead.appendChild(thSelect);
 
-        // Các cột dữ liệu gốc
+        // Các cột dữ liệu từ sheet
         cols.forEach(c => {
           const th = document.createElement('th');
           th.textContent = c.label || c.id;
@@ -58,14 +62,14 @@
         rows.forEach(r => {
           const tr = document.createElement('tr');
 
-          // Cột checkbox
+          // Checkbox
           const tdCheckbox = document.createElement('td');
           const checkbox = document.createElement('input');
           checkbox.type = "checkbox";
           tdCheckbox.appendChild(checkbox);
           tr.appendChild(tdCheckbox);
 
-          // Các ô dữ liệu
+          // Dữ liệu từng ô
           r.c.forEach(cell => {
             const td = document.createElement('td');
             td.textContent = (cell && cell.v !== null && cell.v !== undefined) ? cell.v : '';
