@@ -3,116 +3,127 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Web Chấm Điểm Bảng Đấu</title>
+  <title>Chọn & Theo dõi Cặp Đấu</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background: #f4f4f9;
+      background: #f9f9f9;
     }
-    h2 {
-      margin-top: 20px;
+    h1 {
       text-align: center;
-      color: #333;
+      margin-bottom: 20px;
     }
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-top: 10px;
-      background: #fff;
+    select {
+      padding: 6px;
+      margin: 10px 0;
+      font-size: 14px;
     }
-    th, td {
+    .match-info {
       border: 1px solid #ccc;
-      padding: 6px 10px;
-      text-align: center;
+      border-radius: 8px;
+      background: #fff;
+      padding: 15px;
+      margin: 15px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    th {
+    .progress {
+      margin-top: 10px;
+      height: 24px;
       background: #eee;
-      font-weight: bold;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
     }
+    .progress span {
+      display: block;
+      height: 100%;
+      color: #fff;
+      text-align: center;
+      line-height: 24px;
+      font-size: 13px;
+    }
+    .teamA { background: #4caf50; }
+    .teamB { background: #2196f3; }
   </style>
 </head>
 <body>
-  <h1 style="text-align:center;">Kết quả bảng đấu</h1>
-  <div id="data"></div>
+  <h1>Chọn & Theo dõi Cặp Đấu</h1>
+
+  <label for="matchSelect">Chọn trận đấu:</label>
+  <select id="matchSelect"></select>
+
+  <div id="matchDetail"></div>
 
   <script>
-    // Link Google Sheets: thay ID & gid nếu cần
-    const sheetURL = "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?tqx=out:json&gid=37490152";
+    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8Yo2g9wRCVZ26SLi6M2hHTvVZ6TDRe7GVKyq02lYfthxzxnM4QnBq2gYZ48I7oT7kjEYqkM9bpmYrk/pub?gid=37490152&single=true&output=csv";
+    let matches = [];
 
-    fetch(sheetURL)
+    function renderMatch(matchIndex) {
+      const match = matches[matchIndex];
+      if (!match) return;
+
+      const teamA = match[2] || "";
+      const teamB = match[4] || "";
+      const score = match[5] || "";
+
+      const detailDiv = document.getElementById("matchDetail");
+      detailDiv.innerHTML = `
+        <div class="match-info">
+          <h3>Trận ${match[0]}: ${teamA} vs ${teamB}</h3>
+          <p><b>Tỷ số:</b> ${score}</p>
+          <div class="progress">
+            <span class="teamA" style="width:50%">0</span>
+            <span class="teamB" style="width:50%">0</span>
+          </div>
+        </div>
+      `;
+
+      // Giả lập cập nhật tiến trình
+      const progressA = detailDiv.querySelector(".teamA");
+      const progressB = detailDiv.querySelector(".teamB");
+
+      let scoreA = 0, scoreB = 0;
+      setInterval(() => {
+        if (scoreA + scoreB < 10) {
+          if (Math.random() > 0.5) scoreA++;
+          else scoreB++;
+
+          const total = scoreA + scoreB || 1;
+          const percentA = (scoreA / total) * 100;
+          const percentB = (scoreB / total) * 100;
+
+          progressA.style.width = percentA + "%";
+          progressB.style.width = percentB + "%";
+
+          progressA.textContent = scoreA;
+          progressB.textContent = scoreB;
+        }
+      }, 1500);
+    }
+
+    fetch(csvURL)
       .then(res => res.text())
-      .then(rep => {
-        // Parse JSON từ phản hồi gviz
-        const json = JSON.parse(rep.match(/google\.visualization\.Query\.setResponse\((.*)\)/s)[1]);
-        const rows = json.table.rows;
+      .then(csv => {
+        const rows = csv.split("\n").map(r => r.split(","));
+        matches = rows.filter(r => r[0] && !isNaN(r[0])); // lọc các dòng có số TT
 
-        // Chuyển đổi rows thành mảng dữ liệu đơn giản
-        let data = rows.map(r => r.c ? r.c.map(c => c ? c.v : "") : []);
-
-        let tableTitle = "";
-        let header = [];
-        let startIndex = 0;
-
-        // Tìm tiêu đề bảng (ví dụ: I Bảng A)
-        for (let i = 0; i < data.length; i++) {
-          let nonEmpty = data[i].filter(x => x !== "");
-          if (nonEmpty.length === 1 && nonEmpty[0].toString().includes("Bảng")) {
-            tableTitle = nonEmpty[0];
-            startIndex = i + 1;
-            break;
-          }
-        }
-
-        // Lấy header từ dòng kế tiếp
-        if (startIndex < data.length) {
-          header = data[startIndex];
-          startIndex++;
-        }
-
-        // Dữ liệu thực
-        let tableData = data.slice(startIndex);
-
-        // Tạo HTML
-        const container = document.getElementById("data");
-
-        if (tableTitle) {
-          const h2 = document.createElement("h2");
-          h2.textContent = tableTitle;
-          container.appendChild(h2);
-        }
-
-        const table = document.createElement("table");
-        if (header.length) {
-          const thead = document.createElement("thead");
-          const tr = document.createElement("tr");
-          header.forEach(h => {
-            const th = document.createElement("th");
-            th.textContent = h;
-            tr.appendChild(th);
-          });
-          thead.appendChild(tr);
-          table.appendChild(thead);
-        }
-
-        const tbody = document.createElement("tbody");
-        tableData.forEach(row => {
-          if (row.join("").trim() !== "") {
-            const tr = document.createElement("tr");
-            row.forEach(cell => {
-              const td = document.createElement("td");
-              td.textContent = cell;
-              tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-          }
+        const select = document.getElementById("matchSelect");
+        matches.forEach((match, i) => {
+          const opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = `Trận ${match[0]}: ${match[2]} vs ${match[4]}`;
+          select.appendChild(opt);
         });
-        table.appendChild(tbody);
 
-        container.appendChild(table);
+        select.addEventListener("change", e => {
+          renderMatch(e.target.value);
+        });
+
+        if (matches.length > 0) renderMatch(0);
       })
       .catch(err => {
-        document.getElementById("data").textContent = "Không thể tải dữ liệu. Vui lòng kiểm tra quyền chia sẻ Google Sheet.";
+        document.getElementById("matchDetail").textContent = "❌ Lỗi tải dữ liệu.";
         console.error(err);
       });
   </script>
