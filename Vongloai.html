@@ -1,9 +1,9 @@
-
+```html
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Chọn & Theo dõi Cặp Đấu</title>
+  <title>Danh sách cặp đấu</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,18 +14,26 @@
       text-align: center;
       margin-bottom: 20px;
     }
-    select {
-      padding: 6px;
-      margin: 10px 0;
-      font-size: 14px;
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    th {
+      background: #f1f1f1;
     }
     .match-info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
       border: 1px solid #ccc;
       border-radius: 8px;
-      background: #fff;
-      padding: 15px;
-      margin: 15px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .progress {
       margin-top: 10px;
@@ -64,12 +72,21 @@
   </style>
 </head>
 <body>
-  <h1>Chọn & Theo dõi Cặp Đấu</h1>
+  <h1>Danh sách cặp đấu</h1>
 
-  <label for="matchSelect">Chọn trận đấu:</label>
-  <select id="matchSelect">
-    <option disabled selected>-- Đang tải dữ liệu... --</option>
-  </select>
+  <table id="matchesTable">
+    <thead>
+      <tr>
+        <th>Chọn</th>
+        <th>Trận</th>
+        <th>Đôi A</th>
+        <th>vs</th>
+        <th>Đôi B</th>
+        <th>Tỷ số</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
   <div id="matchDetail"></div>
 
@@ -142,33 +159,44 @@
         const rows = csv.split("\n").map(r => r.split(","));
         matches = rows.filter(r => r[0] && !isNaN(r[0])); // lọc các dòng có số TT
 
-        const select = document.getElementById("matchSelect");
-        select.innerHTML = ""; // xóa option mặc định
-
-        if (matches.length === 0) {
-          select.innerHTML = `<option disabled>❌ Không có dữ liệu trận đấu</option>`;
-          return;
-        }
+        const tbody = document.querySelector("#matchesTable tbody");
+        tbody.innerHTML = "";
 
         matches.forEach((match, i) => {
-          const opt = document.createElement("option");
-          opt.value = i;
-          opt.textContent = `Trận ${match[0]}: ${match[2]} vs ${match[4]}`;
-          select.appendChild(opt);
-        });
+          const tr = document.createElement("tr");
 
-        select.selectedIndex = 0;
-        renderMatch(0);
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.addEventListener("change", () => {
+            if (checkbox.checked) {
+              renderMatch(i);
+              // Bỏ chọn checkbox khác để chỉ chọn 1 trận tại 1 thời điểm
+              document.querySelectorAll("#matchesTable input[type=checkbox]").forEach(cb => {
+                if (cb !== checkbox) cb.checked = false;
+              });
+            } else {
+              document.getElementById("matchDetail").innerHTML = "";
+            }
+          });
 
-        select.addEventListener("change", e => {
-          renderMatch(e.target.value);
+          tr.innerHTML = `
+            <td></td>
+            <td>${match[0]}</td>
+            <td>${match[2]}</td>
+            <td>x</td>
+            <td>${match[4]}</td>
+            <td>${match[5] || ""}</td>
+          `;
+          tr.cells[0].appendChild(checkbox);
+
+          tbody.appendChild(tr);
         });
       })
       .catch(err => {
-        document.getElementById("matchDetail").textContent = "❌ Lỗi tải dữ liệu.";
+        document.querySelector("#matchesTable tbody").innerHTML = `<tr><td colspan="6">❌ Lỗi tải dữ liệu</td></tr>`;
         console.error(err);
       });
   </script>
 </body>
 </html>
-
+```
