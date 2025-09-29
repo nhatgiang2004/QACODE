@@ -14,7 +14,7 @@
     }
     h2 {
       text-align: center;
-      margin-bottom: 10px;
+      margin: 10px 0;
     }
     table {
       border-collapse: collapse;
@@ -36,10 +36,9 @@
 </head>
 <body>
   <h2 id="tenBang"></h2>
-  <div id="bangDau"></div>
+  <div id="matches"></div>
 
   <script>
-    // Link sheet của bạn với gid=37490152
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?gid=37490152";
 
     async function fetchData() {
@@ -50,32 +49,30 @@
     }
 
     function renderTable(data) {
-      if (!data || data.length === 0) return;
+      if (data.length < 2) return;
 
-      // Dòng đầu tiên = tên bảng đấu
-      document.getElementById("tenBang").innerText = data[0][0] || "Bảng đấu";
+      // Dòng đầu tiên là tên bảng
+      document.getElementById("tenBang").innerText = data[0][0];
 
-      // Dòng thứ 2 = tiêu đề cột
-      let header = data[1];
-
+      // Dòng 2 là header
+      let headers = data[1];
       let html = "<table><tr>";
-      header.forEach(col => {
-        html += `<th>${col}</th>`;
+      headers.forEach(h => {
+        html += `<th>${h}</th>`;
       });
       html += "</tr>";
 
-      // Các dòng tiếp theo = dữ liệu
-      data.slice(2).forEach(row => {
-        if (row.every(cell => cell === "")) return; // bỏ dòng trống
+      // Các dòng còn lại là dữ liệu
+      for (let i = 2; i < data.length; i++) {
         html += "<tr>";
-        row.forEach(cell => {
+        data[i].forEach(cell => {
           html += `<td>${cell}</td>`;
         });
         html += "</tr>";
-      });
-
+      }
       html += "</table>";
-      document.getElementById("bangDau").innerHTML = html;
+
+      document.getElementById("matches").innerHTML = html;
     }
 
     async function main() {
