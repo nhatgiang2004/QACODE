@@ -41,8 +41,8 @@
   <div id="data"></div>
 
   <script>
-    // Thay link này bằng link CSV khi bạn publish sheet
-    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-xxxxx/pub?gid=37490152&single=true&output=csv";
+    // Link CSV: phải publish sheet ở chế độ "Anyone with link" và lấy link xuất CSV
+    const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8Yo2g9wRCVZ26SLi6M2hHTvVZ6TDRe7GVKyq02lYfthxzxnM4QnBq2gYZ48I7oT7kjEYqkM9bpmYrk/pub?gid=37490152&single=true&output=csv";
 
     fetch(csvURL)
       .then(res => res.text())
@@ -55,7 +55,7 @@
         rows.forEach(row => {
           const nonEmpty = row.filter(x => x.trim() !== "");
 
-          // Nếu là dòng tiêu đề bảng (có chữ "Bảng")
+          // Nếu là dòng tên bảng (có chữ "Bảng")
           if (nonEmpty.length === 1 && nonEmpty[0].includes("Bảng")) {
             if (table) container.appendChild(table);
             const h2 = document.createElement("h2");
@@ -68,7 +68,7 @@
           else if (row[0] === "TT" || row.includes("Tên VĐV")) {
             const thead = document.createElement("thead");
             const tr = document.createElement("tr");
-            row.forEach(cell => {
+            row.slice(0,7).forEach(cell => { // chỉ lấy cột A–G
               const th = document.createElement("th");
               th.textContent = cell;
               tr.appendChild(th);
@@ -80,7 +80,7 @@
           // Nếu là dữ liệu
           else if (nonEmpty.length > 0) {
             const tr = document.createElement("tr");
-            row.forEach(cell => {
+            row.slice(0,7).forEach(cell => {
               const td = document.createElement("td");
               td.textContent = cell;
               tr.appendChild(td);
@@ -92,7 +92,7 @@
         if (table) container.appendChild(table);
       })
       .catch(err => {
-        document.getElementById("data").textContent = "❌ Lỗi tải CSV.";
+        document.getElementById("data").textContent = "❌ Lỗi tải CSV. Kiểm tra quyền chia sẻ Sheet.";
         console.error(err);
       });
   </script>
