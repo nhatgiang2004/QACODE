@@ -18,7 +18,7 @@
       font-size: 14px;
     }
     td {
-      border: 1px solid #ccc; /* viền xám nhạt */
+      border: 1px solid #ccc;
       padding: 4px 6px;
       vertical-align: middle;
     }
@@ -45,22 +45,29 @@
       width: 45px;
     }
     .col4 {
-       background: #FFD700;
+      background: #FFD700;
       color: black;
       font-size: 16px;
       text-align: center;
       width: 45px;
     }
-    /* Dòng 3: chỉ ô dữ liệu cột 2+3 */
-.row3 td.data {
-  background: #2E8B57;
-  color: #FFFFFF;
-  font-size: 16px;
-  text-align: center;
-  font-weight: bold;
-  padding: 4px 6px;
-}
 
+    /* Bỏ kẻ viền ngang (trên và dưới) của cột 4 dòng 1 và 2 */
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: none;
+      border-bottom: none;
+    }
+
+    /* Dòng 3 */
+    .row3 td.data {
+      background: #2E8B57;
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+      padding: 4px 6px;
+    }
   </style>
 </head>
 <body>
@@ -103,19 +110,17 @@
       });
       html += '</tr>';
 
-// Dòng 3 – gộp tất cả thành 1 ô
-const val2 = table.rows[2].c[1] && table.rows[2].c[1].v ? table.rows[2].c[1].v : "";
-const val3 = table.rows[2].c[2] && table.rows[2].c[2].v ? table.rows[2].c[2].v : "";
-const val4 = table.rows[2].c[3] && table.rows[2].c[3].v ? table.rows[2].c[3].v : "";
-const val5 = table.rows[2].c[4] && table.rows[2].c[4].v ? table.rows[2].c[4].v : "";
+      // Dòng 3
+      const val2 = table.rows[2].c[1]?.v || "";
+      const val3 = table.rows[2].c[2]?.v || "";
+      const val4 = table.rows[2].c[3]?.v || "";
+      const val5 = table.rows[2].c[4]?.v || "";
 
-html += `<tr class="row3">
-           <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
-         </tr>`;
-
+      html += `<tr class="row3">
+                 <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
+               </tr>`;
 
       html += '</table>';
-
       document.getElementById('table').innerHTML = html;
     }
 
