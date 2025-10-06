@@ -52,14 +52,15 @@
       width: 45px;
     }
     /* Dòng 3: chỉ ô dữ liệu cột 2+3 */
-    .row3 td.data {
-      background: #2E8B57;
-      color: #FFFFFF;
-      font-size: 16px;
-      text-align: center;
-      font-weight: bold;
-      padding: 4px 6px;
-    }
+.row3 td.data {
+  background: #2E8B57;
+  color: #FFFFFF;
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+  padding: 4px 6px;
+}
+
   </style>
 </head>
 <body>
@@ -102,12 +103,17 @@
       });
       html += '</tr>';
 
-      // Dòng 3 – bỏ logo và cột 4, gộp cột 2+3
-      const val2 = table.rows[2].c[1] && table.rows[2].c[1].v ? table.rows[2].c[1].v : "";
-      const val3 = table.rows[2].c[2] && table.rows[2].c[2].v ? table.rows[2].c[2].v : "";
-      html += `<tr class="row3">
-                 <td class="data" colspan="3">${val2} ${val3}</td>
-               </tr>`;
+ // Dòng 3 – bỏ logo, gộp cột 2+3+4 và thêm 1 cột ngoài cùng
+const val2 = table.rows[2].c[1] && table.rows[2].c[1].v ? table.rows[2].c[1].v : "";
+const val3 = table.rows[2].c[2] && table.rows[2].c[2].v ? table.rows[2].c[2].v : "";
+const val4 = table.rows[2].c[3] && table.rows[2].c[3].v ? table.rows[2].c[3].v : "";
+const val5 = table.rows[2].c[4] && table.rows[2].c[4].v ? table.rows[2].c[4].v : "";
+
+html += `<tr class="row3">
+           <td class="data" colspan="3">${val2} ${val3} ${val4}</td>
+           <td class="data">${val5}</td>
+         </tr>`;
+
 
       html += '</table>';
 
