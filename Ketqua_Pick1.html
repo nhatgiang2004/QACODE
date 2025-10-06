@@ -103,15 +103,14 @@
       });
       html += '</tr>';
 
- // Dòng 3 – bỏ logo, gộp cột 2+3+4 và thêm 1 cột ngoài cùng
+// Dòng 3 – gộp tất cả thành 1 ô
 const val2 = table.rows[2].c[1] && table.rows[2].c[1].v ? table.rows[2].c[1].v : "";
 const val3 = table.rows[2].c[2] && table.rows[2].c[2].v ? table.rows[2].c[2].v : "";
 const val4 = table.rows[2].c[3] && table.rows[2].c[3].v ? table.rows[2].c[3].v : "";
 const val5 = table.rows[2].c[4] && table.rows[2].c[4].v ? table.rows[2].c[4].v : "";
 
 html += `<tr class="row3">
-           <td class="data" colspan="3">${val2} ${val3} ${val4}</td>
-           <td class="data">${val5}</td>
+           <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
          </tr>`;
 
 
