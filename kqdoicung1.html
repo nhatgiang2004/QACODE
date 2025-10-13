@@ -1,115 +1,149 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Pickleball Trực tiếp</title>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    font-family: 'Lexend', sans-serif;
-    font-weight: 600;
-  }
+  <meta charset="UTF-8">
+  <title>Trực tiếp Pickleball</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: 600;
+    }
 
-  .scoreboard {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    text-align: center;
-  }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+    }
 
-  /* Thanh trên */
-  .live {
-    background-color: #28a745;
-    color: #fff;
-    font-size: 18px;
-    text-transform: uppercase;
-    padding: 6px 0;
-  }
+    /* --- Thanh TRỰC TIẾP --- */
+    .live {
+      background-color: #28a745;
+      color: white;
+      text-transform: uppercase;
+      text-align: center;
+      font-size: 18px;
+      padding: 6px 0;
+    }
 
-  /* Thanh giữa */
-  .title {
-    background-color: #555;
-    color: #fff;
-    font-size: 16px;
-    padding: 4px 0;
-    text-transform: uppercase;
-  }
+    /* --- Thanh PICKLEBALL CHALLENGE --- */
+    .title {
+      background-color: #555;
+      color: white;
+      text-transform: uppercase;
+      text-align: center;
+      font-size: 16px;
+      padding: 4px 0;
+    }
 
-  /* Hàng chính hiển thị đội và tỉ số */
-  .match {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #fff;
-    padding: 6px 12px;
-  }
+    /* --- Dòng chính hiển thị trận đấu --- */
+    .match {
+      background: #fff;
+      text-align: center;
+    }
 
-  .team {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    color: #FF8C00;
-    font-size: 20px;
-    text-transform: uppercase;
-  }
+    .logo {
+      width: 80px;
+      height: 80px;
+      text-align: center;
+    }
 
-  .team span {
-    text-align: center;
-    display: block;
-  }
+    .logo img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+    }
 
-  .logo {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-  }
+    .team {
+      color: #FF8C00;
+      text-transform: uppercase;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+      padding: 6px;
+    }
 
-  .score {
-    font-size: 40px;
-    font-weight: 700;
-    color: #8B0000;
-    width: 60px;
-    text-align: center;
-  }
+    .vs {
+      color: #FF8C00;
+      font-size: 20px;
+      font-weight: 700;
+      padding: 0 8px;
+    }
 
-  .vs {
-    font-size: 22px;
-    color: #FF8C00;
-    margin: 0 10px;
-  }
+    .score {
+      font-size: 36px;
+      color: #8B0000;
+      font-weight: 700;
+      text-align: center;
+      width: 60px;
+    }
 
-  .red-dot {
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    border-radius: 50%;
-    display: inline-block;
-    margin-left: 4px;
-  }
-
-</style>
+    .dot {
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+      margin: auto;
+    }
+  </style>
 </head>
 <body>
-  <div class="scoreboard">
-    <div class="live">TRỰC TIẾP</div>
-    <div class="title">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+  <div id="table"></div>
 
-    <div class="match">
-      <img class="logo" src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="Logo 1">
-      <div class="score">1</div>
-      <div class="team">
-        <span>DUNG ĐOÀN 2.0 - NGUYỄN HẢI 2.0</span>
-        <span class="vs">VS</span>
-        <span>HIỆP BÓNG BÀN - TÌNH CẦU LÔNG</span>
-      </div>
-      <div class="score">3</div>
-      <img class="logo" src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="Logo 2">
-      <div class="red-dot"></div>
-    </div>
-  </div>
+  <script>
+    function fetchData() {
+      const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
+
+      fetch(url)
+        .then(res => res.text())
+        .then(rep => {
+          const json = JSON.parse(rep.substring(47, rep.length - 2));
+          renderTable(json.table);
+        })
+        .catch(err => {
+          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+        });
+    }
+
+    function renderTable(table) {
+      if (!table.rows || table.rows.length < 3) return;
+
+      const valLive = "TRỰC TIẾP";
+      const valTitle = table.rows[0].c[1]?.v || "PICKLEBALL CHICKENBAY CHALLENGE 2025";
+      const teamLeft = table.rows[2].c[1]?.v || "Đội A";
+      const teamRight = table.rows[2].c[3]?.v || "Đội B";
+      const scoreLeft = table.rows[2].c[0]?.v || "0";
+      const scoreRight = table.rows[2].c[4]?.v || "0";
+
+      let html = `
+        <table>
+          <tr><td colspan="7" class="live">${valLive}</td></tr>
+          <tr><td colspan="7" class="title">${valTitle}</td></tr>
+
+          <tr class="match">
+            <td class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg"></td>
+            <td class="score">${scoreLeft}</td>
+            <td colspan="3" class="team">
+              ${teamLeft} <span class="vs">VS</span> ${teamRight}
+            </td>
+            <td class="score">${scoreRight}</td>
+            <td class="logo">
+              <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">
+              <div class="dot"></div>
+            </td>
+          </tr>
+        </table>
+      `;
+
+      document.getElementById('table').innerHTML = html;
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
 </body>
 </html>
