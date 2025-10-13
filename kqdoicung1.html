@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trực tiếp Pickleball - Sân 1 Đội Cung </title>
+  <title>Trực tiếp Pickleball</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -20,7 +20,6 @@
       margin: auto;
     }
 
-    /* --- Thanh TRỰC TIẾP --- */
     .live {
       background-color: #28a745;
       color: white;
@@ -30,7 +29,6 @@
       padding: 6px 0;
     }
 
-    /* --- Thanh PICKLEBALL CHALLENGE --- */
     .title {
       background-color: #555;
       color: white;
@@ -40,7 +38,6 @@
       padding: 4px 0;
     }
 
-    /* --- Dòng chính hiển thị trận đấu --- */
     .match {
       background: #fff;
       text-align: center;
@@ -96,34 +93,37 @@
 
   <script>
     function fetchData() {
-      const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
+      const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?gid=1034622929';
 
       fetch(url)
         .then(res => res.text())
         .then(rep => {
           const json = JSON.parse(rep.substring(47, rep.length - 2));
+          console.log(json.table);  // kiểm tra dữ liệu ra console
           renderTable(json.table);
         })
         .catch(err => {
-          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu: " + err;
         });
     }
 
     function renderTable(table) {
-      if (!table.rows || table.rows.length < 3) return;
+      if (!table.rows || table.rows.length < 3) {
+        document.getElementById('table').innerHTML = "Chưa có dữ liệu đủ";
+        return;
+      }
 
-      const valLive = "TRỰC TIẾP";
-      const valTitle = table.rows[0].c[1]?.v || "PICKLEBALL CHICKENBAY CHALLENGE 2025";
-      const teamLeft = table.rows[2].c[1]?.v || "Đội A";
-      const teamRight = table.rows[2].c[3]?.v || "Đội B";
-      const scoreLeft = table.rows[2].c[0]?.v || "0";
-      const scoreRight = table.rows[2].c[4]?.v || "0";
+      // Lấy dữ liệu
+      const title = table.rows[0].c[1]?.v || "TITLE";
+      const teamLeft = table.rows[1].c[1]?.v || "";
+      const teamRight = table.rows[1].c[3]?.v || "";
+      const scoreLeft = table.rows[1].c[0]?.v || "";
+      const scoreRight = table.rows[1].c[4]?.v || "";
 
       let html = `
         <table>
-          <tr><td colspan="7" class="live">${valLive}</td></tr>
-          <tr><td colspan="7" class="title">${valTitle}</td></tr>
-
+          <tr><td colspan="7" class="live">TRỰC TIẾP</td></tr>
+          <tr><td colspan="7" class="title">${title}</td></tr>
           <tr class="match">
             <td class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg"></td>
             <td class="score">${scoreLeft}</td>
