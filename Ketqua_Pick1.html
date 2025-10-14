@@ -16,6 +16,9 @@
       border-collapse: collapse;
       width: 470px;
       font-size: 14px;
+      border-radius: 15px;              /* 🎯 Bo tròn 4 góc bảng */
+      overflow: hidden;                 /* Giúp bo góc hiển thị đúng */
+      border: 2px solid #ccc;           /* Viền ngoài tổng thể */
     }
     td {
       border: 1px solid #ccc;
@@ -83,7 +86,7 @@
           const json = JSON.parse(rep.substring(47, rep.length - 2));
           renderTable(json.table);
         })
-        .catch(err => {
+        .catch(() => {
           document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
         });
     }
@@ -99,14 +102,14 @@
       // Dòng 1
       table.rows[0].c.slice(1).forEach((cell, i) => {
         let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
       });
       html += '</tr><tr>';
 
       // Dòng 2
       table.rows[1].c.slice(1).forEach((cell, i) => {
         let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
       });
       html += '</tr>';
 
