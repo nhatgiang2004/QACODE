@@ -1,29 +1,145 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Test Sheet</title>
+  <meta charset="UTF-8">
+  <title>Kết quả - Lò Chum - Sân 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: bold;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 760px;
+      font-size: 16px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: none;
+    }
+
+    td {
+      padding: 4px 8px;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    /* Dòng 1: VÒNG LOẠI */
+    .vongloai {
+      background: #28a745;
+      color: white;
+      font-size: 22px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      height: 40px;
+    }
+
+    /* Dòng 2: Tên giải */
+    .tengiai {
+      background: #555;
+      color: white;
+      font-size: 20px;
+      text-transform: uppercase;
+      height: 40px;
+    }
+
+    /* Dòng 3: Kết quả thi đấu */
+    .ketqua {
+      background: white;
+      font-size: 20px;
+      font-weight: bold;
+      height: 70px;
+    }
+
+    .team {
+      color: #FF8C00;
+      text-transform: uppercase;
+      width: 300px;
+    }
+
+    .score {
+      color: #a40000;
+      font-size: 48px;
+      font-weight: bold;
+      width: 60px;
+    }
+
+    .vs {
+      width: 100px;
+    }
+
+    .logo {
+      width: 100px;
+    }
+
+    .logo img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+    }
+
+    .dot {
+      font-size: 36px;
+    }
+  </style>
 </head>
 <body>
-  <h3>Kết quả đọc dữ liệu từ Sheet</h3>
-  <pre id="out">Đang tải...</pre>
+  <div id="table"></div>
 
   <script>
-  const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
-
-  fetch(url)
-    .then(res => res.text())
-    .then(text => {
+    async function fetchData() {
+      const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
       try {
+        const res = await fetch(url);
+        const text = await res.text();
         const json = JSON.parse(text.substring(47, text.length - 2));
-        document.getElementById("out").textContent = JSON.stringify(json.table.rows, null, 2);
-      } catch (e) {
-        document.getElementById("out").textContent = "❌ Không đọc được JSON. Dữ liệu trả về:\n\n" + text;
+        renderTable(json.table.rows);
+      } catch (err) {
+        document.getElementById("table").innerHTML = "❌ Không tải được dữ liệu";
       }
-    })
-    .catch(err => {
-      document.getElementById("out").textContent = "❌ Lỗi tải dữ liệu: " + err;
-    });
+    }
+
+    function renderTable(rows) {
+      if (!rows || rows.length < 3) {
+        document.getElementById("table").innerHTML = "⚠️ Thiếu dữ liệu hiển thị";
+        return;
+      }
+
+      const vong = rows[0]?.c?.[1]?.v || "VÒNG LOẠI";
+      const tenGiai = rows[1]?.c?.[1]?.v || "";
+      const r = rows[2]?.c || [];
+
+      const dot = r[0]?.v || "";
+      const diem1 = r[1]?.v || "";
+      const doi1 = r[2]?.v || "";
+      const doi2 = r[4]?.v || "";
+      const diem2 = r[5]?.v || "";
+
+      let html = `
+        <table>
+          <tr><td colspan="7" class="vongloai">${vong}</td></tr>
+          <tr><td colspan="7" class="tengiai">${tenGiai}</td></tr>
+          <tr class="ketqua">
+            <td class="dot">${dot}</td>
+            <td class="score">${diem1}</td>
+            <td class="team">${doi1}</td>
+            <td class="vs"><img src="https://i.ibb.co/6RRh9rr/vs.png" width="60"></td>
+            <td class="team">${doi2}</td>
+            <td class="score">${diem2}</td>
+            <td class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg"></td>
+          </tr>
+        </table>
+      `;
+
+      document.getElementById("table").innerHTML = html;
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
