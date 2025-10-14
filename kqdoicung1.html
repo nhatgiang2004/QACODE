@@ -1,27 +1,149 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <title>Kết quả Pickleball</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Kết quả thi đấu - Lò Chum Sân 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; padding:16px; font-family:'Lexend',sans-serif; background:#fff; color:#222; }
-    .vong { background:#28A745; color:#fff; padding:10px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:6px; }
-    .giai { background:#555; color:#fff; padding:8px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:12px; }
-    .match { display:flex; align-items:center; justify-content:center; gap:18px; }
-    .score { font-size:48px; color:#a40000; font-weight:900; width:70px; text-align:center; }
-    .team { font-size:22px; color:#FF8C00; font-weight:900; text-transform:uppercase; width:340px; text-align:center; }
-    .vs { font-size:32px; font-weight:900; color:#FFB400; text-shadow:1px 1px 0 #000; width:80px; text-align:center; }
-    .dot { width:36px; height:36px; border-radius:50%; background:red; border:3px solid #000; display:none; }
-    .logo { position: absolute; left:16px; top:16px; }
-    .logo img { width:80px; height:80px; border-radius:50%; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .wrapper {
+      width: 520px;
+      margin: 10px auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      background: #fff;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .vong {
+      background: #a80000;
+      color: white;
+      font-size: 22px;
+      padding: 8px 0;
+      text-transform: uppercase;
+    }
+
+    .giaidau {
+      background: #555;
+      color: white;
+      font-size: 20px;
+      padding: 8px 0;
+      text-transform: uppercase;
+    }
+
+    .match {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+    }
+
+    .team {
+      flex: 1;
+      text-align: center;
+      color: #FF8C00;
+      font-size: 20px;
+      text-transform: uppercase;
+    }
+
+    .score {
+      width: 70px;
+      font-size: 48px;
+      font-weight: bold;
+      color: #A80000;
+    }
+
+    .vs {
+      font-size: 30px;
+      color: #FFB400;
+      font-weight: bold;
+    }
+
+    .dot {
+      font-size: 24px;
+      color: red;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
-  <div class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo"></div>
+  <div class="wrapper">
+    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo" />
 
-  <div id="vong" class="vong">Đang tải vòng...</div>
-  <div id="giai" class="giai">Đang tải giải...</div>
+    <div class="vong" id="vong">Đang tải...</div>
+    <div class="giaidau" id="giaidau">...</div>
 
-  <div class="match" id="match">
-    <div id="do
+    <div class="match">
+      <div class="score" id="score1">0</div>
+      <div class="team" id="team1">Đội 1</div>
+      <div class="vs">VS</div>
+      <div class="team" id="team2">Đội 2</div>
+      <div class="score" id="score2">0</div>
+    </div>
+  </div>
+
+  <script>
+    const sheetURL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1";
+
+    async function fetchData() {
+      try {
+        const res = await fetch(sheetURL);
+        const text = await res.text();
+        const json = JSON.parse(text.substring(47, text.length - 2));
+        const rows = json.table.rows;
+
+        if (rows.length > 2) {
+          // Dòng 1: tên vòng
+          const vong = rows[0].c[1]?.v || "";
+          document.getElementById("vong").innerText = vong;
+
+          // Dòng 2: tên giải
+          const giaidau = rows[1].c[1]?.v || "";
+          document.getElementById("giaidau").innerText = giaidau;
+
+          // Dòng 3: dữ liệu trận đấu
+          const row = rows[2].c;
+
+          const giaoBongTrai = row[0]?.v || ""; // Cột 1
+          const doiTrai = row[1]?.v || "";
+          const diemTrai = row[2]?.v || 0;
+          const doiPhai = row[5]?.v || "";
+          const diemPhai = row[4]?.v || 0;
+          const giaoBongPhai = row[6]?.v || ""; // Cột 7
+
+          // Hiển thị dữ liệu
+          document.getElementById("team1").innerHTML = doiTrai + (giaoBongTrai ? ' <span class="dot">🔴</span>' : '');
+          document.getElementById("score1").innerText = diemTrai;
+          document.getElementById("team2").innerHTML = doiPhai + (giaoBongPhai ? ' <span class="dot">🔴</span>' : '');
+          document.getElementById("score2").innerText = diemPhai;
+        }
+      } catch (err) {
+        console.error("❌ Lỗi tải dữ liệu:", err);
+      }
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
