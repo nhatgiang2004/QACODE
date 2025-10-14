@@ -1,54 +1,85 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Kết quả Pickleball - Hường Đỗ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Lexend', sans-serif;
-      font-weight: 600;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảng Trao Giải Thưởng Pickleball</title>
+<style>
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
 
-    /* Khung tổng */
-    .wrapper {
-      width: 100%;
-      max-width: 950px;
-      margin: 10px auto;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      background: white;
-    }
+  .award-board {
+    background: white;
+    width: 400px;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
 
-    /* Dòng 1 - TRỰC TIẾP */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #28A745;
-      color: white;
-      font-size: 22px;
-      font-weight: 700;
-      padding: 6px 0;
-      position: relative;
-    }
+  .header, .footer {
+    background: #ffcc00;
+    padding: 10px 0;
+  }
 
-    .topbar img {
-      position: absolute;
-      left: 15px;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-    }
+  .header img {
+    height: 60px;
+  }
 
-    /* Dòng 2 - Tên giải */
-    .subtitle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      back
+  .sub-header {
+    background: #0078D7;
+    color: white;
+    padding: 8px 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .content h2 {
+    margin: 0;
+    color: #0078D7;
+    font-size: 24px;
+  }
+
+  .content p {
+    font-size: 16px;
+    margin: 5px 0;
+  }
+
+  .footer img {
+    height: 60px;
+  }
+</style>
+</head>
+<body>
+
+<div class="award-board">
+  <div class="header">
+    <img src="logo1.png" alt="Logo trên">
+  </div>
+  <div class="sub-header">
+    CHỦ SÂN HƯỜNG ĐỖ
+  </div>
+  <div class="content">
+    <h2>BẢNG TRAO GIẢI PICKLEBALL</h2>
+    <p>Giải thưởng Thể Thao Năm 2025</p>
+    <p><b>Vô Địch Đơn Nam:</b> Nguyễn Văn A</p>
+    <p><b>Vô Địch Đôi Nam:</b> Trần B & Lê C</p>
+    <p><b>Vô Địch Đôi Nam Nữ:</b> Minh D & Hoa E</p>
+  </div>
+  <div class="footer">
+    <img src="logo2.png" alt="Logo dưới">
+  </div>
+</div>
+
+</body>
+</html>
