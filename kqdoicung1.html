@@ -26,11 +26,17 @@
       position: relative;
     }
 
-    /* Dòng 1 và 2 */
-    .header {
-      position: relative;
+    /* Logo góc trái chiếm 2 dòng đầu */
+    .logo {
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      width: 70px;
+      height: auto;
+      z-index: 10;
     }
 
+    /* Dòng 1 - TRỰC TIẾP */
     .topbar {
       background: #28A745;
       color: white;
@@ -39,6 +45,7 @@
       padding: 6px 0;
     }
 
+    /* Dòng 2 - Tên giải */
     .subtitle {
       background: #555;
       color: white;
@@ -47,29 +54,13 @@
       padding: 8px 0;
     }
 
-    /* Logo giữa 2 dòng, căn trái */
-    .logo-left {
-      position: absolute;
-      top: 32px; /* giữa 2 dòng */
-      left: 30px; /* cách lề trái */
-      transform: translateY(-50%);
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 4px solid white;
-      object-fit: cover;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      background: white;
-    }
-
     /* Dòng 3 - Trận đấu */
     .match {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 18px 20px;
+      justify-content: space-between;
+      padding: 14px 20px;
       background: white;
-      gap: 12px;
     }
 
     .team {
@@ -79,13 +70,14 @@
       text-transform: uppercase;
       font-weight: 700;
       text-align: center;
+      padding: 0 10px;
     }
 
     .score {
       font-size: 58px;
       font-weight: bold;
       color: #A80000;
-      width: 80px;
+      width: 70px;
       text-align: center;
     }
 
@@ -99,14 +91,11 @@
 </head>
 <body>
   <div class="wrapper">
-    <!-- Khối tiêu đề -->
-    <div class="header">
-      <div class="topbar">TRỰC TIẾP</div>
-      <div class="subtitle">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
-      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo-left">
-    </div>
+    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
 
-    <!-- Khối trận đấu -->
+    <div class="topbar">TRỰC TIẾP</div>
+    <div class="subtitle">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+
     <div class="match">
       <div class="score" id="score1">1</div>
       <div class="team" id="team1">DUNG ĐOÀN 2.0 - NGUYỄN HẢI 2.0</div>
