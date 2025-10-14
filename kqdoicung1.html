@@ -2,55 +2,59 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Trực tiếp Pickleball - Hường Đỗ</title>
+  <title>Kết quả Pickleball - Hường Đỗ</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
+      background: transparent;
       font-family: 'Lexend', sans-serif;
       font-weight: 600;
-      background: transparent;
       text-align: center;
     }
 
-    /* Thanh tiêu đề */
+    /* Khung tổng */
+    .wrapper {
+      width: 100%;
+      max-width: 950px;
+      margin: 10px auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      background: white;
+    }
+
+    /* Dòng 1 - TRỰC TIẾP */
     .topbar {
       background: #28A745;
       color: white;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
-      padding: 5px 0;
-      border-radius: 12px 12px 0 0;
-      width: 100%;
-      max-width: 900px;
-      margin: auto;
+      padding: 6px 0;
     }
 
+    /* Dòng 2 - Tên giải */
     .subtitle {
       background: #555;
       color: white;
-      font-size: 18px;
+      font-size: 20px;
       text-transform: uppercase;
-      padding: 6px 0;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      border-radius: 0 0 12px 12px;
+      padding: 8px 0;
     }
 
-    /* Khung hiển thị trận đấu */
-    .banner {
+    /* Dòng 3 - Trận đấu */
+    .match {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 14px 20px;
       background: white;
-      border-radius: 20px;
-      padding: 12px 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      width: 100%;
-      max-width: 900px;
-      margin: 10px auto;
+    }
+
+    .logo {
+      width: 80px;
+      height: auto;
     }
 
     .team {
@@ -75,22 +79,54 @@
       font-size: 36px;
       font-weight: bold;
       color: #FFB400;
-      margin: 0 8px;
       text-shadow: 1px 1px 0 #000;
-    }
-
-    .logo {
-      width: 80px;
-      height: auto;
     }
   </style>
 </head>
 <body>
-  <div class="banner">
-    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
-    <div class="score" id="score1">1</div>
-    <div class="team" id="team1">DUNG ĐOÀN 2.0 - NGUYỄN HẢI 2.0</div>
-    <div class="vs">VS</div>
-    <div class="team" id="team2">HIỆP BÓNG BÀN - TÌNH CẦU LÔNG</div>
-    <div class="score" id="score2">3</div>
-    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo
+  <div class="wrapper">
+    <div class="topbar">TRỰC TIẾP</div>
+    <div class="subtitle">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+
+    <div class="match">
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
+      <div class="score" id="score1">1</div>
+      <div class="team" id="team1">DUNG ĐOÀN 2.0 - NGUYỄN HẢI 2.0</div>
+      <div class="vs">VS</div>
+      <div class="team" id="team2">HIỆP BÓNG BÀN - TÌNH CẦU LÔNG</div>
+      <div class="score" id="score2">3</div>
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
+    </div>
+  </div>
+
+  <script>
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
+
+    async function fetchData() {
+      try {
+        const res = await fetch(sheetURL);
+        const text = await res.text();
+        const json = JSON.parse(text.substring(47, text.length - 2));
+        const rows = json.table.rows;
+
+        if (rows.length > 1) {
+          const team1 = rows[0].c[1]?.v || "";
+          const score1 = rows[0].c[2]?.v || "";
+          const team2 = rows[1].c[1]?.v || "";
+          const score2 = rows[1].c[2]?.v || "";
+
+          document.getElementById('team1').innerText = team1;
+          document.getElementById('score1').innerText = score1;
+          document.getElementById('team2').innerText = team2;
+          document.getElementById('score2').innerText = score2;
+        }
+      } catch (err) {
+        console.error("❌ Lỗi tải dữ liệu:", err);
+      }
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
