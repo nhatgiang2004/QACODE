@@ -1,103 +1,89 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <title>Kết quả Pickleball</title>
+  <meta charset="UTF-8">
+  <title>Kết quả thi đấu Pickleball</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
   <style>
-    body { margin: 0; padding: 0; background: transparent; font-family: 'Lexend', sans-serif; text-align: center; font-weight: 600; }
-    .wrapper { width: 100%; max-width: 950px; margin: 10px auto; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.25); background: white; position: relative; }
-    .logo { position: absolute; top: 5px; left: 10px; width: 70px; height: 70px; border-radius: 50%; object-fit: cover; z-index: 10; }
-    .topbar { background: #28A745; color: #fff; font-size: 22px; padding: 6px 0; font-weight: 700; text-transform: uppercase; }
-    .subtitle { background: #555; color: #fff; font-size: 20px; text-transform: uppercase; padding: 8px 0; }
-    .match { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: white; position: relative; }
-    .team { flex: 1; color: #FF8C00; font-size: 22px; text-transform: uppercase; font-weight: 700; text-align: center; padding: 0 10px; }
-    .score { font-size: 58px; font-weight: bold; color: #A80000; width: 70px; text-align: center; }
-    .vs { font-size: 36px; font-weight: bold; color: #FFB400; text-shadow: 1px 1px 0 #000; }
-    .circle { width: 28px; height: 28px; border-radius: 50%; background: red; border: 3px solid #000; position: absolute; top: 50%; transform: translateY(-50%); display: none; }
-    .circle.left { left: 6px; }
-    .circle.right { right: 6px; }
-    @media(max-width:520px){
-      .score { font-size: 36px; width: 52px; }
-      .team { font-size: 16px; }
-      .vs { font-size: 24px; }
+    body {margin:0;padding:0;background:#f5f5f5;font-family:'Lexend',sans-serif;text-align:center;}
+    .wrapper {
+      width:100%;max-width:1000px;margin:10px auto;border-radius:20px;
+      background:#fff;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.25);
+      position:relative;
+    }
+    .vong {background:#28A745;color:#fff;font-size:28px;padding:10px 0;text-transform:uppercase;}
+    .giai {background:#555;color:#fff;font-size:24px;padding:8px 0;text-transform:uppercase;}
+    .match {
+      display:grid;grid-template-columns:80px 1fr 100px 1fr 80px;
+      align-items:center;gap:10px;padding:15px 20px;background:white;position:relative;
+    }
+    .logo {width:70px;height:70px;border-radius:50%;object-fit:cover;}
+    .score {font-size:60px;color:#A80000;font-weight:700;}
+    .team {color:#FF8C00;font-size:28px;text-transform:uppercase;font-weight:700;}
+    .vs {font-size:36px;font-weight:900;color:#FFB400;text-shadow:1px 1px 0 #000;}
+    .circle {
+      width:30px;height:30px;border-radius:50%;background:red;border:3px solid #000;
+      position:absolute;top:50%;transform:translateY(-50%);display:none;
+    }
+    .circle.left {left:10px;}
+    .circle.right {right:10px;}
+    @media(max-width:600px){
+      .score{font-size:38px}.team{font-size:18px}.vs{font-size:24px}
     }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo" alt="logo">
-    <div class="topbar" id="vong">ĐANG CẬP NHẬT…</div>
-    <div class="subtitle" id="giai">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
-
+    <div class="vong" id="vong">Đang tải vòng...</div>
+    <div class="giai" id="giai">Đang tải giải...</div>
     <div class="match">
       <div class="score" id="score1">0</div>
       <div class="team" id="team1">---</div>
       <div class="vs">VS</div>
       <div class="team" id="team2">---</div>
       <div class="score" id="score2">0</div>
-
       <div class="circle left" id="circle1"></div>
       <div class="circle right" id="circle2"></div>
     </div>
   </div>
 
   <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
+    const sheetURL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1";
 
-    function parseGviz(text) {
-      const start = text.indexOf('({');
-      const end = text.lastIndexOf('})');
-      const jsonText = text.substring(start + 1, end + 1);
-      return JSON.parse(jsonText);
+    function parseGvizData(text) {
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      return json.table.rows;
     }
 
     async function fetchData() {
       try {
         const res = await fetch(sheetURL);
-        const txt = await res.text();
-        const js = parseGviz(txt);
-        const rows = js.table.rows;
+        const text = await res.text();
+        const rows = parseGvizData(text);
 
-        if (!rows || rows.length < 3) {
-          console.warn('Không có đủ dữ liệu');
-          return;
-        }
+        // Lấy dữ liệu theo cấu trúc ảnh bạn gửi
+        const vong = rows[0]?.c[2]?.v || "ĐANG CẬP NHẬT";
+        const giai = rows[1]?.c[2]?.v || "";
+        const score1 = rows[2]?.c[1]?.v || "0";
+        const team1  = rows[2]?.c[2]?.v || "";
+        const team2  = rows[2]?.c[4]?.v || "";
+        const score2 = rows[2]?.c[5]?.v || "0";
 
-        // ✅ Dòng 1 (index 0) -> tên vòng loại
-        const vong = rows[0].c[0]?.v || 'ĐANG CẬP NHẬT';
-        document.getElementById('vong').innerText = vong;
+        document.getElementById("vong").innerText = vong;
+        document.getElementById("giai").innerText = giai;
+        document.getElementById("score1").innerText = score1;
+        document.getElementById("team1").innerText = team1;
+        document.getElementById("team2").innerText = team2;
+        document.getElementById("score2").innerText = score2;
 
-        // Dòng 2 (index 1) -> đội 1
-        const r1 = rows[1].c;
-        const team1 = r1[1]?.v || '';
-        const score1 = Number(r1[2]?.v) || 0;
-
-        // Dòng 3 (index 2) -> đội 2
-        const r2 = rows[2].c;
-        const team2 = r2[1]?.v || '';
-        const score2 = Number(r2[2]?.v) || 0;
-
-        // Hiển thị ra
-        document.getElementById('team1').innerText = team1;
-        document.getElementById('score1').innerText = score1;
-        document.getElementById('team2').innerText = team2;
-        document.getElementById('score2').innerText = score2;
-
-        // ✅ Hiển thị đội thắng (chấm tròn đỏ)
-        if (score1 > score2) {
-          document.getElementById('circle1').style.display = 'block';
-          document.getElementById('circle2').style.display = 'none';
-        } else if (score2 > score1) {
-          document.getElementById('circle2').style.display = 'block';
-          document.getElementById('circle1').style.display = 'none';
-        } else {
-          document.getElementById('circle1').style.display = 'none';
-          document.getElementById('circle2').style.display = 'none';
-        }
-
-      } catch (err) {
-        console.error('Lỗi tải dữ liệu:', err);
+        // Xác định đội thắng
+        const c1 = document.getElementById("circle1");
+        const c2 = document.getElementById("circle2");
+        c1.style.display = c2.style.display = "none";
+        if (Number(score1) > Number(score2)) c1.style.display = "block";
+        else if (Number(score2) > Number(score1)) c2.style.display = "block";
+      } catch (e) {
+        console.error("Lỗi khi tải dữ liệu:", e);
       }
     }
 
