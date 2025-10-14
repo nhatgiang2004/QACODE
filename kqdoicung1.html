@@ -15,6 +15,7 @@
     .dot { width:36px; height:36px; border-radius:50%; background:red; border:3px solid #000; display:none; }
     .logo { position: absolute; left:16px; top:16px; }
     .logo img { width:80px; height:80px; border-radius:50%; }
+    .debug { font-family:monospace; font-size:11px; color:#666; white-space:pre-wrap; display:none; }
   </style>
 </head>
 <body>
@@ -33,6 +34,8 @@
     <div id="dot2" class="dot"></div>
   </div>
 
+  <pre id="debug" class="debug"></pre>
+
 <script>
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1";
 
@@ -42,56 +45,77 @@ function parseGviz(text) {
   return JSON.parse(text.substring(first, last + 1));
 }
 
-function safeStr(x) {
-  return (x === undefined || x === null) ? '' : String(x);
+function looksLikeVong(s){
+  if(!s) return false;
+  s = s.toLowerCase();
+  return s.includes('vòng') || s.includes('vong');
+}
+function looksLikeGiai(s){
+  if(!s) return false;
+  s = s.toLowerCase();
+  return s.includes('giải') || s.includes('giai') || s.includes('cup') || s.includes('pickle');
 }
 
-async function fetchAndRender() {
-  try {
+function safeStr(x){ return (x===undefined||x===null)?'':String(x); }
+
+async function fetchAndRender(){
+  try{
     const res = await fetch(SHEET_URL);
     const text = await res.text();
     const parsed = parseGviz(text);
     const rows = parsed.table.rows || [];
 
-    if (rows.length < 2) throw new Error("Thiếu dữ liệu hiển thị");
+    document.getElementById('debug').textContent = JSON.stringify(rows, null, 2);
 
-    // ✅ Dòng 1: tên vòng đấu
-    const vong = rows[0]?.c?.[0]?.v || "VÒNG";
+    if(rows.length === 0) throw new Error("Không có dữ liệu từ sheet");
 
-    // ✅ Dòng 2: tên giải đấu
-    const giai = rows[1]?.c?.[0]?.v || "GIẢI";
+    // 🔍 tìm dòng có 'Vòng' và 'Giải'
+    let vong = "VÒNG", giai = "GIẢI", matchRow = null;
+    for(const row of rows){
+      const cells = row.c || [];
+      for(const c of cells){
+        const val = c?.v ? String(c.v).trim() : '';
+        if(!vong && looksLikeVong(val)) vong = val;
+        if(!giai && looksLikeGiai(val)) giai = val;
+      }
+    }
 
-    // ✅ Dòng 3 trở đi là dữ liệu trận
-    const matchRow = rows[2] || {};
+    // tìm dòng chứa 2 đội
+    for(const row of rows){
+      const texts = (row.c || []).map(c => c?.v ? String(c.v).trim() : '');
+      const teams = texts.filter(t => t && t.match(/[A-Za-zÀ-ỹ0-9]/) && t.includes(' '));
+      if(teams.length >= 2){ matchRow = row; break; }
+    }
+
+    if(!matchRow) throw new Error("Không tìm thấy dữ liệu trận đấu");
+
     const cells = matchRow.c || [];
-
-    const serveA = safeStr(cells[0]?.v); // đội giao bóng bên trái
+    const serveA = safeStr(cells[0]?.v);
     const score1 = safeStr(cells[1]?.v);
     const team1  = safeStr(cells[2]?.v);
     const team2  = safeStr(cells[4]?.v);
     const score2 = safeStr(cells[5]?.v);
-    const serveG = safeStr(cells[6]?.v); // đội giao bóng bên phải
+    const serveG = safeStr(cells[6]?.v);
 
-    // cập nhật HTML
-    document.getElementById("vong").innerText = vong;
-    document.getElementById("giai").innerText = giai;
-    document.getElementById("score1").innerText = score1;
-    document.getElementById("team1").innerText = team1 || "---";
-    document.getElementById("team2").innerText = team2 || "---";
-    document.getElementById("score2").innerText = score2;
+    document.getElementById('vong').innerText = vong;
+    document.getElementById('giai').innerText = giai;
+    document.getElementById('score1').innerText = score1 || '0';
+    document.getElementById('team1').innerText = team1 || '---';
+    document.getElementById('team2').innerText = team2 || '---';
+    document.getElementById('score2').innerText = score2 || '0';
 
-    // ✅ chấm đỏ theo đội đang giao bóng
-    const dot1 = document.getElementById("dot1");
-    const dot2 = document.getElementById("dot2");
-    dot1.style.display = dot2.style.display = "none";
+    const dot1 = document.getElementById('dot1');
+    const dot2 = document.getElementById('dot2');
+    dot1.style.display = dot2.style.display = 'none';
+    if(serveA) dot1.style.display = 'block';
+    else if(serveG) dot2.style.display = 'block';
 
-    if (serveA) dot1.style.display = "block";
-    else if (serveG) dot2.style.display = "block";
-
-  } catch (err) {
+  }catch(err){
     console.error(err);
-    document.getElementById("vong").innerText = "LỖI DỮ LIỆU";
-    document.getElementById("giai").innerText = "";
+    document.getElementById('vong').innerText = 'LỖI DỮ LIỆU';
+    document.getElementById('giai').innerText = '';
+    document.getElementById('debug').style.display = 'block';
+    document.getElementById('debug').textContent += '\n' + err.message;
   }
 }
 
