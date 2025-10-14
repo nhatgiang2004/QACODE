@@ -1,85 +1,155 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bảng Trao Giải Thưởng Pickleball</title>
-<style>
-  body {
-    font-family: "Segoe UI", sans-serif;
-    background: #f3f4f6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
+  <meta charset="UTF-8">
+  <title>Kết quả Pickleball - Hường Đỗ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: 600;
+      text-align: center;
+    }
 
-  .award-board {
-    background: white;
-    width: 400px;
-    text-align: center;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    overflow: hidden;
-  }
+    /* Khung tổng */
+    .wrapper {
+      width: 100%;
+      max-width: 950px;
+      margin: 10px auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      background: white;
+    }
 
-  .header, .footer {
-    background: #ffcc00;
-    padding: 10px 0;
-  }
+    /* Dòng 1 và 2 có logo hai bên */
+    .topbar, .subtitle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 16px;
+      color: white;
+    }
 
-  .header img {
-    height: 60px;
-  }
+    .topbar {
+      background: #28A745;
+      font-size: 22px;
+      font-weight: 700;
+    }
 
-  .sub-header {
-    background: #0078D7;
-    color: white;
-    padding: 8px 0;
-    font-size: 16px;
-    font-weight: bold;
-  }
+    .subtitle {
+      background: #555;
+      font-size: 20px;
+      text-transform: uppercase;
+      padding: 8px 16px;
+    }
 
-  .content {
-    padding: 20px;
-  }
+    .logo-bar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
 
-  .content h2 {
-    margin: 0;
-    color: #0078D7;
-    font-size: 24px;
-  }
+    /* Dòng 3 - Trận đấu */
+    .match {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: white;
+    }
 
-  .content p {
-    font-size: 16px;
-    margin: 5px 0;
-  }
+    .logo {
+      width: 80px;
+      height: auto;
+    }
 
-  .footer img {
-    height: 60px;
-  }
-</style>
+    .team {
+      flex: 1;
+      color: #FF8C00;
+      font-size: 22px;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-align: center;
+      padding: 0 10px;
+    }
+
+    .score {
+      font-size: 58px;
+      font-weight: bold;
+      color: #A80000;
+      width: 70px;
+      text-align: center;
+    }
+
+    .vs {
+      font-size: 36px;
+      font-weight: bold;
+      color: #FFB400;
+      text-shadow: 1px 1px 0 #000;
+    }
+  </style>
 </head>
 <body>
+  <div class="wrapper">
+    <!-- Dòng 1 -->
+    <div class="topbar">
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo-bar">
+      <div>TRỰC TIẾP</div>
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo-bar">
+    </div>
 
-<div class="award-board">
-  <div class="header">
-    <img src="logo1.png" alt="Logo trên">
-  </div>
-  <div class="sub-header">
-    CHỦ SÂN HƯỜNG ĐỖ
-  </div>
-  <div class="content">
-    <h2>BẢNG TRAO GIẢI PICKLEBALL</h2>
-    <p>Giải thưởng Thể Thao Năm 2025</p>
-    <p><b>Vô Địch Đơn Nam:</b> Nguyễn Văn A</p>
-    <p><b>Vô Địch Đôi Nam:</b> Trần B & Lê C</p>
-    <p><b>Vô Địch Đôi Nam Nữ:</b> Minh D & Hoa E</p>
-  </div>
-  <div class="footer">
-    <img src="logo2.png" alt="Logo dưới">
-  </div>
-</div>
+    <!-- Dòng 2 -->
+    <div class="subtitle">
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo-bar">
+      <div>PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo-bar">
+    </div>
 
+    <!-- Dòng 3 -->
+    <div class="match">
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
+      <div class="score" id="score1">1</div>
+      <div class="team" id="team1">DUNG ĐOÀN 2.0 - NGUYỄN HẢI 2.0</div>
+      <div class="vs">VS</div>
+      <div class="team" id="team2">HIỆP BÓNG BÀN - TÌNH CẦU LÔNG</div>
+      <div class="score" id="score2">3</div>
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
+    </div>
+  </div>
+
+  <script>
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
+
+    async function fetchData() {
+      try {
+        const res = await fetch(sheetURL);
+        const text = await res.text();
+        const json = JSON.parse(text.substring(47, text.length - 2));
+        const rows = json.table.rows;
+
+        if (rows.length > 1) {
+          const team1 = rows[0].c[1]?.v || "";
+          const score1 = rows[0].c[2]?.v || "";
+          const team2 = rows[1].c[1]?.v || "";
+          const score2 = rows[1].c[2]?.v || "";
+
+          document.getElementById('team1').innerText = team1;
+          document.getElementById('score1').innerText = score1;
+          document.getElementById('team2').innerText = team2;
+          document.getElementById('score2').innerText = score2;
+        }
+      } catch (err) {
+        console.error("❌ Lỗi tải dữ liệu:", err);
+      }
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
 </body>
 </html>
