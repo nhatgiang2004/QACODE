@@ -2,25 +2,29 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <title>Kết quả thi đấu</title>
+  <title>Kết quả Pickleball - Auto detect</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; padding:20px; font-family:'Lexend', sans-serif; background:#fff; color:#111; }
-    .giai, .vong { text-align:center; font-weight:800; text-transform:uppercase; margin-bottom:8px; }
-    .giai { font-size:26px; color:#333; }
-    .vong { font-size:20px; color:#FF5722; }
-    .match { display:flex; align-items:center; justify-content:center; gap:18px; margin-top:20px; }
-    .team { font-size:22px; width:300px; text-align:center; font-weight:700; text-transform:uppercase; color:#FF8C00; }
-    .score { font-size:50px; width:70px; text-align:center; font-weight:900; color:#a40000; }
+    body { margin:0; padding:16px; font-family:'Lexend',sans-serif; background:#fff; color:#222; }
+    .vong { background:#28A745; color:#fff; padding:10px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:6px; }
+    .giai { background:#555; color:#fff; padding:8px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:12px; }
+    .match { display:flex; align-items:center; justify-content:center; gap:18px; }
+    .score { font-size:48px; color:#a40000; font-weight:900; width:70px; text-align:center; }
+    .team { font-size:22px; color:#FF8C00; font-weight:900; text-transform:uppercase; width:340px; text-align:center; }
+    .vs { font-size:32px; font-weight:900; color:#FFB400; text-shadow:1px 1px 0 #000; width:80px; text-align:center; }
     .dot { width:36px; height:36px; border-radius:50%; background:red; border:3px solid #000; display:none; }
-    .vs { font-size:30px; font-weight:800; color:#555; width:80px; text-align:center; }
+    .logo { position: absolute; left:16px; top:16px; }
+    .logo img { width:80px; height:80px; border-radius:50%; }
+    .debug { font-family:monospace; font-size:11px; color:#666; white-space:pre-wrap; display:none; }
   </style>
 </head>
 <body>
-  <div class="giai" id="tenGiai">Đang tải tên giải...</div>
-  <div class="vong" id="tenVong">Đang tải vòng...</div>
+  <div class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo"></div>
 
-  <div class="match">
+  <div id="vong" class="vong">Đang tải...</div>
+  <div id="giai" class="giai">Đang tải...</div>
+
+  <div class="match" id="match">
     <div id="dot1" class="dot"></div>
     <div id="score1" class="score">0</div>
     <div id="team1" class="team">---</div>
@@ -30,64 +34,63 @@
     <div id="dot2" class="dot"></div>
   </div>
 
-<script>
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1";
+  <pre id="debug" class="debug"></pre>
 
-async function loadData() {
-  try {
+<script>
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?range=A1:G10&sheet=HIENTHI1";
+
+function parseGviz(text) {
+  const first = text.indexOf('{');
+  const last = text.lastIndexOf('}');
+  return JSON.parse(text.substring(first, last + 1));
+}
+
+function safeStr(x){ return (x===undefined||x===null)?'':String(x); }
+
+async function fetchAndRender(){
+  try{
     const res = await fetch(SHEET_URL);
     const text = await res.text();
+    const parsed = parseGviz(text);
+    const rows = parsed.table.rows || [];
 
-    // Gviz trả về JSON nằm trong hàm JS, ta tách phần JSON thực
-    const json = JSON.parse(text.match(/{.*}/s)[0]);
-    const rows = json.table.rows;
+    if(rows.length < 3) throw new Error("Không đủ dữ liệu (phải có ít nhất 3 dòng)");
 
-    if (!rows || rows.length < 2) {
-      document.getElementById("tenGiai").innerText = "Không đủ dữ liệu";
-      return;
-    }
+    const giai = safeStr(rows[0]?.c?.[0]?.v);
+    const vong = safeStr(rows[1]?.c?.[0]?.v);
+    const matchRow = rows[2]?.c || [];
 
-    // ===== 2 dòng đầu =====
-    const tenGiai = rows[0]?.c?.[0]?.v || "";
-    const tenVong = rows[1]?.c?.[0]?.v || "";
+    const serveA = safeStr(matchRow[0]?.v);
+    const score1 = safeStr(matchRow[1]?.v);
+    const team1  = safeStr(matchRow[2]?.v);
+    const team2  = safeStr(matchRow[4]?.v);
+    const score2 = safeStr(matchRow[5]?.v);
+    const serveG = safeStr(matchRow[6]?.v);
 
-    document.getElementById("tenGiai").innerText = tenGiai || "Tên giải đấu";
-    document.getElementById("tenVong").innerText = tenVong || "Tên vòng";
+    document.getElementById('vong').innerText = vong || 'Vòng';
+    document.getElementById('giai').innerText = giai || 'Giải';
+    document.getElementById('score1').innerText = score1 || '0';
+    document.getElementById('team1').innerText = team1 || '---';
+    document.getElementById('team2').innerText = team2 || '---';
+    document.getElementById('score2').innerText = score2 || '0';
 
-    // ===== Dòng dữ liệu thi đấu (bắt đầu từ dòng 3 trở đi) =====
-    const matchRow = rows[2];
-    if (!matchRow || !matchRow.c) return;
+    const dot1 = document.getElementById('dot1');
+    const dot2 = document.getElementById('dot2');
+    dot1.style.display = dot2.style.display = 'none';
+    if(serveA) dot1.style.display = 'block';
+    else if(serveG) dot2.style.display = 'block';
 
-    const c = matchRow.c.map(v => v ? v.v : "");
-
-    // Giả định:
-    // c[0] = chấm đỏ bên A (có giá trị nếu đang giao bóng)
-    // c[1] = điểm đội A
-    // c[2] = tên đội A
-    // c[4] = tên đội B
-    // c[5] = điểm đội B
-    // c[6] = chấm đỏ bên G (có giá trị nếu đang giao bóng)
-
-    document.getElementById("team1").innerText = c[2] || "---";
-    document.getElementById("score1").innerText = c[1] ?? "0";
-    document.getElementById("team2").innerText = c[4] || "---";
-    document.getElementById("score2").innerText = c[5] ?? "0";
-
-    // Chấm đỏ: cột A hoặc G có giá trị ⇒ hiển thị chấm đỏ tương ứng
-    const dot1 = document.getElementById("dot1");
-    const dot2 = document.getElementById("dot2");
-    dot1.style.display = dot2.style.display = "none";
-    if (c[0]) dot1.style.display = "block";
-    if (c[6]) dot2.style.display = "block";
-
-  } catch (err) {
+  }catch(err){
     console.error(err);
-    document.getElementById("tenGiai").innerText = "Lỗi dữ liệu!";
+    document.getElementById('vong').innerText = 'LỖI DỮ LIỆU';
+    document.getElementById('giai').innerText = '';
+    document.getElementById('debug').style.display = 'block';
+    document.getElementById('debug').textContent = err.message;
   }
 }
 
-loadData();
-setInterval(loadData, 4000);
+fetchAndRender();
+setInterval(fetchAndRender, 5000);
 </script>
 </body>
 </html>
