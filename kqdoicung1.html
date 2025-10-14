@@ -1,166 +1,213 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
   <title>Kết quả Pickleball - Hường Đỗ</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Lexend', sans-serif;
-      text-align: center;
-      font-weight: 600;
+    body { margin:0; padding:0; background:transparent; font-family:'Lexend',sans-serif; text-align:center; font-weight:700; }
+    .wrapper{ width:100%; max-width:950px; margin:10px auto; border-radius:20px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.25); background:white; position:relative; }
+    .logo{ position:absolute; top:5px; left:10px; width:70px; height:70px; border-radius:50%; object-fit:cover; z-index:10; }
+    .topbar{ background:#28A745; color:#fff; font-size:22px; padding:6px 0; font-weight:700; }
+    .subtitle{ background:#555; color:#fff; font-size:20px; text-transform:uppercase; padding:8px 0; }
+    .match{ display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:white; position:relative; }
+    .team{ flex:1; color:#FF8C00; font-size:22px; text-transform:uppercase; font-weight:700; text-align:center; padding:0 10px; }
+    .score{ font-size:58px; font-weight:bold; color:#A80000; width:70px; text-align:center; }
+    .vs{ font-size:36px; font-weight:bold; color:#FFB400; text-shadow:1px 1px 0 #000; }
+    .circle{ width:28px; height:28px; border-radius:50%; background:red; border:3px solid #000; position:absolute; top:50%; transform:translateY(-50%); display:none; }
+    .circle.left{ left:6px; }
+    .circle.right{ right:6px; }
+    /* mobile small */
+    @media(max-width:520px){
+      .score{ font-size:36px; width:52px; }
+      .team{ font-size:16px; }
+      .vs{ font-size:24px; }
     }
-
-    .wrapper {
-      width: 100%;
-      max-width: 950px;
-      margin: 10px auto;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      background: white;
-      position: relative;
-    }
-
-    .logo {
-      position: absolute;
-      top: 5px;
-      left: 10px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
-
-    .topbar {
-      background: #28A745;
-      color: white;
-      font-size: 22px;
-      padding: 6px 0;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      background: #555;
-      color: white;
-      font-size: 20px;
-      text-transform: uppercase;
-      padding: 8px 0;
-    }
-
-    .match {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      background: white;
-      position: relative;
-    }
-
-    .team {
-      flex: 1;
-      color: #FF8C00;
-      font-size: 22px;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: center;
-      padding: 0 10px;
-    }
-
-    .score {
-      font-size: 58px;
-      font-weight: bold;
-      color: #A80000;
-      width: 70px;
-      text-align: center;
-    }
-
-    .vs {
-      font-size: 36px;
-      font-weight: bold;
-      color: #FFB400;
-      text-shadow: 1px 1px 0 #000;
-    }
-
-    .circle {
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      border: 3px solid black;
-      background: red;
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: none;
-    }
-
-    .circle.team1 { left: 10px; right: auto; }
   </style>
 </head>
 <body>
   <div class="wrapper">
-    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
-
+    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo" alt="logo">
     <div class="topbar" id="vong">ĐANG CẬP NHẬT...</div>
     <div class="subtitle" id="giai">ĐANG CẬP NHẬT...</div>
 
     <div class="match">
       <div class="score" id="score1">0</div>
-      <div class="team" id="team1">---</div>
+      <div class="team" id="team1">Đang tải...</div>
       <div class="vs">VS</div>
-      <div class="team" id="team2">---</div>
+      <div class="team" id="team2">Đang tải...</div>
       <div class="score" id="score2">0</div>
 
-      <!-- Vòng tròn đỏ -->
-      <div class="circle team1" id="circle1"></div>
-      <div class="circle team2" id="circle2"></div>
+      <div class="circle left" id="circle1" title="Đội thắng"></div>
+      <div class="circle right" id="circle2" title="Đội thắng"></div>
     </div>
   </div>
 
   <script>
+    // → Link sheet bạn cung cấp
     const sheetURL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
-    async function fetchData() {
-      try {
-        const res = await fetch(sheetURL);
-        const text = await res.text();
-        const json = JSON.parse(text.substring(47, text.length - 2));
-        const row = json.table.rows[0]; // chỉ đọc hàng đầu tiên
+    // Tên header dự kiến và các biến thể (viết thường để so sánh)
+    const HEADERS = {
+      vong: ['vong','vòng','vòng đấu','vong dau','round'],
+      giai: ['giai','giải','tên giải','tengiai','tên giải đấu'],
+      doi1: ['doi1','đội1','team1','team a','đội a','doi a'],
+      diem1: ['diem1','điểm1','score1','point1','điểm a'],
+      doi2: ['doi2','đội2','team2','team b','đội b','doi b'],
+      diem2: ['diem2','điểm2','score2','point2','điểm b'],
+      thang: ['thang','thắng','winner','win','nguoi thang']
+    };
 
-        // Lấy dữ liệu từng cột
-        const vong  = row.c[0]?.v || '';
-        const giai  = row.c[1]?.v || '';
-        const doi1  = row.c[2]?.v || '';
-        const diem1 = row.c[3]?.v || 0;
-        const doi2  = row.c[4]?.v || '';
-        const diem2 = row.c[5]?.v || 0;
-        const thang = row.c[6]?.v || '';
+    // helper: find header index by scanning header row values
+    function findHeaderIndex(headerRow, variants){
+      for(let i=0;i<headerRow.length;i++){
+        const cell = headerRow[i];
+        if(!cell || !cell.v) continue;
+        const text = String(cell.v).trim().toLowerCase();
+        for(const v of variants){
+          if(text === v) return i;
+          // contains (for headers like "Tên đội 1")
+          if(text.includes(v)) return i;
+        }
+      }
+      return -1;
+    }
 
-        // Gán vào giao diện
-        document.getElementById('vong').innerText  = vong;
-        document.getElementById('giai').innerText  = giai;
-        document.getElementById('team1').innerText = doi1;
-        document.getElementById('team2').innerText = doi2;
-        document.getElementById('score1').innerText = diem1;
-        document.getElementById('score2').innerText = diem2;
+    // parse google viz response safely
+    function parseGviz(text){
+      // find first { and last } to extract JSON
+      const first = text.indexOf('{');
+      const last = text.lastIndexOf('}');
+      if(first === -1 || last === -1) throw new Error('Không parse được response');
+      const json = JSON.parse(text.substring(first, last+1));
+      return json;
+    }
 
-        // Hiện vòng tròn đỏ theo đội thắng
-        document.getElementById('circle1').style.display = (thang == 1) ? 'block' : 'none';
-        document.getElementById('circle2').style.display = (thang == 2) ? 'block' : 'none';
+    async function fetchData(){
+      try{
+        const r = await fetch(sheetURL);
+        const t = await r.text();
+        const js = parseGviz(t);
+        const rows = js.table.rows || [];
+        if(!rows.length){
+          console.warn('Sheet trả về 0 hàng.');
+          return;
+        }
 
-      } catch (err) {
-        console.error('❌ Lỗi tải dữ liệu:', err);
+        // Nếu hàng đầu tiên có nhiều ô text và giống header -> dùng header
+        const headerCandidate = rows[0].c;
+        let mapping = null;
+        if(headerCandidate && headerCandidate.some(c => c && typeof c.v === 'string' && c.v.trim().length > 0)){
+          // tìm header indices
+          const map = {};
+          map.vong  = findHeaderIndex(headerCandidate, HEADERS.vong);
+          map.giai  = findHeaderIndex(headerCandidate, HEADERS.giai);
+          map.doi1  = findHeaderIndex(headerCandidate, HEADERS.doi1);
+          map.diem1 = findHeaderIndex(headerCandidate, HEADERS.diem1);
+          map.doi2  = findHeaderIndex(headerCandidate, HEADERS.doi2);
+          map.diem2 = findHeaderIndex(headerCandidate, HEADERS.diem2);
+          map.thang = findHeaderIndex(headerCandidate, HEADERS.thang);
+
+          // nếu ít nhất team cột được tìm thấy -> coi đây là header
+          if(map.doi1 !== -1 || map.doi2 !== -1){
+            mapping = { map, dataRowIndex: 1 }; // data bắt đầu từ hàng 2 (index 1)
+          }
+        }
+
+        // Fallback: nếu không có header, cố gắng dùng định dạng phổ biến theo hàng 0 & 1 (cặp đôi ở 2 hàng)
+        if(!mapping){
+          // 2 hàng: row 0 contains team1,score1 ; row1 contains team2,score2
+          // hoặc 1 hàng: [Vong, Giai, Doi1, Diem1, Doi2, Diem2, Thang]
+          // thử phát hiện 2-hang (ở ảnh bạn cung cấp đội nằm trong same row OR two rows)
+          if(rows.length >= 2 && rows[0].c.length >= 3 && rows[1].c.length >= 3){
+            // assume columns: [index?, team, score]
+            mapping = {
+              map: {
+                vong: -1, giai: -1,
+                doi1: 1, diem1: 2,
+                doi2: 1, // will take from row index 1
+                diem2: 2,
+                thang: -1
+              },
+              dataRowIndex: 0,
+              twoRowTeams: true
+            };
+          } else {
+            // fallback to one-row wide format with columns positions
+            mapping = {
+              map: { vong:0, giai:1, doi1:2, diem1:3, doi2:4, diem2:5, thang:6 },
+              dataRowIndex: 0,
+              twoRowTeams: false
+            };
+          }
+        }
+
+        // Extract values
+        let vong = '', giai = '', doi1='', doi2='', diem1=0, diem2=0, thang=null;
+
+        if(mapping.twoRowTeams){
+          // teams split across two rows
+          const r0 = rows[0].c;
+          const r1 = rows[1].c;
+          // if vong/giai exist use row0 cols 0/1
+          vong = (r0[0] && r0[0].v) ? r0[0].v : '';
+          giai = (r0[1] && r0[1].v) ? r0[1].v : '';
+          doi1 = (r0[ mapping.map.doi1 ] && r0[ mapping.map.doi1 ].v) ? r0[ mapping.map.doi1 ].v : '';
+          diem1 = (r0[ mapping.map.diem1 ] && r0[ mapping.map.diem1 ].v) ? r0[ mapping.map.diem1 ].v : 0;
+          doi2 = (r1[ mapping.map.doi2 ] && r1[ mapping.map.doi2 ].v) ? r1[ mapping.map.doi2 ].v : '';
+          diem2 = (r1[ mapping.map.diem2 ] && r1[ mapping.map.diem2 ].v) ? r1[ mapping.map.diem2 ].v : 0;
+        } else {
+          const row = rows[mapping.dataRowIndex].c;
+          // helper to safely read cell by index
+          const get = (i) => (row[i] && typeof row[i].v !== 'undefined') ? row[i].v : '';
+          vong  = (mapping.map.vong  > -1) ? get(mapping.map.vong) : '';
+          giai  = (mapping.map.giai  > -1) ? get(mapping.map.giai) : '';
+          doi1  = (mapping.map.doi1  > -1) ? get(mapping.map.doi1) : '';
+          diem1 = (mapping.map.diem1 > -1) ? get(mapping.map.diem1) : 0;
+          doi2  = (mapping.map.doi2  > -1) ? get(mapping.map.doi2) : '';
+          diem2 = (mapping.map.diem2 > -1) ? get(mapping.map.diem2) : 0;
+          thang = (mapping.map.thang > -1) ? get(mapping.map.thang) : null;
+        }
+
+        // normalize numeric scores
+        const n1 = Number(String(diem1).replace(/[^\d.-]/g,'')) || 0;
+        const n2 = Number(String(diem2).replace(/[^\d.-]/g,'')) || 0;
+
+        // determine winner: prefer explicit 'thang' if present and is 1 or 2; else compare scores
+        let winner = null;
+        if(thang !== null && thang !== ''){
+          const t = String(thang).trim();
+          if(t === '1' || t.toLowerCase().includes('1')) winner = 1;
+          else if(t === '2' || t.toLowerCase().includes('2')) winner = 2;
+          // allow team names in 'thang' like team1/team2
+        }
+        if(!winner){
+          if(n1 > n2) winner = 1;
+          else if(n2 > n1) winner = 2;
+        }
+
+        // set DOM
+        if(vong) document.getElementById('vong').innerText = vong;
+        if(giai) document.getElementById('giai').innerText = giai;
+        document.getElementById('team1').innerText = doi1 || '---';
+        document.getElementById('team2').innerText = doi2 || '---';
+        document.getElementById('score1').innerText = n1;
+        document.getElementById('score2').innerText = n2;
+
+        // show/hide winner circles
+        document.getElementById('circle1').style.display = (winner === 1) ? 'block' : 'none';
+        document.getElementById('circle2').style.display = (winner === 2) ? 'block' : 'none';
+
+        // debug log (xóa nếu không cần)
+        console.log('mapping', mapping);
+        console.log({vong,giai,doi1,diem1: n1, doi2, diem2: n2, thang, winner});
+      }catch(err){
+        console.error('Lỗi khi lấy/parsing dữ liệu sheet:', err);
       }
     }
 
     fetchData();
-    setInterval(fetchData, 5000); // cập nhật mỗi 5 giây
+    setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
