@@ -2,144 +2,150 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả thi đấu - Lò Chum Sân 1</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
+  <title>Kết quả Lò Chum - Sân 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
       background: transparent;
       font-family: 'Lexend', sans-serif;
-      font-weight: 600;
-      text-align: center;
+      font-weight: bold;
     }
 
-    .wrapper {
-      width: 520px;
-      margin: 10px auto;
-      border-radius: 20px;
+    table {
+      border-collapse: collapse;
+      width: 470px;
+      font-size: 14px;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      background: #fff;
-      position: relative;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    td {
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      vertical-align: middle;
     }
 
     .logo {
-      position: absolute;
-      top: 8px;
-      left: 10px;
+      width: 60px;
+      text-align: center;
+    }
+
+    .logo img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      object-fit: cover;
     }
 
-    .vong {
-      background: #a80000;
+    /* Dòng 1 - tên vòng đấu */
+    .row1 td {
+      background: #28A745;
       color: white;
-      font-size: 22px;
-      padding: 8px 0;
+      font-size: 18px;
       text-transform: uppercase;
+      text-align: center;
     }
 
-    .giaidau {
+    /* Dòng 2 - tên giải */
+    .row2 td {
       background: #555;
       color: white;
-      font-size: 20px;
-      padding: 8px 0;
+      font-size: 16px;
       text-transform: uppercase;
+      text-align: center;
     }
 
-    .match {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 15px;
+    /* Dòng 3 - hiển thị kết quả */
+    .match td {
+      background: #fff7da;
+      color: #212121;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
     }
 
     .team {
-      flex: 1;
-      text-align: center;
       color: #FF8C00;
-      font-size: 20px;
       text-transform: uppercase;
+      width: 180px;
     }
 
     .score {
-      width: 70px;
-      font-size: 48px;
+      font-size: 32px;
       font-weight: bold;
       color: #A80000;
+      width: 40px;
     }
 
     .vs {
-      font-size: 30px;
-      color: #FFB400;
-      font-weight: bold;
+      font-size: 18px;
+      color: #000;
+      width: 40px;
     }
 
-    .dot {
-      font-size: 24px;
+    .serve {
       color: red;
-      margin-left: 6px;
-      vertical-align: middle;
+      font-size: 22px;
+      padding-left: 5px;
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo" />
-
-    <div class="vong" id="vong">Đang tải...</div>
-    <div class="giaidau" id="giaidau">...</div>
-
-    <div class="match">
-      <div class="score" id="score1">0</div>
-      <div class="team" id="team1">Đội 1</div>
-      <div class="vs">VS</div>
-      <div class="team" id="team2">Đội 2</div>
-      <div class="score" id="score2">0</div>
-    </div>
-  </div>
+  <div id="table"></div>
 
   <script>
-    const sheetURL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1";
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
     async function fetchData() {
       try {
         const res = await fetch(sheetURL);
         const text = await res.text();
         const json = JSON.parse(text.substring(47, text.length - 2));
-        const rows = json.table.rows;
-
-        if (rows.length > 2) {
-          // Dòng 1: tên vòng
-          const vong = rows[0].c[1]?.v || "";
-          document.getElementById("vong").innerText = vong;
-
-          // Dòng 2: tên giải
-          const giaidau = rows[1].c[1]?.v || "";
-          document.getElementById("giaidau").innerText = giaidau;
-
-          // Dòng 3: dữ liệu trận đấu
-          const row = rows[2].c;
-
-          const giaoBongTrai = row[0]?.v || ""; // Cột 1
-          const doiTrai = row[1]?.v || "";
-          const diemTrai = row[2]?.v || 0;
-          const doiPhai = row[5]?.v || "";
-          const diemPhai = row[4]?.v || 0;
-          const giaoBongPhai = row[6]?.v || ""; // Cột 7
-
-          // Hiển thị dữ liệu
-          document.getElementById("team1").innerHTML = doiTrai + (giaoBongTrai ? ' <span class="dot">🔴</span>' : '');
-          document.getElementById("score1").innerText = diemTrai;
-          document.getElementById("team2").innerHTML = doiPhai + (giaoBongPhai ? ' <span class="dot">🔴</span>' : '');
-          document.getElementById("score2").innerText = diemPhai;
-        }
-      } catch (err) {
-        console.error("❌ Lỗi tải dữ liệu:", err);
+        renderTable(json.table);
+      } catch (e) {
+        document.getElementById("table").innerHTML = "❌ Lỗi tải dữ liệu";
       }
+    }
+
+    function renderTable(table) {
+      if (!table.rows || table.rows.length < 3) {
+        document.getElementById("table").innerHTML = "❌ Thiếu dữ liệu hiển thị";
+        return;
+      }
+
+      // --- Lấy dữ liệu từ các cột ---
+      const serve1 = table.rows[0].c[0]?.v || ""; // cột A
+      const roundName = table.rows[0].c[1]?.v || ""; // tên vòng
+      const team1 = table.rows[1].c[1]?.v || "";     // đội 1
+      const score1 = table.rows[1].c[2]?.v || "";    // điểm đội 1
+      const team2 = table.rows[1].c[4]?.v || "";     // đội 2
+      const score2 = table.rows[1].c[3]?.v || "";    // điểm đội 2
+      const serve2 = table.rows[1].c[6]?.v || "";    // cột G
+      const tournament = table.rows[0].c[2]?.v || ""; // tên giải
+
+      // --- Xác định đội đang giao bóng ---
+      const serveLeft = serve1 == 1 ? "🔴" : "";
+      const serveRight = serve2 == 1 ? "🔴" : "";
+
+      // --- Hiển thị HTML ---
+      let html = `
+        <table>
+          <tr class="row1"><td colspan="5">${roundName}</td></tr>
+          <tr class="row2"><td colspan="5">${tournament}</td></tr>
+          <tr class="match">
+            <td class="score">${score1}</td>
+            <td class="team">${team1} <span class="serve">${serveLeft}</span></td>
+            <td class="vs">VS</td>
+            <td class="team">${team2} <span class="serve">${serveRight}</span></td>
+            <td class="score">${score2}</td>
+          </tr>
+        </table>
+      `;
+
+      document.getElementById("table").innerHTML = html;
     }
 
     fetchData();
