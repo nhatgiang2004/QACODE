@@ -39,16 +39,13 @@
 <script>
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
-// helper parse gviz text -> json
 function parseGviz(text){
-  // try robust parse: find first '{' and last '}'
   const first = text.indexOf('{');
   const last = text.lastIndexOf('}');
   if(first === -1 || last === -1) throw new Error('Không parse được gviz response');
   return JSON.parse(text.substring(first, last+1));
 }
 
-// heuristics to detect vong/giai by keywords
 function looksLikeVong(s){
   if(!s) return false;
   s = String(s).toLowerCase();
@@ -57,58 +54,20 @@ function looksLikeVong(s){
 function looksLikeGiai(s){
   if(!s) return false;
   s = String(s).toLowerCase();
-  return s.includes('pickleb') || s.includes('cup') || s.includes('giai') || s.includes('giải') || s.includes('power');
+  return s.includes('pickle') || s.includes('cup') || s.includes('giai') || s.includes('giải') || s.includes('power');
 }
 
-// pick row that contains two non-empty team names (common pattern)
 function findMatchRow(rows){
   for(const row of rows){
     const cells = row.c || [];
-    // team names often at index 2 and 4 per your sheet; but be flexible:
     const texts = cells.map(c => c && c.v ? String(c.v).trim() : '');
-    // requires at least two non-empty long-ish strings
     const nonEmpty = texts.filter(t => t && t.length > 1);
-    // prefer rows containing two long strings (team names)
-    if(nonEmpty.length >= 2){
-      // also ensure at least one of them contains spaces or hyphen (likely team)
-      const teamsCount = nonEmpty.filter(t => t.match(/[A-Za-zÀ-ỹ0-9]/) && (t.includes(' ') || t.includes('-') || t.length>6)).length;
-      if(teamsCount >= 2) return row;
-    }
+    const teamsCount = nonEmpty.filter(t => t.match(/[A-Za-zÀ-ỹ0-9]/) && (t.includes(' ') || t.includes('-') || t.length>6)).length;
+    if(teamsCount >= 2) return row;
   }
-  // fallback to second or third row if not found
   return rows[1] || rows[2] || rows[0];
 }
 
-function findVongAndGiai(rows){
-  let vong = null, giai = null;
-  // scan all cells
-  for(const r of rows){
-    const cells = r.c || [];
-    for(const c of cells){
-      if(!c || typeof c.v === 'undefined' || c.v === null) continue;
-      const text = String(c.v).trim();
-      if(!vong && looksLikeVong(text)) vong = text;
-      else if(!giai && looksLikeGiai(text)) giai = text;
-      if(vong && giai) return {vong,giai};
-    }
-  }
-  // fallback: try row0 col2 and row1 col2 (based on earlier assumptions)
-  const r0 = rows[0] && rows[0].c ? rows[0].c : [];
-  const r1 = rows[1] && rows[1].c ? rows[1].c : [];
-  if(!vong){
-    if(r0[2] && r0[2].v) vong = r0[2].v;
-    else if(r0[1] && r0[1].v) vong = r0[1].v;
-    else if(r0[0] && r0[0].v) vong = r0[0].v;
-  }
-  if(!giai){
-    if(r1[2] && r1[2].v) giai = r1[2].v;
-    else if(r1[1] && r1[1].v) giai = r1[1].v;
-    else if(r1[0] && r1[0].v) giai = r1[0].v;
-  }
-  return {vong:gong(vong), giai: giai};
-}
-
-// small helper to avoid undefined
 function safeStr(x){ return (typeof x === 'undefined' || x === null) ? '' : String(x); }
 
 async function fetchAndRender(){
@@ -117,11 +76,10 @@ async function fetchAndRender(){
     const text = await res.text();
     const parsed = parseGviz(text);
     const rows = parsed.table.rows || [];
-    console.log('rows:', rows);
     document.getElementById('debug').textContent = JSON.stringify(rows, null, 2);
-    // find vong/giai
+
+    // tìm vòng & giải
     let vong = null, giai = null;
-    // first pass: look for explicit vong/giai keywords
     for(const r of rows){
       for(const c of (r.c || [])){
         if(!c || typeof c.v === 'undefined' || c.v===null) continue;
@@ -131,66 +89,37 @@ async function fetchAndRender(){
       }
       if(vong && giai) break;
     }
-    // fallback heuristics if not yet found
-    if(!vong || !giai){
-      // try common positions: rows[0].c[1..3] and rows[1].c[1..3]
-      const r0 = rows[0] && rows[0].c ? rows[0].c : [];
-      const r1 = rows[1] && rows[1].c ? rows[1].c : [];
-      if(!vong){
-        vong = (r0[2] && r0[2].v) ? r0[2].v : (r0[1] && r0[1].v) ? r0[1].v : (r0[0] && r0[0].v) ? r0[0].v : null;
-      }
-      if(!giai){
-        giai = (r1[2] && r1[2].v) ? r1[2].v : (r1[1] && r1[1].v) ? r1[1].v : (r1[0] && r1[0].v) ? r1[0].v : null;
-      }
-    }
 
-    // find the match row (where two team names are present)
     const matchRow = findMatchRow(rows);
     const cells = matchRow.c || [];
 
-    // Based on your sheet examples team1 in index 2, score1 index 1, team2 index 4, score2 index 5, dot index 0
-    const dotCell = cells[0] && cells[0].v ? String(cells[0].v).trim() : '';
-    const score1 = cells[1] && typeof cells[1].v !== 'undefined' ? cells[1].v : '';
-    const team1 = cells[2] && cells[2].v ? String(cells[2].v).trim() : '';
-    const team2 = cells[4] && cells[4].v ? String(cells[4].v).trim() : '';
-    const score2 = cells[5] && typeof cells[5].v !== 'undefined' ? cells[5].v : '';
+    const score1 = cells[1]?.v ?? '';
+    const team1  = cells[2]?.v ? String(cells[2].v).trim() : '';
+    const team2  = cells[4]?.v ? String(cells[4].v).trim() : '';
+    const score2 = cells[5]?.v ?? '';
 
-    // render
     document.getElementById('vong').innerText = vong ? String(vong).trim() : 'VÒNG';
     document.getElementById('giai').innerText = giai ? String(giai).trim() : 'GIẢI';
-
     document.getElementById('score1').innerText = safeStr(score1);
     document.getElementById('team1').innerText = team1 || '---';
     document.getElementById('team2').innerText = team2 || '---';
     document.getElementById('score2').innerText = safeStr(score2);
 
-    // show dot near winner if dotCell has value or compare scores
+    // 🎯 Hiển thị chấm đỏ theo đội đang giao bóng (cột A hoặc G)
     const dot1 = document.getElementById('dot1');
     const dot2 = document.getElementById('dot2');
     dot1.style.display = dot2.style.display = 'none';
 
-    // if sheet uses dot in cell[0], determine side by comparing dot string or by score
-    if(dotCell && dotCell.trim().length > 0){
-      // dot present: decide if dot text contains some marker for left/right (rare)
-      // We assume dot indicates left team if present (per your example)
-      // But better: if dot equal to '🔴' then check score to decide
-      const n1 = Number(score1) || 0;
-      const n2 = Number(score2) || 0;
-      if(n1 > n2) dot1.style.display = 'block';
-      else if(n2 > n1) dot2.style.display = 'block';
-      else {
-        // tie: show left dot if dotCell is non-empty
-        dot1.style.display = 'block';
-      }
-    } else {
-      const n1 = Number(score1) || 0;
-      const n2 = Number(score2) || 0;
-      if(n1 > n2) dot1.style.display = 'block';
-      else if(n2 > n1) dot2.style.display = 'block';
-    }
+    const serveA = cells[0]?.v ? String(cells[0].v).trim() : ''; // cột A
+    const serveG = cells[6]?.v ? String(cells[6].v).trim() : ''; // cột G
 
-    // show debug optionally
-    // document.getElementById('debug').style.display = 'block';
+    if (serveA) {
+      dot1.style.display = 'block'; // đội 1 đang giao bóng
+    } else if (serveG) {
+      dot2.style.display = 'block'; // đội 2 đang giao bóng
+    } else {
+      dot1.style.display = dot2.style.display = 'none';
+    }
 
   }catch(err){
     console.error('Lỗi fetch/parse:', err);
@@ -202,7 +131,6 @@ async function fetchAndRender(){
   }
 }
 
-// initial + interval
 fetchAndRender();
 setInterval(fetchAndRender, 5000);
 </script>
