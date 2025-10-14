@@ -2,136 +2,141 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Pickleball - Hường Đỗ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
+  <title>Kết quả Đội cung - Sân 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
       background: transparent;
       font-family: 'Lexend', sans-serif;
-      font-weight: 600;
+      font-weight: bold;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 470px;
+      font-size: 14px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    td {
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      vertical-align: middle;
+    }
+
+    .logo {
+      width: 60px;
       text-align: center;
     }
 
-    /* Khung tổng */
-    .wrapper {
-      width: 100%;
-      max-width: 950px;
-      margin: 10px auto;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      background: white;
-      position: relative;
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
     }
 
-    /* Logo góc trái chiếm 2 dòng đầu */
-    .logo {
-      position: absolute;
-      top: 5px;
-      left: 10px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%; /* Bo tròn hoàn toàn */
-      object-fit: cover;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
-
-    /* Dòng 1 - TRỰC TIẾP */
-    .topbar {
-      background: #28A745;
-      color: white;
-      font-size: 22px;
-      font-weight: 700;
-      padding: 6px 0;
-    }
-
-    /* Dòng 2 - Tên giải */
-    .subtitle {
+    .col2 {
       background: #555;
       color: white;
-      font-size: 20px;
       text-transform: uppercase;
-      padding: 8px 0;
+      text-align: left;
     }
 
-    /* Dòng 3 - Trận đấu */
-    .match {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      background: white;
-    }
-
-    .team {
-      flex: 1;
-      color: #FF8C00;
-      font-size: 22px;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: center;
-      padding: 0 10px;
-    }
-
-    .score {
-      font-size: 58px;
+    .col3 {
+      background: #FFD700;
+      color: #212121; /* Đen than */
+      font-size: 22px; /* To hơn */
       font-weight: bold;
-      color: #A80000;
-      width: 70px;
       text-align: center;
+      width: 45px;
     }
 
-    .vs {
-      font-size: 36px;
+    .col4 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      width: 45px;
+      border: none; /* Bỏ viền */
+    }
+
+    /* Bỏ viền ngang trên/dưới của cột 4 dòng 1 và 2 */
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: none;
+      border-bottom: none;
+    }
+
+    /* Dòng 3 */
+    .row3 td.data {
+      background: #2E8B57;
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
       font-weight: bold;
-      color: #FFB400;
-      text-shadow: 1px 1px 0 #000;
+      padding: 4px 6px;
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
-
-    <div class="topbar">TRỰC TIẾP</div>
-    <div class="subtitle">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
-
-    <div class="match">
-      <div class="score" id="score1">1</div>
-      <div class="team" id="team1">DUNG ĐOÀN 2.0 - NGUYỄN HẢI 2.0</div>
-      <div class="vs">VS</div>
-      <div class="team" id="team2">HIỆP BÓNG BÀN - TÌNH CẦU LÔNG</div>
-      <div class="score" id="score2">3</div>
-    </div>
-  </div>
+  <div id="table"></div>
 
   <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
+    function fetchData() {
+      const url =
+        'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
-    async function fetchData() {
-      try {
-        const res = await fetch(sheetURL);
-        const text = await res.text();
-        const json = JSON.parse(text.substring(47, text.length - 2));
-        const rows = json.table.rows;
+      fetch(url)
+        .then(res => res.text())
+        .then(rep => {
+          const json = JSON.parse(rep.substring(47, rep.length - 2));
+          renderTable(json.table);
+        })
+        .catch(err => {
+          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+        });
+    }
 
-        if (rows.length > 1) {
-          const team1 = rows[0].c[1]?.v || "";
-          const score1 = rows[0].c[2]?.v || "";
-          const team2 = rows[1].c[1]?.v || "";
-          const score2 = rows[1].c[2]?.v || "";
+    function renderTable(table) {
+      if (!table.rows || table.rows.length < 3) return;
 
-          document.getElementById('team1').innerText = team1;
-          document.getElementById('score1').innerText = score1;
-          document.getElementById('team2').innerText = team2;
-          document.getElementById('score2').innerText = score2;
-        }
-      } catch (err) {
-        console.error("❌ Lỗi tải dữ liệu:", err);
-      }
+      let html = '<table><tr>';
+      html +=
+        '<td class="logo" rowspan="2">' +
+        '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
+        '</td>';
+
+      // Dòng 1
+      table.rows[0].c.slice(1).forEach((cell, i) => {
+        let cls = i === 0 ? "col2" : i === 1 ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += "</tr><tr>";
+
+      // Dòng 2
+      table.rows[1].c.slice(1).forEach((cell, i) => {
+        let cls = i === 0 ? "col2" : i === 1 ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += "</tr>";
+
+      // Dòng 3
+      const val2 = table.rows[2].c[1]?.v || "";
+      const val3 = table.rows[2].c[2]?.v || "";
+      const val4 = table.rows[2].c[3]?.v || "";
+      const val5 = table.rows[2].c[4]?.v || "";
+
+      html += `<tr class="row3">
+                 <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
+               </tr>`;
+
+      html += "</table>";
+      document.getElementById("table").innerHTML = html;
     }
 
     fetchData();
