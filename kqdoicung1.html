@@ -2,154 +2,31 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Pickleball - Hường Đỗ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
+  <title>Kết quả từ Google Sheet</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Lexend', sans-serif;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    /* Khung tổng */
-    .wrapper {
-      width: 100%;
-      max-width: 950px;
-      margin: 10px auto;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      background: white;
-      position: relative;
-    }
-
-    /* Logo góc trái chiếm 2 dòng đầu */
-    .logo {
-      position: absolute;
-      top: 5px;
-      left: 10px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%; /* Bo tròn hoàn toàn */
-      object-fit: cover;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
-
-    /* Dòng 1 - TRỰC TIẾP */
-    .topbar {
-      background: #28A745;
-      color: white;
-      font-size: 22px;
-      font-weight: 700;
-      padding: 6px 0;
-    }
-
-    /* Dòng 2 - Tên giải */
-    .subtitle {
-      background: #555;
-      color: white;
-      font-size: 20px;
-      text-transform: uppercase;
-      padding: 8px 0;
-    }
-
-    /* Dòng 3 - Trận đấu */
-    .match {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      background: white;
-    }
-
-    .team {
-      flex: 1;
-      color: #FF8C00;
-      font-size: 22px;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: center;
-      padding: 0 10px;
-    }
-
-    .score {
-      font-size: 58px;
-      font-weight: bold;
-      color: #A80000;
-      width: 70px;
-      text-align: center;
-    }
-
-    .vs {
-      font-size: 36px;
-      font-weight: bold;
-      color: #FFB400;
-      text-shadow: 1px 1px 0 #000;
-    }
+    body { font-family: Lexend, sans-serif; text-align: center; margin: 40px; }
+    table { border-collapse: collapse; margin: auto; }
+    th, td { border: 1px solid #ccc; padding: 8px 12px; }
+    th { background: #f2f2f2; }
   </style>
 </head>
 <body>
-  <div id="table"></div>
+  <h2>Kết quả cập nhật tự động</h2>
+  <table id="sheet-data"><tr><td>Đang tải dữ liệu...</td></tr></table>
 
   <script>
-    function fetchData() {
-      const url =
-        'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
+    const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTwMmzVA4Tn64y48649hywWVL5UqaqIA6lgaQI_psAixoHZ9lHE419NvRKKMj1EvV3wntwDVBwdXM12/pub?gid=1034622929&single=true&output=csv";
 
-      fetch(url)
-        .then(res => res.text())
-        .then(rep => {
-          const json = JSON.parse(rep.substring(47, rep.length - 2));
-          renderTable(json.table);
-        })
-        .catch(err => {
-          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
-        });
-    }
-
-    function renderTable(table) {
-      if (!table.rows || table.rows.length < 3) return;
-
-      let html = '<table><tr>';
-      html +=
-        '<td class="logo" rowspan="2">' +
-        '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
-        '</td>';
-
-      // Dòng 1
-      table.rows[0].c.slice(1).forEach((cell, i) => {
-        let cls = i === 0 ? "col2" : i === 1 ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+    fetch(sheetURL)
+      .then(res => res.text())
+      .then(data => {
+        const rows = data.split("\n").map(r => r.split(","));
+        let html = rows.map(r => "<tr>" + r.map(c => `<td>${c}</td>`).join("") + "</tr>").join("");
+        document.getElementById("sheet-data").innerHTML = html;
+      })
+      .catch(err => {
+        document.getElementById("sheet-data").innerHTML = "<tr><td>Lỗi tải dữ liệu</td></tr>";
       });
-      html += "</tr><tr>";
-
-      // Dòng 2
-      table.rows[1].c.slice(1).forEach((cell, i) => {
-        let cls = i === 0 ? "col2" : i === 1 ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
-      });
-      html += "</tr>";
-
-      // Dòng 3
-      const val2 = table.rows[2].c[1]?.v || "";
-      const val3 = table.rows[2].c[2]?.v || "";
-      const val4 = table.rows[2].c[3]?.v || "";
-      const val5 = table.rows[2].c[4]?.v || "";
-
-      html += `<tr class="row3">
-                 <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
-               </tr>`;
-
-      html += "</table>";
-      document.getElementById("table").innerHTML = html;
-    }
-
-    fetchData();
-    setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
