@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Pickleball - Sân 1</title>
+  <title>Kết quả Lò Chum - Sân 1</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
@@ -15,83 +15,71 @@
 
     table {
       border-collapse: collapse;
-      width: 750px;
-      font-size: 16px;
+      width: 470px;
+      font-size: 14px;
       border-radius: 16px;
       overflow: hidden;
       border: none;
-      margin: 10px auto;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     td {
+      border: 1px solid #ccc;
       padding: 4px 6px;
       vertical-align: middle;
-      border: none;
     }
 
     .logo {
-      width: 70px;
+      width: 60px;
       text-align: center;
     }
 
     .logo img {
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
     }
 
-    .vong {
-      background: #28A745;
-      color: white;
-      font-size: 22px;
-      text-align: center;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-
-    .giai {
+    .col2 {
       background: #555;
       color: white;
-      font-size: 20px;
-      text-align: center;
       text-transform: uppercase;
-      font-weight: 700;
+      text-align: left;
     }
 
-    .score {
-      font-size: 50px;
-      font-weight: 800;
-      color: #A80000;
+    .col3 {
+      background: #FFD700;
+      color: #212121; /* Đen than */
+      font-size: 22px; /* To hơn */
+      font-weight: bold;
       text-align: center;
-      width: 70px;
+      width: 45px;
     }
 
-    .team {
-      font-size: 22px;
-      color: #FF8C00;
-      font-weight: 700;
-      text-transform: uppercase;
+    .col4 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
       text-align: center;
+      width: 45px;
+      border: none; /* Bỏ viền */
     }
 
-    .vs {
-      font-size: 32px;
-      font-weight: 900;
-      color: #FFB400;
-      text-shadow: 1px 1px 0 #000;
+    /* Bỏ viền ngang trên/dưới của cột 4 dòng 1 và 2 */
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: none;
+      border-bottom: none;
+    }
+
+    /* Dòng 3 */
+    .row3 td.data {
+      background: #2E8B57;
+      color: #FFFFFF;
+      font-size: 16px;
       text-align: center;
-      width: 80px;
-    }
-
-    .dot {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 3px solid #000;
-      background: red;
-      display: none;
-      margin: 0 auto;
+      font-weight: bold;
+      padding: 4px 6px;
     }
   </style>
 </head>
@@ -99,7 +87,8 @@
   <div id="table"></div>
 
   <script>
-    const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
+    function fetchData() {
+      const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
     async function fetchData() {
       try {
