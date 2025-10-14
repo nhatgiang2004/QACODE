@@ -14,7 +14,6 @@
       text-align: center;
     }
 
-    /* Khung tổng */
     .wrapper {
       width: 100%;
       max-width: 950px;
@@ -26,7 +25,6 @@
       position: relative;
     }
 
-    /* Logo bo tròn bên trái, chiếm 2 dòng */
     .logo-left {
       position: absolute;
       top: 10px;
@@ -38,7 +36,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
-    /* Dòng 1 - TRỰC TIẾP */
     .topbar {
       background: #28A745;
       color: white;
@@ -49,7 +46,6 @@
       border-top-right-radius: 20px;
     }
 
-    /* Dòng 2 - Tên giải */
     .subtitle {
       background: #555;
       color: white;
@@ -58,7 +54,6 @@
       padding: 8px 0;
     }
 
-    /* Dòng 3 - Trận đấu */
     .match {
       display: flex;
       align-items: center;
@@ -80,9 +75,9 @@
     }
 
     .score {
-      font-size: 68px;
+      font-size: 58px;
       font-weight: bold;
-      color: #222; /* đen than */
+      color: #A80000;
       width: 70px;
       text-align: center;
     }
@@ -99,8 +94,8 @@
   <div class="wrapper">
     <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo-left">
 
-    <div class="topbar">TRỰC TIẾP</div>
-    <div class="subtitle">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+    <div class="topbar" id="topbar">TRỰC TIẾP</div>
+    <div class="subtitle" id="subtitle">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
 
     <div class="match">
       <div class="score" id="score1">0</div>
@@ -112,30 +107,39 @@
   </div>
 
   <script>
-    // URL Google Sheets xuất bản (dùng chế độ /gviz/tq để lấy JSON)
     const sheetURL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
     async function fetchData() {
       try {
         const res = await fetch(sheetURL);
         const text = await res.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2)); // xử lý chuỗi JSON của Google
+        const json = JSON.parse(text.substring(47, text.length - 2));
         const rows = json.table.rows;
 
-        if (rows.length > 0) {
-          const r = rows[0].c; // lấy dòng đầu tiên
-          document.getElementById('team1').innerText = r[0]?.v || "";
-          document.getElementById('score1').innerText = r[1]?.v || "0";
-          document.getElementById('team2').innerText = r[2]?.v || "";
-          document.getElementById('score2').innerText = r[3]?.v || "0";
-        }
+        // Dòng 1, cột 3
+        const topbar = rows[0]?.c[2]?.v || "Đang cập nhật...";
+        // Dòng 2, cột 3
+        const subtitle = rows[1]?.c[2]?.v || "";
+        // Dòng 3
+        const team1 = rows[2]?.c[0]?.v || "Đội A";
+        const score1 = rows[2]?.c[1]?.v || "0";
+        const team2 = rows[2]?.c[4]?.v || "Đội B";
+        const score2 = rows[2]?.c[5]?.v || "0";
+
+        document.getElementById("topbar").innerText = topbar;
+        document.getElementById("subtitle").innerText = subtitle;
+        document.getElementById("team1").innerText = team1;
+        document.getElementById("score1").innerText = score1;
+        document.getElementById("team2").innerText = team2;
+        document.getElementById("score2").innerText = score2;
+
       } catch (err) {
         console.error("❌ Lỗi tải dữ liệu:", err);
       }
     }
 
     fetchData();
-    setInterval(fetchData, 5000); // cập nhật mỗi 5 giây
+    setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
