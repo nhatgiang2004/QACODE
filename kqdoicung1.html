@@ -1,152 +1,29 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Kết quả Lò Chum - Sân 1</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Lexend', sans-serif;
-      font-weight: bold;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 470px;
-      font-size: 14px;
-      border-radius: 16px;
-      overflow: hidden;
-      border: none;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    td {
-      border: 1px solid #ccc;
-      padding: 4px 6px;
-      vertical-align: middle;
-    }
-
-    .logo {
-      width: 60px;
-      text-align: center;
-    }
-
-    .logo img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-    }
-
-    .col2 {
-      background: #555;
-      color: white;
-      text-transform: uppercase;
-      text-align: left;
-    }
-
-    .col3 {
-      background: #FFD700;
-      color: #212121; /* Đen than */
-      font-size: 22px; /* To hơn */
-      font-weight: bold;
-      text-align: center;
-      width: 45px;
-    }
-
-    .col4 {
-      background: #FFD700;
-      color: black;
-      font-size: 16px;
-      text-align: center;
-      width: 45px;
-      border: none; /* Bỏ viền */
-    }
-
-    /* Bỏ viền ngang trên/dưới của cột 4 dòng 1 và 2 */
-    tr:nth-child(1) td.col4,
-    tr:nth-child(2) td.col4 {
-      border-top: none;
-      border-bottom: none;
-    }
-
-    /* Dòng 3 */
-    .row3 td.data {
-      background: #2E8B57;
-      color: #FFFFFF;
-      font-size: 16px;
-      text-align: center;
-      font-weight: bold;
-      padding: 4px 6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Test Sheet</title>
 </head>
 <body>
-  <div id="table"></div>
+  <h3>Kết quả đọc dữ liệu từ Sheet</h3>
+  <pre id="out">Đang tải...</pre>
 
   <script>
-    function fetchData() {
-      const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
+  const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
-    async function fetchData() {
+  fetch(url)
+    .then(res => res.text())
+    .then(text => {
       try {
-        const res = await fetch(url);
-        const text = await res.text();
         const json = JSON.parse(text.substring(47, text.length - 2));
-        renderTable(json.table);
+        document.getElementById("out").textContent = JSON.stringify(json.table.rows, null, 2);
       } catch (e) {
-        document.getElementById("table").innerHTML = "❌ Lỗi tải dữ liệu";
-        console.error(e);
+        document.getElementById("out").textContent = "❌ Không đọc được JSON. Dữ liệu trả về:\n\n" + text;
       }
-    }
-
-    function renderTable(table) {
-      if (!table.rows || table.rows.length < 3) return;
-
-      const vong = table.rows[0].c[2]?.v || "";
-      const giai = table.rows[1].c[2]?.v || "";
-      const score1 = table.rows[2].c[1]?.v || "0";
-      const team1 = table.rows[2].c[2]?.v || "";
-      const team2 = table.rows[2].c[4]?.v || "";
-      const score2 = table.rows[2].c[5]?.v || "0";
-
-      let html = `
-      <table>
-        <tr>
-          <td rowspan="3" class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg"></td>
-          <td colspan="5" class="vong">${vong}</td>
-        </tr>
-        <tr>
-          <td colspan="5" class="giai">${giai}</td>
-        </tr>
-        <tr>
-          <td class="dot" id="dot1"></td>
-          <td class="score">${score1}</td>
-          <td class="team">${team1}</td>
-          <td class="vs">VS</td>
-          <td class="team">${team2}</td>
-          <td class="score">${score2}</td>
-          <td class="dot" id="dot2"></td>
-        </tr>
-      </table>
-      `;
-
-      document.getElementById("table").innerHTML = html;
-
-      // Xác định đội thắng -> hiển thị chấm đỏ bên thắng
-      const s1 = Number(score1);
-      const s2 = Number(score2);
-      const dot1 = document.getElementById("dot1");
-      const dot2 = document.getElementById("dot2");
-
-      if (s1 > s2) dot1.style.display = "block";
-      else if (s2 > s1) dot2.style.display = "block";
-    }
-
-    fetchData();
-    setInterval(fetchData, 5000);
+    })
+    .catch(err => {
+      document.getElementById("out").textContent = "❌ Lỗi tải dữ liệu: " + err;
+    });
   </script>
 </body>
 </html>
