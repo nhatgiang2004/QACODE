@@ -1,166 +1,172 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Kết quả Pickleball - Hường Đỗ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Lexend', sans-serif;
-      text-align: center;
-      font-weight: 600;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kết quả Pickleball - Hường Đỗ</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: 'Lexend', sans-serif;
+    font-weight: 600;
+    text-align: center;
+  }
 
-    .wrapper {
-      width: 100%;
-      max-width: 950px;
-      margin: 10px auto;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-      background: white;
-      position: relative;
-    }
+  /* Khung tổng */
+  .wrapper {
+    width: 100%;
+    max-width: 950px;
+    margin: 10px auto;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    background: white;
+    position: relative;
+  }
 
-    .logo {
-      position: absolute;
-      top: 5px;
-      left: 10px;
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
+  /* Logo góc trái chiếm 2 dòng đầu */
+  .logo {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%; /* Bo tròn hoàn toàn */
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
 
-    .topbar {
-      background: #28A745;
-      color: white;
-      font-size: 22px;
-      padding: 6px 0;
-      font-weight: 700;
-    }
+  /* Dòng 1 - TRỰC TIẾP */
+  .topbar {
+    background: #28A745;
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+    padding: 6px 0;
+  }
 
-    .subtitle {
-      background: #555;
-      color: white;
-      font-size: 20px;
-      text-transform: uppercase;
-      padding: 8px 0;
-    }
+  /* Dòng 2 - Tên giải */
+  .subtitle {
+    background: #555;
+    color: white;
+    font-size: 20px;
+    text-transform: uppercase;
+    padding: 8px 0;
+  }
 
-    .match {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      background: white;
-      position: relative;
-    }
+  /* Dòng 3 - Trận đấu */
+  .match {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: white;
+  }
 
-    .team {
-      flex: 1;
-      color: #FF8C00;
-      font-size: 22px;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: center;
-      padding: 0 10px;
-    }
+  .team {
+    flex: 1;
+    color: #FF8C00;
+    font-size: 22px;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-align: center;
+    padding: 0 10px;
+  }
 
-    .score {
-      font-size: 58px;
-      font-weight: bold;
-      color: #A80000;
-      width: 70px;
-      text-align: center;
-    }
+  .score {
+    font-size: 58px;
+    font-weight: bold;
+    color: #A80000;
+    width: 70px;
+    text-align: center;
+  }
 
-    .vs {
-      font-size: 36px;
-      font-weight: bold;
-      color: #FFB400;
-      text-shadow: 1px 1px 0 #000;
-    }
-
-    .circle {
-      width: 25px;
-      height: 25px;
-      border-radius: 50%;
-      border: 3px solid black;
-      background: red;
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: none;
-    }
-
-    .circle.team1 { left: 10px; right: auto; }
-  </style>
+  .vs {
+    font-size: 36px;
+    font-weight: bold;
+    color: #FFB400;
+    text-shadow: 1px 1px 0 #000;
+  }
+</style>
 </head>
 <body>
   <div class="wrapper">
+    <!-- Cập nhật logo nếu cần, giữ nguyên logo mẫu -->
     <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" class="logo">
 
-    <div class="topbar" id="vong">ĐANG CẬP NHẬT...</div>
-    <div class="subtitle" id="giai">ĐANG CẬP NHẬT...</div>
+    <div class="topbar">TRỰC TIẾP</div>
+    <!-- Giữ nguyên tên giải đấu mẫu cho đến khi dữ liệu mới được tải -->
+    <div class="subtitle">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
 
     <div class="match">
-      <div class="score" id="score1">0</div>
-      <div class="team" id="team1">---</div>
+      <div class="score" id="score1">--</div>
+      <div class="team" id="team1">Đang tải...</div>
       <div class="vs">VS</div>
-      <div class="team" id="team2">---</div>
-      <div class="score" id="score2">0</div>
-
-      <!-- Vòng tròn đỏ -->
-      <div class="circle team1" id="circle1"></div>
-      <div class="circle team2" id="circle2"></div>
+      <div class="team" id="team2">Đang tải...</div>
+      <div class="score" id="score2">--</div>
     </div>
   </div>
 
   <script>
+    // URL MỚI CỦA BẠN ĐÃ ĐƯỢC CẬP NHẬT Ở ĐÂY
     const sheetURL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
     async function fetchData() {
       try {
-        const res = await fetch(sheetURL);
+        // Tải dữ liệu với tham số ngẫu nhiên để tránh cache
+        const cacheBustingURL = sheetURL + '&t=' + Date.now();
+        const res = await fetch(cacheBustingURL);
+        
+        if (!res.ok) {
+            throw new Error('Lỗi HTTP: Không thể truy cập Google Sheets.');
+        }
+
         const text = await res.text();
-        const json = JSON.parse(text.substring(47, text.length - 2));
-        const row = json.table.rows[0]; // chỉ đọc hàng đầu tiên
+        
+        // Cắt chuỗi để lấy JSON. Định dạng chuẩn của Google Visualization API là '/*O_o*/\ngoogle.visualization.Query.setResponse(<json>)'
+        const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+        const json = JSON.parse(jsonString);
+        
+        const rows = json.table.rows;
 
-        // Lấy dữ liệu từng cột
-        const vong  = row.c[0]?.v || '';
-        const giai  = row.c[1]?.v || '';
-        const doi1  = row.c[2]?.v || '';
-        const diem1 = row.c[3]?.v || 0;
-        const doi2  = row.c[4]?.v || '';
-        const diem2 = row.c[5]?.v || 0;
-        const thang = row.c[6]?.v || '';
+        // Dữ liệu từ sheet HIENTHI1 cần phải được sắp xếp như sau:
+        // Hàng 0 (hoặc hàng đầu tiên): [Tên đội 1, Điểm đội 1]
+        // Hàng 1 (hoặc hàng thứ hai): [Tên đội 2, Điểm đội 2]
+        // Giả sử: Col B (c[1]) là Tên đội, Col C (c[2]) là Điểm số
+        
+        if (rows.length >= 2) {
+          // Trích xuất dữ liệu, đảm bảo giá trị không rỗng
+          const team1 = rows[0].c[1]?.v || "ĐỘI A";
+          const score1 = rows[0].c[2]?.v || "--";
+          const team2 = rows[1].c[1]?.v || "ĐỘI B";
+          const score2 = rows[1].c[2]?.v || "--";
 
-        // Gán vào giao diện
-        document.getElementById('vong').innerText  = vong;
-        document.getElementById('giai').innerText  = giai;
-        document.getElementById('team1').innerText = doi1;
-        document.getElementById('team2').innerText = doi2;
-        document.getElementById('score1').innerText = diem1;
-        document.getElementById('score2').innerText = diem2;
-
-        // Hiện vòng tròn đỏ theo đội thắng
-        document.getElementById('circle1').style.display = (thang == 1) ? 'block' : 'none';
-        document.getElementById('circle2').style.display = (thang == 2) ? 'block' : 'none';
-
+          // Cập nhật DOM
+          document.getElementById('team1').innerText = team1.toUpperCase();
+          document.getElementById('score1').innerText = score1;
+          document.getElementById('team2').innerText = team2.toUpperCase();
+          document.getElementById('score2').innerText = score2;
+        } else {
+            console.warn("Dữ liệu không đủ 2 đội để hiển thị.");
+        }
       } catch (err) {
-        console.error('❌ Lỗi tải dữ liệu:', err);
+        console.error("❌ Lỗi tải hoặc phân tích dữ liệu:", err);
+        // Hiển thị thông báo lỗi trên giao diện (tùy chọn)
+        document.getElementById('team1').innerText = "LỖI TẢI DỮ LIỆU";
+        document.getElementById('team2').innerText = "VUI LÒNG KIỂM TRA LINK";
+        document.getElementById('score1').innerText = "!";
+        document.getElementById('score2').innerText = "!";
       }
     }
 
+    // Lần tải đầu tiên
     fetchData();
-    setInterval(fetchData, 5000); // cập nhật mỗi 5 giây
+    // Tải lại mỗi 5 giây
+    setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
