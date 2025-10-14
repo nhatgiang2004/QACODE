@@ -2,55 +2,25 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <title>Kết quả Pickleball - Hường Đỗ</title>
+  <title>Kết quả Pickleball</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600&display=swap" rel="stylesheet">
   <style>
-    body { 
-      margin:0; padding:0; background:transparent; 
-      font-family:'Lexend',sans-serif; text-align:center; font-weight:700; 
-    }
-    .wrapper{
-      width:100%; max-width:950px; margin:10px auto;
-      border-radius:20px; overflow:hidden; 
-      box-shadow:0 4px 10px rgba(0,0,0,0.25); background:white; position:relative;
-    }
-    .logo{
-      position:absolute; top:5px; left:10px; width:70px; height:70px;
-      border-radius:50%; object-fit:cover; z-index:10;
-    }
-    /* Dòng 1 - tên vòng đấu */
-    .topbar{
-      background:#28A745; color:#fff; font-size:22px; padding:6px 0; font-weight:700;
-      text-transform:uppercase;
-    }
-    /* Dòng 2 - tên giải */
-    .subtitle{
-      background:#555; color:#fff; font-size:20px; text-transform:uppercase; padding:8px 0;
-    }
-    .match{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 20px; background:white; position:relative;
-    }
-    .team{
-      flex:1; color:#FF8C00; font-size:22px; text-transform:uppercase;
-      font-weight:700; text-align:center; padding:0 10px;
-    }
-    .score{
-      font-size:58px; font-weight:bold; color:#A80000; width:70px; text-align:center;
-    }
-    .vs{
-      font-size:36px; font-weight:bold; color:#FFB400; text-shadow:1px 1px 0 #000;
-    }
-    .circle{
-      width:28px; height:28px; border-radius:50%; background:red; border:3px solid #000;
-      position:absolute; top:50%; transform:translateY(-50%); display:none;
-    }
-    .circle.left{ left:6px; }
-    .circle.right{ right:6px; }
+    body { margin:0; padding:0; background:transparent; font-family:'Lexend',sans-serif; text-align:center; font-weight:600; }
+    .wrapper { width:100%; max-width:950px; margin:10px auto; border-radius:20px; overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,0.25); background:white; position:relative; }
+    .logo { position:absolute; top:5px; left:10px; width:70px; height:70px; border-radius:50%; object-fit:cover; z-index:10; }
+    .topbar { background:#28A745; color:#fff; font-size:22px; padding:6px 0; font-weight:700; text-transform:uppercase; }
+    .subtitle { background:#555; color:#fff; font-size:20px; text-transform:uppercase; padding:8px 0; }
+    .match { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:white; position:relative; }
+    .team { flex:1; color:#FF8C00; font-size:22px; text-transform:uppercase; font-weight:700; text-align:center; padding:0 10px; }
+    .score { font-size:58px; font-weight:bold; color:#A80000; width:70px; text-align:center; }
+    .vs { font-size:36px; font-weight:bold; color:#FFB400; text-shadow:1px 1px 0 #000; }
+    .circle { width:28px; height:28px; border-radius:50%; background:red; border:3px solid #000; position:absolute; top:50%; transform:translateY(-50%); display:none; }
+    .circle.left { left:6px; }
+    .circle.right { right:6px; }
     @media(max-width:520px){
-      .score{ font-size:36px; width:52px; }
-      .team{ font-size:16px; }
-      .vs{ font-size:24px; }
+      .score { font-size:36px; width:52px; }
+      .team { font-size:16px; }
+      .vs { font-size:24px; }
     }
   </style>
 </head>
@@ -66,87 +36,73 @@
       <div class="vs">VS</div>
       <div class="team" id="team2">Đang tải...</div>
       <div class="score" id="score2">0</div>
-      <div class="circle left" id="circle1" title="Đội thắng"></div>
-      <div class="circle right" id="circle2" title="Đội thắng"></div>
+
+      <div class="circle left" id="circle1"></div>
+      <div class="circle right" id="circle2"></div>
     </div>
   </div>
 
   <script>
-    const sheetURL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
+    // Link pubhtml bạn vừa cung cấp
+    const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTwMmzVA4Tn64y48649hywWVL5UqaqIA6lgaQI_psAixoHZ9lHE419NvRKKMj1EvV3wntwDVBwdXM12/pubhtml';
 
-    const HEADERS = {
-      vong: ['vong','vòng','vòng đấu','vong dau','round'],
-      giai: ['giai','giải','tên giải','tengiai','tên giải đấu'],
-      doi1: ['doi1','đội1','team1','team a','đội a','doi a'],
-      diem1: ['diem1','điểm1','score1','point1','điểm a'],
-      doi2: ['doi2','đội2','team2','team b','đội b','doi b'],
-      diem2: ['diem2','điểm2','score2','point2','điểm b'],
-      thang: ['thang','thắng','winner','win','nguoi thang']
-    };
-
-    function findHeaderIndex(headerRow, variants){
-      for(let i=0;i<headerRow.length;i++){
-        const cell = headerRow[i];
-        if(!cell || !cell.v) continue;
-        const text = String(cell.v).trim().toLowerCase();
-        for(const v of variants){
-          if(text === v || text.includes(v)) return i;
-        }
-      }
-      return -1;
-    }
-
-    function parseGviz(text){
-      const first = text.indexOf('{');
-      const last = text.lastIndexOf('}');
-      if(first === -1 || last === -1) throw new Error('Không parse được response');
-      return JSON.parse(text.substring(first, last+1));
-    }
-
-    async function fetchData(){
-      try{
+    async function fetchData() {
+      try {
         const res = await fetch(sheetURL);
-        const text = await res.text();
-        const json = parseGviz(text);
-        const rows = json.table.rows || [];
-        if(!rows.length) return;
+        const html = await res.text();
 
-        const header = rows[0].c;
-        const map = {
-          vong: findHeaderIndex(header, HEADERS.vong),
-          giai: findHeaderIndex(header, HEADERS.giai),
-          doi1: findHeaderIndex(header, HEADERS.doi1),
-          diem1: findHeaderIndex(header, HEADERS.diem1),
-          doi2: findHeaderIndex(header, HEADERS.doi2),
-          diem2: findHeaderIndex(header, HEADERS.diem2),
-          thang: findHeaderIndex(header, HEADERS.thang)
-        };
+        // Google pubhtml trả về một trang HTML chứa bảng <table>
+        // Chúng ta cần parse HTML để lấy dữ liệu từ table
 
-        const data = rows[1]?.c || [];
-        const get = (i) => (i >= 0 && data[i] && data[i].v !== undefined) ? data[i].v : '';
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const tables = doc.querySelectorAll('table');
+        if (tables.length === 0) {
+          console.error('Không tìm thấy bảng trong pubhtml');
+          return;
+        }
+        // Giả sử bảng đầu tiên là dữ liệu bạn muốn
+        const table = tables[0];
+        const rows = table.rows;
 
-        const vong = get(map.vong);
-        const giai = get(map.giai);
-        const doi1 = get(map.doi1);
-        const doi2 = get(map.doi2);
-        const diem1 = Number(get(map.diem1)) || 0;
-        const diem2 = Number(get(map.diem2)) || 0;
+        // Lấy header (vòng + giải) nếu có trong hàng đầu, hoặc từ cột riêng
+        // Giả sử hàng 0 chứa tiêu đề: vòng, giải
+        if (rows.length >= 1) {
+          const headerRow = rows[0].cells;
+          // nếu header có ít nhất 2 ô, lấy 2 ô đầu làm vòng + giải
+          if (headerRow.length >= 2) {
+            document.getElementById('vong').innerText = headerRow[0].innerText.trim();
+            document.getElementById('giai').innerText = headerRow[1].innerText.trim();
+          }
+        }
 
-        document.getElementById('vong').innerText = vong || 'VÒNG ĐẤU';
-        document.getElementById('giai').innerText = giai || 'GIẢI ĐẤU';
-        document.getElementById('team1').innerText = doi1 || '---';
-        document.getElementById('team2').innerText = doi2 || '---';
-        document.getElementById('score1').innerText = diem1;
-        document.getElementById('score2').innerText = diem2;
+        // Lấy dữ liệu trận đấu từ dòng thứ 2 (index 1)
+        if (rows.length >= 2) {
+          const dataRow = rows[1].cells;
+          // Bạn cần chắc cấu trúc: cell[0] = đội 1, cell[1] = điểm 1, cell[2] = đội 2, cell[3] = điểm 2
+          // Hoặc cấu trúc tương ứng với sheet bạn
+          const doi1 = dataRow[0]?.innerText.trim() || '';
+          const diem1 = Number(dataRow[1]?.innerText.trim()) || 0;
+          const doi2 = dataRow[2]?.innerText.trim() || '';
+          const diem2 = Number(dataRow[3]?.innerText.trim()) || 0;
 
-        const circle1 = document.getElementById('circle1');
-        const circle2 = document.getElementById('circle2');
-        circle1.style.display = 'none';
-        circle2.style.display = 'none';
-        if (diem1 > diem2) circle1.style.display = 'block';
-        else if (diem2 > diem1) circle2.style.display = 'block';
-      } catch(e){
-        console.error('Lỗi tải dữ liệu:', e);
+          document.getElementById('team1').innerText = doi1;
+          document.getElementById('score1').innerText = diem1;
+          document.getElementById('team2').innerText = doi2;
+          document.getElementById('score2').innerText = diem2;
+
+          // xác định đội thắng
+          if (diem1 > diem2) {
+            document.getElementById('circle1').style.display = 'block';
+            document.getElementById('circle2').style.display = 'none';
+          } else if (diem2 > diem1) {
+            document.getElementById('circle2').style.display = 'block';
+            document.getElementById('circle1').style.display = 'none';
+          }
+        }
+
+      } catch (err) {
+        console.error('Lỗi fetch/parse pubhtml:', err);
       }
     }
 
