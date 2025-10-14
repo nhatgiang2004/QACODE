@@ -56,10 +56,13 @@ async function fetchAndRender(){
 
     if(rows.length === 0) throw new Error("Không có dữ liệu từ sheet");
 
-    // ✅ Lấy giá trị ô D1 (dòng 0, cột 3)
-    const giaiTuSheet = safeStr(rows[0]?.c?.[3]?.v) || "CHƯA CÓ TÊN GIẢI";
+    // ✅ LẤY GIÁ TRỊ Ô D1
+    const giaTriD1 = safeStr(rows[0]?.c?.[3]?.v) || "Chưa có dữ liệu ô D1";
 
-    // ✅ Lấy dữ liệu trận đấu như cũ (giữ nguyên)
+    // ✅ GÁN VÀO PHẦN BÁO CÁO (ví dụ id="giai")
+    document.getElementById('giai').innerText = giaTriD1;
+
+    // ⚙️ Giữ nguyên phần xử lý trận đấu như cũ
     let matchRow = null;
     for (const row of rows) {
       const texts = (row.c || []).map(c => c?.v ? String(c.v).trim() : '');
@@ -76,10 +79,8 @@ async function fetchAndRender(){
     const score2 = safeStr(cells[5]?.v);
     const serveG = safeStr(cells[6]?.v);
 
-    // ✅ Hiển thị lên giao diện
+    // ✅ Hiển thị thông tin trận đấu (không đổi)
     document.getElementById('vong').innerText = "VÒNG ĐANG THI ĐẤU";
-    document.getElementById('giai').innerText = giaiTuSheet;
-
     document.getElementById('score1').innerText = score1 || '0';
     document.getElementById('team1').innerText = team1 || '---';
     document.getElementById('team2').innerText = team2 || '---';
@@ -101,6 +102,7 @@ async function fetchAndRender(){
 fetchAndRender();
 setInterval(fetchAndRender, 5000);
 </script>
+
 
 </body>
 </html>
