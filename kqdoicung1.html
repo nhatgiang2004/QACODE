@@ -2,10 +2,10 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <title>Kết quả Pickleball - Auto detect</title>
+  <title>Kết quả Pickleball – Toàn bộ Dữ liệu</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; padding:16px; font-family:'Lexend',sans-serif; background:#fff; color:#222; }
+    body { margin:0; padding:16px; font-family:'Lexend', sans-serif; background:#fff; color:#222; }
     .vong { background:#28A745; color:#fff; padding:10px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:6px; }
     .giai { background:#555; color:#fff; padding:8px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:12px; }
     .match { display:flex; align-items:center; justify-content:center; gap:18px; }
@@ -13,16 +13,16 @@
     .team { font-size:22px; color:#FF8C00; font-weight:900; text-transform:uppercase; width:340px; text-align:center; }
     .vs { font-size:32px; font-weight:900; color:#FFB400; text-shadow:1px 1px 0 #000; width:80px; text-align:center; }
     .dot { width:36px; height:36px; border-radius:50%; background:red; border:3px solid #000; display:none; }
-    .logo { position: absolute; left:16px; top:16px; }
+    .logo { position:absolute; left:16px; top:16px; }
     .logo img { width:80px; height:80px; border-radius:50%; }
-    .debug { font-family:monospace; font-size:11px; color:#666; white-space:pre-wrap; display:none; }
+    .debug { font-family:monospace; font-size:12px; color:#666; white-space:pre-wrap; margin-top:20px; }
   </style>
 </head>
 <body>
   <div class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo"></div>
 
-  <div id="vong" class="vong">Đang tải...</div>
-  <div id="giai" class="giai">Đang tải...</div>
+  <div id="vong" class="vong">Đang tải vòng...</div>
+  <div id="giai" class="giai">Đang tải giải...</div>
 
   <div class="match" id="match">
     <div id="dot1" class="dot"></div>
@@ -42,80 +42,88 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VF
 function parseGviz(text) {
   const first = text.indexOf('{');
   const last = text.lastIndexOf('}');
+  if (first < 0 || last < 0) throw new Error("Không parse được gviz response");
   return JSON.parse(text.substring(first, last + 1));
 }
 
-function looksLikeVong(s){
-  if(!s) return false;
-  s = s.toLowerCase();
-  return s.includes('vòng') || s.includes('vong');
-}
-function looksLikeGiai(s){
-  if(!s) return false;
-  s = s.toLowerCase();
-  return s.includes('giải') || s.includes('giai') || s.includes('cup') || s.includes('pickle');
+function safeStr(x) {
+  return (x === undefined || x === null) ? '' : String(x);
 }
 
-function safeStr(x){ return (x===undefined||x===null)?'':String(x); }
+function findMatchRow(rows) {
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const cells = row.c || [];
+    // heuristics: look for two non-empty string cells that look like team names
+    const texts = cells.map(c => c && c.v ? String(c.v).trim() : '');
+    const nonEmpty = texts.filter(t => t && t.length > 1);
+    if (nonEmpty.length >= 2) {
+      return row;
+    }
+  }
+  // fallback: return the third row if exists
+  return rows[2] || rows[1] || rows[0];
+}
 
-async function fetchAndRender(){
-  try{
+async function fetchAndRender() {
+  try {
     const res = await fetch(SHEET_URL);
     const text = await res.text();
     const parsed = parseGviz(text);
     const rows = parsed.table.rows || [];
-
     document.getElementById('debug').textContent = JSON.stringify(rows, null, 2);
 
-    if(rows.length === 0) throw new Error("Không có dữ liệu từ sheet");
-
-    // 🔍 tìm dòng có 'Vòng' và 'Giải'
-    let vong = "VÒNG", giai = "GIẢI", matchRow = null;
-    for(const row of rows){
-      const cells = row.c || [];
-      for(const c of cells){
-        const val = c?.v ? String(c.v).trim() : '';
-        if(!vong && looksLikeVong(val)) vong = val;
-        if(!giai && looksLikeGiai(val)) giai = val;
-      }
+    if (rows.length < 3) {
+      document.getElementById('vong').innerText = "Không đủ dữ liệu";
+      document.getElementById('giai').innerText = "";
+      return;
     }
 
-    // tìm dòng chứa 2 đội
-    for(const row of rows){
-      const texts = (row.c || []).map(c => c?.v ? String(c.v).trim() : '');
-      const teams = texts.filter(t => t && t.match(/[A-Za-zÀ-ỹ0-9]/) && t.includes(' '));
-      if(teams.length >= 2){ matchRow = row; break; }
+    // Lấy tên vòng đấu ở dòng đầu tiên (row 0), cột thích hợp
+    let vong = '';
+    if (rows[0].c && rows[0].c.length > 0 && rows[0].c[0].v !== undefined) {
+      vong = safeStr(rows[0].c[0].v);
     }
 
-    if(!matchRow) throw new Error("Không tìm thấy dữ liệu trận đấu");
+    // Lấy tên giải ở dòng thứ hai (row 1)
+    let giai = '';
+    if (rows[1].c && rows[1].c.length > 0 && rows[1].c[0].v !== undefined) {
+      giai = safeStr(rows[1].c[0].v);
+    }
 
+    // Tìm dòng thi đấu (hoặc dòng 2 nếu cấu trúc chuẩn)
+    const matchRow = findMatchRow(rows);
     const cells = matchRow.c || [];
+
     const serveA = safeStr(cells[0]?.v);
     const score1 = safeStr(cells[1]?.v);
-    const team1  = safeStr(cells[2]?.v);
-    const team2  = safeStr(cells[4]?.v);
+    const team1 = safeStr(cells[2]?.v);
+    const team2 = safeStr(cells[4]?.v);
     const score2 = safeStr(cells[5]?.v);
     const serveG = safeStr(cells[6]?.v);
 
-    document.getElementById('vong').innerText = vong;
-    document.getElementById('giai').innerText = giai;
-    document.getElementById('score1').innerText = score1 || '0';
-    document.getElementById('team1').innerText = team1 || '---';
-    document.getElementById('team2').innerText = team2 || '---';
-    document.getElementById('score2').innerText = score2 || '0';
+    document.getElementById('vong').innerText = vong || "VÒNG";
+    document.getElementById('giai').innerText = giai || "GIẢI";
+    document.getElementById('score1').innerText = score1;
+    document.getElementById('team1').innerText = team1 || "---";
+    document.getElementById('team2').innerText = team2 || "---";
+    document.getElementById('score2').innerText = score2;
 
+    // Hiển thị chấm đỏ
     const dot1 = document.getElementById('dot1');
     const dot2 = document.getElementById('dot2');
     dot1.style.display = dot2.style.display = 'none';
-    if(serveA) dot1.style.display = 'block';
-    else if(serveG) dot2.style.display = 'block';
+    if (serveA) {
+      dot1.style.display = 'block';
+    } else if (serveG) {
+      dot2.style.display = 'block';
+    }
 
-  }catch(err){
-    console.error(err);
-    document.getElementById('vong').innerText = 'LỖI DỮ LIỆU';
-    document.getElementById('giai').innerText = '';
-    document.getElementById('debug').style.display = 'block';
-    document.getElementById('debug').textContent += '\n' + err.message;
+  } catch (err) {
+    console.error("Lỗi fetch/parse:", err);
+    document.getElementById('vong').innerText = "LỖI DỮ LIỆU";
+    document.getElementById('giai').innerText = "";
+    document.getElementById('match').innerText = "";
   }
 }
 
