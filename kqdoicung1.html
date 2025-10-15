@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8" />
-<title>Kết quả Pickleball - Đội Cung 1</title>
+<title>Kết quả Pickleball</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
 <style>
   body {
@@ -21,24 +21,25 @@
     border: 1px solid #ccc;
   }
 
-  /* --- KHỐI HEADER GỒM 2 DÒNG, GỘP CỘT 1 --- */
+  /* --- KHỐI HEADER (2 dòng + logo) --- */
   .header-block {
     display: grid;
-    grid-template-columns: 120px 1fr;  /* Logo + phần nội dung */
+    grid-template-columns: 120px 1fr;
     grid-template-rows: auto auto;
     position: relative;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    overflow: hidden; /* ✅ bo góc trên như hình */
+    overflow: hidden;
   }
 
   .logo-cell {
     grid-row: 1 / span 2;
     grid-column: 1;
-    background: #28a745;
+    background: linear-gradient(180deg, #32b34c, #25963b); /* 🌈 xanh đậm dần xuống */
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: inset -4px 0 8px rgba(0,0,0,0.2);
   }
 
   .logo-cell img {
@@ -49,7 +50,7 @@
   }
 
   .header-green {
-    background: #28a745;
+    background: linear-gradient(180deg, #32b34c, #25963b);
     color: white;
     font-weight: 800;
     font-size: 18px;
@@ -57,11 +58,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0; /* ✅ không bo riêng */
+    border-radius: 0;
+    box-shadow: inset 0 -3px 5px rgba(0,0,0,0.2); /* 🌟 hiệu ứng tách lớp nhẹ */
   }
 
   .header-gray {
-    background: #555;
+    background: linear-gradient(180deg, #5b5b5b, #444);
     color: white;
     font-weight: 800;
     font-size: 15px;
@@ -71,6 +73,7 @@
     justify-content: center;
   }
 
+  /* --- PHẦN NỘI DUNG --- */
   .container {
     background: #fff;
     padding: 15px 10px;
@@ -93,7 +96,7 @@
   }
 
   .team {
-    font-size: 22px;
+    font-size: 20px; /* ✅ nhỏ hơn */
     color: #FF8C00;
     font-weight: 900;
     text-transform: uppercase;
@@ -118,13 +121,14 @@
     display: none;
   }
 
+  /* --- RESPONSIVE --- */
   @media (max-width: 768px) {
     .main-wrapper { max-width: 90%; }
     .logo-cell img { width: 55px; height: 55px; }
     .header-green { font-size: 16px; padding: 8px; }
     .header-gray { font-size: 13px; padding: 7px; }
     .score { font-size: 44px; width: 70px; }
-    .team { font-size: 18px; width: 250px; }
+    .team { font-size: 17px; width: 250px; } /* ✅ nhỏ tương ứng */
     .vs { font-size: 22px; }
   }
 
@@ -135,13 +139,35 @@
     .header-green { font-size: 14px; }
     .header-gray { font-size: 12px; }
     .score { font-size: 36px; width: 60px; }
-    .team { font-size: 16px; width: 220px; }
+    .team { font-size: 15px; width: 220px; }
     .vs { font-size: 20px; }
     .match { gap: 8px; }
   }
 </style>
 </head>
 <body>
+
+  <div class="main-wrapper">
+    <div class="header-block">
+      <div class="logo-cell">
+        <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
+      </div>
+      <div id="hdr1" class="header-green">TRỰC TIẾP</div>
+      <div id="hdr2" class="header-gray">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+    </div>
+
+    <div class="container">
+      <div id="matchArea" class="match">
+        <div id="dot1" class="dot"></div>
+        <div id="score1" class="score">6</div>
+        <div id="team1" class="team">HIỆP 2.5 – KHÁNH CẬN 2.6</div>
+        <div class="vs">VS</div>
+        <div id="team2" class="team">GIANG CL 2.6 – SƠN NÚI 2.6</div>
+        <div id="score2" class="score">4</div>
+        <div id="dot2" class="dot"></div>
+      </div>
+    </div>
+  </div>
 
 <script>
   const SHEET_ID = "17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ";
