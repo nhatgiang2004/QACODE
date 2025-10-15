@@ -2,30 +2,67 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <title>Kết quả Pickleball - Live</title>
+  <title>Kết quả Pickleball</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
-    body { margin:0; padding:16px; font-family:'Lexend',sans-serif; background:#fff; color:#222; }
-    .vong { background:#28A745; color:#fff; padding:10px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:6px; }
-    .giai { background:#555; color:#fff; padding:8px; font-weight:800; text-align:center; text-transform:uppercase; margin-bottom:12px; }
-    .match { display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:6px; }
-    .score { font-size:48px; color:#a40000; font-weight:900; width:70px; text-align:center; }
-    .team { font-size:22px; color:#FF8C00; font-weight:900; text-transform:uppercase; width:340px; text-align:center; }
-    .vs { font-size:32px; font-weight:900; color:#FFB400; text-shadow:1px 1px 0 #000; width:80px; text-align:center; }
-    .dot { width:36px; height:36px; border-radius:50%; background:red; border:3px solid #000; display:none; }
-    .logo { position:absolute; left:16px; top:16px; }
-    .logo img { width:80px; height:80px; border-radius:50%; }
-    .debug { font-family:monospace; font-size:11px; color:#666; white-space:pre-wrap; display:none; }
+    body {
+      margin:0; padding:16px;
+      font-family:'Lexend',sans-serif;
+      background:#fff; color:#222;
+    }
+    .vong {
+      background:#28A745; color:#fff;
+      padding:10px; font-weight:800;
+      text-align:center; text-transform:uppercase;
+      margin-bottom:6px;
+    }
+    .giai {
+      background:#555; color:#fff;
+      padding:8px; font-weight:800;
+      text-align:center; text-transform:uppercase;
+      margin-bottom:12px;
+    }
+    .match {
+      display:flex; align-items:center; justify-content:center; gap:18px;
+    }
+    .score {
+      font-size:48px; color:#a40000; font-weight:900; width:70px; text-align:center;
+    }
+    .team {
+      font-size:22px; color:#FF8C00; font-weight:900; text-transform:uppercase;
+      width:340px; text-align:center;
+    }
+    .vs {
+      font-size:32px; font-weight:900; color:#FFB400;
+      text-shadow:1px 1px 0 #000; width:80px; text-align:center;
+    }
+    .dot {
+      width:36px; height:36px; border-radius:50%;
+      background:red; border:3px solid #000; display:none;
+    }
+    .logo {
+      position: absolute; left:16px; top:16px;
+    }
+    .logo img {
+      width:80px; height:80px; border-radius:50%;
+    }
   </style>
 </head>
 <body>
   <div class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo"></div>
 
-  <div id="vong" class="vong">Đang tải vòng...</div>
-  <div id="giai" class="giai">Đang tải giải...</div>
-  <div id="matches"></div>
+  <div id="vong" class="vong">Đang tải...</div>
+  <div id="giai" class="giai">Đang tải...</div>
 
-  <pre id="debug" class="debug"></pre>
+  <div class="match">
+    <div id="dot1" class="dot"></div>
+    <div id="score1" class="score">0</div>
+    <div id="team1" class="team">---</div>
+    <div class="vs">VS</div>
+    <div id="team2" class="team">---</div>
+    <div id="score2" class="score">0</div>
+    <div id="dot2" class="dot"></div>
+  </div>
 
 <script>
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1";
@@ -39,54 +76,44 @@ function parseGviz(text) {
 function safeStr(x){ return (x===undefined||x===null)?'':String(x); }
 
 async function fetchAndRender(){
-  try {
+  try{
     const res = await fetch(SHEET_URL);
     const text = await res.text();
     const parsed = parseGviz(text);
     const rows = parsed.table.rows || [];
     if(rows.length < 3) throw new Error("Không đủ dữ liệu (phải có ít nhất 3 dòng)");
 
-    const getVal = (row, col) => safeStr(rows[row]?.c?.[col]?.v);
+    // Lấy dữ liệu
+    const vong = safeStr(rows[0]?.c?.[2]?.v); // dòng 1, cột C
+    const giai = safeStr(rows[1]?.c?.[2]?.v); // dòng 2, cột C
+    const match = rows[2]?.c || []; // dòng 3
 
-    // lấy dữ liệu
-    const vong = getVal(0, 3); // dòng 1 cột D
-    const giai = getVal(1, 3); // dòng 2 cột D
-    document.getElementById('vong').innerText = vong || "VÒNG";
-    document.getElementById('giai').innerText = giai || "GIẢI";
+    const serveA = safeStr(match[0]?.v);
+    const score1 = safeStr(match[1]?.v);
+    const team1  = safeStr(match[2]?.v);
+    const team2  = safeStr(match[4]?.v);
+    const score2 = safeStr(match[5]?.v);
+    const serveG = safeStr(match[6]?.v);
 
-    const matchContainer = document.getElementById('matches');
-    matchContainer.innerHTML = '';
+    // Cập nhật hiển thị
+    document.getElementById('vong').innerText = vong || "Chưa có vòng";
+    document.getElementById('giai').innerText = giai || "Chưa có giải";
+    document.getElementById('score1').innerText = score1 || "0";
+    document.getElementById('team1').innerText = team1 || "---";
+    document.getElementById('team2').innerText = team2 || "---";
+    document.getElementById('score2').innerText = score2 || "0";
 
-    for(let i=2; i<rows.length; i++){ // bắt đầu từ dòng 3
-      const A = getVal(i, 0);
-      const B = getVal(i, 1);
-      const C = getVal(i, 2);
-      const E = getVal(i, 4);
-      const F = getVal(i, 5);
-      const G = getVal(i, 6);
+    // Hiển thị 🔴 đội giao bóng
+    const dot1 = document.getElementById('dot1');
+    const dot2 = document.getElementById('dot2');
+    dot1.style.display = dot2.style.display = 'none';
+    if(serveA) dot1.style.display = 'block';
+    else if(serveG) dot2.style.display = 'block';
 
-      if(!(C || E)) continue; // bỏ qua dòng trống
-
-      const matchDiv = document.createElement('div');
-      matchDiv.className = 'match';
-      matchDiv.innerHTML = `
-        <div class="dot" style="display:${A?'block':'none'}"></div>
-        <div class="score">${B || 0}</div>
-        <div class="team">${C || '---'}</div>
-        <div class="vs">VS</div>
-        <div class="team">${E || '---'}</div>
-        <div class="score">${F || 0}</div>
-        <div class="dot" style="display:${G?'block':'none'}"></div>
-      `;
-      matchContainer.appendChild(matchDiv);
-    }
-
-  } catch (err) {
+  }catch(err){
     console.error(err);
     document.getElementById('vong').innerText = 'LỖI DỮ LIỆU';
-    document.getElementById('giai').innerText = '';
-    document.getElementById('debug').style.display = 'block';
-    document.getElementById('debug').textContent = err.stack || err.message;
+    document.getElementById('giai').innerText = err.message;
   }
 }
 
