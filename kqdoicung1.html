@@ -15,58 +15,63 @@
   /* --- HEADER --- */
   .header-block {
     background: transparent;
-    text-align: center;
     color: white;
     position: relative;
     overflow: hidden;
   }
 
-  .header-green,
-  .header-gray {
-    max-width: 1000px;      /* ✅ Giới hạn giống container */
+  .header-inner {
+    max-width: 1000px;
     margin: 0 auto;
-    text-align: center;
-    border-left: 1px solid #ccc; /* để dễ căn mắt */
+    border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
-  }
-
-  .header-green {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     background: #28a745;
-    padding: 8px;
-    font-weight: 800;
-    font-size: 18px;         /* ✅ nhỏ lại */
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+    padding: 8px 15px;
   }
 
-  .header-gray {
-    background: #555;
-    padding: 7px;
-    font-weight: 800;
-    font-size: 15px;         /* ✅ nhỏ lại */
-  }
-
-  .logo {
-    position: absolute;
-    left: 20px;
-    top: 8px;
-  }
-
-  .logo img {
-    width: 60px;             /* ✅ nhỏ lại */
+  .header-inner img {
+    width: 60px;
     height: 60px;
     border-radius: 50%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    margin-right: 15px;
+  }
+
+  .header-text {
+    flex: 1;
+    text-align: center;
+  }
+
+  #hdr1 {
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  #hdr2 {
+    background: #555;
+    display: inline-block;
+    width: 100%;
+    font-weight: 800;
+    font-size: 15px;
+    padding: 7px 0;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
   }
 
   /* --- CONTAINER --- */
   .container {
-    max-width: 1000px;       /* ✅ cùng chiều rộng với header */
+    max-width: 1000px;
     margin: 0 auto;
     background: #fff;
     border-radius: 0 0 20px 20px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    padding: 15px 10px;      /* ✅ thu nhỏ */
+    padding: 15px 10px;
   }
 
   .match {
@@ -78,7 +83,7 @@
   }
 
   .score {
-    font-size: 56px;         /* ✅ nhỏ hơn */
+    font-size: 56px;
     color: #a40000;
     font-weight: 900;
     width: 80px;
@@ -86,7 +91,7 @@
   }
 
   .team {
-    font-size: 22px;         /* ✅ nhỏ hơn */
+    font-size: 22px;
     color: #FF8C00;
     font-weight: 900;
     text-transform: uppercase;
@@ -96,14 +101,14 @@
   }
 
   .vs {
-    font-size: 28px;         /* ✅ nhỏ hơn */
+    font-size: 28px;
     color: #FFB400;
     font-weight: 900;
     text-shadow: 1px 1px 0 #000;
   }
 
   .dot {
-    width: 24px;             /* ✅ nhỏ hơn */
+    width: 24px;
     height: 24px;
     border-radius: 50%;
     background: red;
@@ -113,24 +118,17 @@
 
   /* --- RESPONSIVE --- */
   @media (max-width: 768px) {
-    .header-green, .header-gray, .container {
+    .header-inner, #hdr2, .container {
       max-width: 90%;
     }
 
-    .logo img {
+    .header-inner img {
       width: 50px;
       height: 50px;
     }
 
-    .header-green {
-      font-size: 16px;
-      padding: 6px;
-    }
-
-    .header-gray {
-      font-size: 13px;
-      padding: 6px;
-    }
+    #hdr1 { font-size: 16px; }
+    #hdr2 { font-size: 13px; }
 
     .score {
       font-size: 44px;
@@ -142,31 +140,21 @@
       width: 250px;
     }
 
-    .vs {
-      font-size: 22px;
-    }
+    .vs { font-size: 22px; }
   }
 
   @media (max-width: 500px) {
-    .logo {
-      position: static;
-      margin-top: 8px;
+    .header-inner {
+      flex-direction: column;
+      text-align: center;
     }
 
-    .logo img {
-      width: 40px;
-      height: 40px;
-      display: block;
-      margin: 0 auto 5px auto;
+    .header-inner img {
+      margin: 0 auto 8px auto;
     }
 
-    .header-green {
-      font-size: 14px;
-    }
-
-    .header-gray {
-      font-size: 12px;
-    }
+    #hdr1 { font-size: 14px; }
+    #hdr2 { font-size: 12px; }
 
     .score {
       font-size: 36px;
@@ -178,24 +166,21 @@
       width: 220px;
     }
 
-    .vs {
-      font-size: 20px;
-    }
-
-    .match {
-      gap: 8px;
-    }
+    .vs { font-size: 20px; }
+    .match { gap: 8px; }
   }
 </style>
 </head>
 <body>
 
   <div class="header-block">
-    <div class="logo">
+    <div class="header-inner">
       <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
+      <div class="header-text">
+        <div id="hdr1">TRỰC TIẾP</div>
+        <div id="hdr2">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+      </div>
     </div>
-    <div id="hdr1" class="header-green">TRỰC TIẾP</div>
-    <div id="hdr2" class="header-gray">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
   </div>
 
   <div class="container">
