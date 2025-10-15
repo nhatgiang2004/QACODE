@@ -1,106 +1,250 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Kết quả thi đấu</title>
+<meta charset="utf-8" />
+<title>Kết quả Pickleball - Robust</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
 <style>
-  body {
-    font-family: 'Lexend', sans-serif;
-    text-align: center;
-    background: white;
-    margin: 0;
-  }
-  .header {
-    background: #28a745;
-    color: white;
-    padding: 10px;
-    font-weight: bold;
-  }
-  .subheader {
-    background: #555;
-    color: white;
-    padding: 8px;
-    font-weight: bold;
-  }
-  table {
-    width: 100%;
-    margin-top: 20px;
-    font-size: 28px;
-  }
-  td {
-    padding: 10px;
-  }
-  .score {
-    color: darkred;
-    font-weight: bold;
-  }
-  .serve {
-    color: red;
-    font-size: 24px;
-  }
-  .team {
-    font-weight: bold;
-    color: orange;
-  }
+  body{margin:0;font-family:'Lexend',sans-serif;background:#fff;color:#222}
+  .header-green{background:#28a745;color:#fff;padding:12px;text-align:center;font-weight:800}
+  .header-gray{background:#555;color:#fff;padding:10px;text-align:center;font-weight:800}
+  .container{max-width:1200px;margin:12px auto;padding:8px}
+  .match{display:flex;align-items:center;justify-content:center;gap:20px;padding:20px}
+  .score{font-size:64px;color:#a40000;font-weight:900;width:90px;text-align:center}
+  .team{font-size:28px;color:#FF8C00;font-weight:900;text-transform:uppercase;width:420px;text-align:center}
+  .vs{font-size:36px;color:#FFB400;font-weight:900;text-shadow:1px 1px 0 #000}
+  .dot{width:36px;height:36px;border-radius:50%;background:red;border:3px solid #000;display:none}
+  .logo{position:absolute;left:16px;top:8px}
+  .logo img{width:72px;height:72px;border-radius:50%}
+  .debug{font-family:monospace;font-size:12px;color:#333;white-space:pre-wrap;margin:10px;padding:8px;border:1px solid #eee;display:none}
+  .small{font-size:14px;color:#666}
 </style>
 </head>
 <body>
-  <div id="round" class="header"></div>
-  <div id="tournament" class="subheader"></div>
+  <div class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo"></div>
+  <div id="hdr1" class="header-green">ĐANG TẢI DỮ LIỆU...</div>
+  <div id="hdr2" class="header-gray">&nbsp;</div>
 
-  <table id="matchTable"></table>
+  <div class="container">
+    <div id="matchArea" class="match">
+      <div id="dot1" class="dot"></div>
+      <div id="score1" class="score">0</div>
+      <div id="team1" class="team">---</div>
+      <div class="vs">VS</div>
+      <div id="team2" class="team">---</div>
+      <div id="score2" class="score">0</div>
+      <div id="dot2" class="dot"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:8px">
+      <button id="toggleDebug">Hiển thị debug</button>
+      <div class="small">(Mở Console F12 nếu cần lỗi chi tiết)</div>
+    </div>
+
+    <pre id="debug" class="debug"></pre>
+  </div>
 
 <script>
-const sheetUrl = "https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1";
+/*
+  Robust reader:
+  1) Try gviz with headers=0 (so it won't drop first rows)
+  2) If result doesn't contain expected rows, fallback to CSV export (uses gid)
+  3) Extract:
+     - Vòng: row0 col2 (C1)
+     - Giải: row1 col2 (C2)
+     - Match: first row from rowIndex>=2 that contains >=2 team-like texts (else row2)
+     - Dot left: c[0], Dot right: c[6]
+  4) Show friendly error UI when can't find anything
+*/
 
-fetch(sheetUrl)
-  .then(res => res.text())
-  .then(text => {
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
+// CONFIG: update gid if different
+const SHEET_ID = "17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ";
+const SHEET_NAME = "HIENTHI1";
+const GID = "1034622929"; // if your sheet uses different gid, change here
 
-    if (rows.length < 3) {
-      document.getElementById("round").innerText = "LỖI DỮ LIỆU";
-      document.getElementById("tournament").innerText = "KHÔNG ĐỦ DỮ LIỆU (phải có ít nhất 3 dòng)";
+// try gviz first (with headers=0)
+const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq=&sheet=${encodeURIComponent(SHEET_NAME)}&headers=0`;
+const CSV_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+const debugEl = document.getElementById('debug');
+const toggleBtn = document.getElementById('toggleDebug');
+toggleBtn.onclick = () => {
+  debugEl.style.display = debugEl.style.display === 'block' ? 'none' : 'block';
+};
+
+function showError(title, subtitle){
+  document.getElementById('hdr1').innerText = title;
+  document.getElementById('hdr2').innerText = subtitle;
+  document.getElementById('hdr1').style.background = '#28a745';
+  document.getElementById('hdr2').style.background = '#555';
+}
+
+function showNormal(roundName, tournamentName){
+  document.getElementById('hdr1').innerText = roundName || 'VÒNG';
+  document.getElementById('hdr2').innerText = tournamentName || 'GIẢI';
+}
+
+function parseGvizResponse(text){
+  // robustly extract JSON object inside function call
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if(start === -1 || end === -1) throw new Error('gviz response parse fail');
+  return JSON.parse(text.substring(start, end+1));
+}
+
+function parseCSV(text){
+  // simple CSV parse to 2D array (handles quoted fields)
+  const rows = [];
+  const lines = text.split(/\r\n|\n/);
+  for(const line of lines){
+    if(line.trim()==='') { rows.push([]); continue; }
+    const row = [];
+    let cur = '', inQuotes = false;
+    for(let i=0;i<line.length;i++){
+      const ch = line[i];
+      if(ch === '"' ) {
+        if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if(ch === ',' && !inQuotes){
+        row.push(cur); cur=''; 
+      } else cur += ch;
+    }
+    row.push(cur);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function toCellsFromCSV(rows){
+  // convert CSV rows -> structure similar to gviz rows: rows[i].c[j].v
+  return rows.map(r => ({ c: r.map(v => ({ v: v === '' ? null : v })) }));
+}
+
+function safe(v){ return v===undefined || v===null ? '' : String(v); }
+
+// heuristics: find match row index >=2 that contains >=2 likely team names
+function findMatchRowIndex(rows){
+  for(let i=2;i<rows.length;i++){
+    const cells = rows[i].c || [];
+    const texts = cells.map(c => safe(c?.v).trim()).filter(Boolean);
+    const teamLike = texts.filter(t => (t.match(/[A-Za-zÀ-ỹ0-9]/) && (t.includes(' ') || t.includes('-') || t.length>5)));
+    if(teamLike.length >= 2) return i;
+  }
+  // fallback: if there is a row 2 (index 2), return it, else first available >=2
+  for(let i=2;i<rows.length;i++) return i;
+  return -1;
+}
+
+async function fetchWithTimeout(url, timeout=8000){
+  const controller = new AbortController();
+  const id = setTimeout(()=>controller.abort(), timeout);
+  try{
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(id);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.text();
+  }catch(e){
+    clearTimeout(id);
+    throw e;
+  }
+}
+
+async function loadData(){
+  debugEl.textContent = '';
+  // try GVIZ
+  let rows = null;
+  let used = '';
+  try{
+    const txt = await fetchWithTimeout(GVIZ_URL, 7000);
+    debugEl.textContent += 'GVIZ fetched OK\n';
+    const json = parseGvizResponse(txt);
+    rows = json.table.rows || [];
+    used = 'gviz';
+  }catch(e){
+    debugEl.textContent += 'GVIZ failed: ' + (e.message||e) + '\nTrying CSV fallback...\n';
+    // try CSV
+    try{
+      const csv = await fetchWithTimeout(CSV_URL, 7000);
+      debugEl.textContent += 'CSV fetched OK\n';
+      const csvRows = parseCSV(csv);
+      rows = toCellsFromCSV(csvRows);
+      used = 'csv';
+    }catch(e2){
+      debugEl.textContent += 'CSV fallback failed: ' + (e2.message||e2) + '\n';
+      showError('LỖI KẾT NỐI', 'Không thể lấy dữ liệu từ Sheet (gviz & csv đều thất bại)');
       return;
     }
+  }
 
-    // Dòng 1 cột C = vòng loại
-    document.getElementById("round").innerText = rows[0].c[2]?.v || "Không có tên vòng loại";
+  debugEl.textContent += `Data source: ${used}\nTotal rows: ${rows.length}\n\n${JSON.stringify(rows.slice(0,8), null, 2)}\n`;
 
-    // Dòng 2 cột C = tên giải đấu
-    document.getElementById("tournament").innerText = rows[1].c[2]?.v || "Không có tên giải đấu";
+  // Ensure we have at least 1 row for header and 1 for tournament and at least one match row could be absent
+  // Get Vòng from row0 col2 (C1), fallback search in first two rows any non-empty cell
+  const vong = safe(rows[0]?.c?.[2]?.v) || (function(){
+    for(let i=0;i<2;i++){
+      const cells = rows[i]?.c || [];
+      for(let j=0;j<cells.length;j++){
+        const v = safe(cells[j]?.v);
+        if(v && v.toLowerCase().includes('vòng') || v.match(/\bvòng\b/i)) return v;
+      }
+    }
+    // last resort: first non-empty in row0
+    for(let j=0;j<(rows[0]?.c?.length||0);j++){ if(safe(rows[0].c[j]?.v)) return safe(rows[0].c[j]?.v); }
+    return '';
+  })();
 
-    // Dòng 3 trở đi = dữ liệu trận
-    const matchData = rows.slice(2);
+  // Giải from row1 col2 (C2), fallback
+  const giai = safe(rows[1]?.c?.[2]?.v) || (function(){
+    for(let i=0;i<2;i++){
+      const cells = rows[i]?.c || [];
+      for(let j=0;j<cells.length;j++){
+        const v = safe(cells[j]?.v);
+        if(v && (v.toLowerCase().includes('cup') || v.toLowerCase().includes('pickleb') || v.toLowerCase().includes('giải') || v.toLowerCase().includes('giai'))) return v;
+      }
+    }
+    for(let j=0;j<(rows[1]?.c?.length||0);j++){ if(safe(rows[1].c[j]?.v)) return safe(rows[1].c[j]?.v); }
+    return '';
+  })();
 
-    let html = "";
-    matchData.forEach(row => {
-      const teamA = row.c[0]?.v || "---";
-      const scoreA = row.c[1]?.v ?? 0;
-      const serveA = row.c[2]?.v === "A" ? "🔴" : "";
-      const teamB = row.c[3]?.v || "---";
-      const scoreB = row.c[4]?.v ?? 0;
-      const serveB = row.c[2]?.v === "B" ? "🔴" : "";
+  // find match row index
+  const matchIndex = findMatchRowIndex(rows);
+  if(matchIndex === -1){
+    // no match rows found — show warning but still display titles
+    showError('LỖI DỮ LIỆU', 'Không tìm thấy dòng trận đấu (dòng 3 trở đi)');
+    // still show titles if available
+    document.getElementById('hdr1').innerText = vong || 'VÒNG';
+    document.getElementById('hdr2').innerText = giai || 'GIẢI';
+    return;
+  }
 
-      html += `
-        <tr>
-          <td class="score">${scoreA}</td>
-          <td class="serve">${serveA}</td>
-          <td class="team">${teamA}</td>
-          <td>VS</td>
-          <td class="team">${teamB}</td>
-          <td class="serve">${serveB}</td>
-          <td class="score">${scoreB}</td>
-        </tr>`;
-    });
+  // extract match cells from that row
+  const cells = rows[matchIndex].c || [];
+  // c[0]=A, c[1]=B, c[2]=C, c[3]=D, c[4]=E, c[5]=F, c[6]=G
+  const serveA = safe(cells[0]?.v);
+  const score1 = safe(cells[1]?.v) || '0';
+  const team1  = safe(cells[2]?.v) || '---';
+  const team2  = safe(cells[4]?.v) || '---';
+  const score2 = safe(cells[5]?.v) || '0';
+  const serveG = safe(cells[6]?.v);
 
-    document.getElementById("matchTable").innerHTML = html;
-  })
-  .catch(err => {
-    document.getElementById("round").innerText = "LỖI KẾT NỐI";
-    document.getElementById("tournament").innerText = err.message;
-  });
+  // render UI
+  showNormal(vong || 'VÒNG', giai || 'GIẢI');
+  document.getElementById('score1').innerText = score1;
+  document.getElementById('team1').innerText  = team1;
+  document.getElementById('team2').innerText  = team2;
+  document.getElementById('score2').innerText = score2;
+
+  // show dots according to A/G
+  const dot1 = document.getElementById('dot1');
+  const dot2 = document.getElementById('dot2');
+  dot1.style.display = dot2.style.display = 'none';
+  if(serveA) dot1.style.display = 'block';
+  else if(serveG) dot2.style.display = 'block';
+}
+
+// initial load + refresh
+loadData();
+setInterval(loadData, 5000);
 </script>
 </body>
 </html>
