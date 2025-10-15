@@ -22,7 +22,7 @@
     border: 1px solid #ccc;
   }
 
-  /* --- HEADER 2 DÒNG --- */
+  /* --- HEADER 2 DÒNG (CỘT 1 GHÉP) --- */
   .header-block {
     display: grid;
     grid-template-columns: 100px 1fr;  /* Cột 1: logo, Cột 2: nội dung */
@@ -30,8 +30,9 @@
     position: relative;
   }
 
+  /* Cột 1 – Logo (ghép dòng 1 và 2) */
   .logo-cell {
-    grid-row: 1 / span 2;   /* ✅ Gộp dòng 1 và dòng 2 */
+    grid-row: 1 / span 2;   /* ✅ Gộp dòng 1 và 2 */
     grid-column: 1;
     background: #28a745;    /* ✅ Màu nền xanh phủ cả chiều cao */
     display: flex;
@@ -46,6 +47,7 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
 
+  /* Dòng 1 – màu xanh (không bo góc) */
   .header-green {
     background: #28a745;
     color: white;
@@ -55,10 +57,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    /* ❌ Bỏ bo tròn góc trên */
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
+  /* Dòng 2 – màu xám */
   .header-gray {
     background: #555;
     color: white;
