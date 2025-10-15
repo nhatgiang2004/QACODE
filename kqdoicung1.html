@@ -12,25 +12,23 @@
     color: #222;
   }
 
-  /* --- HEADER --- */
-  .header-block {
-    background: transparent;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .header-inner {
-    max-width: 1000px;
+  /* --- KHỐI NGOÀI --- */
+  .main-wrapper {
+    max-width: 1000px;          /* ✅ 3 dòng cùng độ rộng */
     margin: 0 auto;
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+
+  /* --- DÒNG 1: HEADER XANH + LOGO --- */
+  .header-inner {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     background: #28a745;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
     padding: 8px 15px;
   }
 
@@ -50,31 +48,23 @@
   #hdr1 {
     font-weight: 800;
     font-size: 18px;
-    margin-bottom: 4px;
+    color: #fff;
   }
 
+  /* --- DÒNG 2: HEADER XÁM --- */
   #hdr2 {
     background: #555;
-    display: block;
-    width: 100%;
+    color: #fff;
+    text-align: center;
     font-weight: 800;
     font-size: 15px;
     padding: 7px 0;
-    /* ❌ bỏ bo tròn dưới */
-    border-radius: 0;
   }
 
-  /* --- CONTAINER (dòng 3) --- */
+  /* --- DÒNG 3: CONTAINER --- */
   .container {
-    max-width: 1000px;          /* ✅ cùng độ rộng với dòng 2 */
-    margin: 0 auto;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
     background: #fff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     padding: 15px 10px;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
   }
 
   .match {
@@ -121,9 +111,7 @@
 
   /* --- RESPONSIVE --- */
   @media (max-width: 768px) {
-    .header-inner, #hdr2, .container {
-      max-width: 90%;
-    }
+    .main-wrapper { max-width: 90%; }
 
     .header-inner img {
       width: 50px;
@@ -133,16 +121,8 @@
     #hdr1 { font-size: 16px; }
     #hdr2 { font-size: 13px; }
 
-    .score {
-      font-size: 44px;
-      width: 70px;
-    }
-
-    .team {
-      font-size: 18px;
-      width: 250px;
-    }
-
+    .score { font-size: 44px; width: 70px; }
+    .team { font-size: 18px; width: 250px; }
     .vs { font-size: 22px; }
   }
 
@@ -159,16 +139,8 @@
     #hdr1 { font-size: 14px; }
     #hdr2 { font-size: 12px; }
 
-    .score {
-      font-size: 36px;
-      width: 60px;
-    }
-
-    .team {
-      font-size: 16px;
-      width: 220px;
-    }
-
+    .score { font-size: 36px; width: 60px; }
+    .team { font-size: 16px; width: 220px; }
     .vs { font-size: 20px; }
     .match { gap: 8px; }
   }
@@ -176,25 +148,27 @@
 </head>
 <body>
 
-  <div class="header-block">
+  <div class="main-wrapper">
+    <!-- Dòng 1 -->
     <div class="header-inner">
       <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
-      <div class="header-text">
-        <div id="hdr1">TRỰC TIẾP</div>
-        <div id="hdr2">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
-      </div>
+      <div class="header-text" id="hdr1">TRỰC TIẾP</div>
     </div>
-  </div>
 
-  <div class="container">
-    <div id="matchArea" class="match">
-      <div id="dot1" class="dot"></div>
-      <div id="score1" class="score">6</div>
-      <div id="team1" class="team">HIỆP 2.5 – KHÁNH CẬN 2.6</div>
-      <div class="vs">VS</div>
-      <div id="team2" class="team">GIANG CL 2.6 – SƠN NÚI 2.6</div>
-      <div id="score2" class="score">4</div>
-      <div id="dot2" class="dot"></div>
+    <!-- Dòng 2 -->
+    <div id="hdr2">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+
+    <!-- Dòng 3 -->
+    <div class="container">
+      <div id="matchArea" class="match">
+        <div id="dot1" class="dot"></div>
+        <div id="score1" class="score">6</div>
+        <div id="team1" class="team">HIỆP 2.5 – KHÁNH CẬN 2.6</div>
+        <div class="vs">VS</div>
+        <div id="team2" class="team">GIANG CL 2.6 – SƠN NÚI 2.6</div>
+        <div id="score2" class="score">4</div>
+        <div id="dot2" class="dot"></div>
+      </div>
     </div>
   </div>
 
