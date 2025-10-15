@@ -5,52 +5,133 @@
 <title>Kết quả Pickleball</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
 <style>
-  body{margin:0;font-family:'Lexend',sans-serif;background:#fff;color:#222}
-  .header-green{background:#28a745;color:#fff;padding:14px;text-align:center;font-weight:800;border-top-left-radius:20px;border-top-right-radius:20px}
-  .header-gray{background:#555;color:#fff;padding:12px;text-align:center;font-weight:800}
-  .container{max-width:1200px;margin:12px auto;padding:8px;border-radius:20px;box-shadow:0 4px 8px rgba(0,0,0,0.15)}
-  .match{display:flex;align-items:center;justify-content:center;gap:20px;padding:20px}
-  .score{font-size:64px;color:#a40000;font-weight:900;width:90px;text-align:center}
-  .team{font-size:28px;color:#FF8C00;font-weight:900;text-transform:uppercase;width:420px;text-align:center}
-  .vs{font-size:36px;color:#FFB400;font-weight:900;text-shadow:1px 1px 0 #000}
-  .dot{width:36px;height:36px;border-radius:50%;background:red;border:3px solid #000;display:none}
-  .logo{position:absolute;left:16px;top:8px}
-  .logo img{width:72px;height:72px;border-radius:50%}
+  body {
+    margin: 0;
+    font-family: 'Lexend', sans-serif;
+    background: #fff;
+    color: #222;
+  }
+
+  .header-block {
+    position: relative;
+    text-align: center;
+    color: white;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+
+  .header-green {
+    background: #28a745;
+    padding: 14px;
+    font-weight: 800;
+    font-size: 22px;
+  }
+
+  .header-gray {
+    background: #555;
+    padding: 12px;
+    font-weight: 800;
+    font-size: 18px;
+  }
+
+  .logo {
+    position: absolute;
+    left: 20px;
+    top: 8px;
+  }
+
+  .logo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    padding: 25px 10px;
+  }
+
+  .match {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .score {
+    font-size: 78px;
+    color: #a40000;
+    font-weight: 900;
+    width: 100px;
+    text-align: center;
+  }
+
+  .team {
+    font-size: 30px;
+    color: #FF8C00;
+    font-weight: 900;
+    text-transform: uppercase;
+    width: 420px;
+    text-align: center;
+  }
+
+  .vs {
+    font-size: 38px;
+    color: #FFB400;
+    font-weight: 900;
+    text-shadow: 1px 1px 0 #000;
+  }
+
+  .dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: red;
+    border: 3px solid #000;
+    display: none;
+  }
 </style>
 </head>
 <body>
-  <div class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo"></div>
-  <div id="hdr1" class="header-green">ĐANG TẢI DỮ LIỆU...</div>
-  <div id="hdr2" class="header-gray">&nbsp;</div>
+
+  <div class="header-block">
+    <div class="logo">
+      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
+    </div>
+    <div id="hdr1" class="header-green">TRỰC TIẾP</div>
+    <div id="hdr2" class="header-gray">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
+  </div>
 
   <div class="container">
     <div id="matchArea" class="match">
       <div id="dot1" class="dot"></div>
-      <div id="score1" class="score">0</div>
-      <div id="team1" class="team">---</div>
+      <div id="score1" class="score">6</div>
+      <div id="team1" class="team">HIỆP 2.5 – KHÁNH CẬN 2.6</div>
       <div class="vs">VS</div>
-      <div id="team2" class="team">---</div>
-      <div id="score2" class="score">0</div>
+      <div id="team2" class="team">GIANG CL 2.6 – SƠN NÚI 2.6</div>
+      <div id="score2" class="score">4</div>
       <div id="dot2" class="dot"></div>
     </div>
   </div>
 
 <script>
 /*
-  Phiên bản hiển thị 1 trận duy nhất
-  - Dòng 1, cột C: tên vòng
-  - Dòng 2, cột C: tên giải
-  - Dòng 3 trở đi: dữ liệu trận đấu
-  - Cột A/G: đội đang giao bóng (🔴)
+  Hiển thị 1 trận duy nhất, dữ liệu lấy từ Google Sheet
+  Giữ nguyên như trước, chỉ thay đổi phần hiển thị
 */
 
-// Cấu hình link sheet
 const SHEET_ID = "17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ";
 const SHEET_NAME = "HIENTHI1";
 const GID = "1034622929";
 
 const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq=&sheet=${encodeURIComponent(SHEET_NAME)}&headers=0`;
-const CSV_URL  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
 function showError(title, msg){
   document.getElementById('hdr1').innerText = title;
@@ -79,7 +160,6 @@ async function loadData(){
     const vong = safe(rows[0]?.c?.[2]?.v);
     const giai = safe(rows[1]?.c?.[2]?.v);
 
-    // chỉ hiển thị trận đầu tiên (dòng 3)
     const cells = rows[2].c;
     const serveA = safe(cells[0]?.v);
     const score1 = safe(cells[1]?.v) || "0";
