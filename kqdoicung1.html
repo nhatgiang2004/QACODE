@@ -55,23 +55,26 @@
 
   #hdr2 {
     background: #555;
-    display: inline-block;
+    display: block;
     width: 100%;
     font-weight: 800;
     font-size: 15px;
     padding: 7px 0;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+    /* ❌ bỏ bo tròn dưới */
+    border-radius: 0;
   }
 
-  /* --- CONTAINER --- */
+  /* --- CONTAINER (dòng 3) --- */
   .container {
-    max-width: 1000px;
+    max-width: 1000px;          /* ✅ cùng độ rộng với dòng 2 */
     margin: 0 auto;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
     background: #fff;
-    border-radius: 0 0 20px 20px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     padding: 15px 10px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
   }
 
   .match {
