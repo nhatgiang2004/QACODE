@@ -14,54 +14,63 @@
 
   /* --- KHỐI NGOÀI --- */
   .main-wrapper {
-    max-width: 1000px;          /* ✅ 3 dòng cùng độ rộng */
+    max-width: 1000px;
     margin: 0 auto;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border: 1px solid #ccc;
   }
 
-  /* --- DÒNG 1: HEADER XANH + LOGO --- */
-  .header-inner {
+  /* --- HEADER 2 DÒNG --- */
+  .header-block {
+    display: grid;
+    grid-template-columns: 100px 1fr;  /* Cột 1: logo, Cột 2: nội dung */
+    grid-template-rows: auto auto;     /* Dòng 1 & 2 */
+    position: relative;
+  }
+
+  .logo-cell {
+    grid-row: 1 / span 2;   /* ✅ Gộp dòng 1 và dòng 2 */
+    grid-column: 1;
+    background: #28a745;    /* ✅ Màu nền xanh phủ cả chiều cao */
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    background: #28a745;
-    padding: 8px 15px;
+    justify-content: center;
   }
 
-  .header-inner img {
-    width: 60px;
-    height: 60px;
+  .logo-cell img {
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    margin-right: 15px;
   }
 
-  .header-text {
-    flex: 1;
-    text-align: center;
-  }
-
-  #hdr1 {
+  .header-green {
+    background: #28a745;
+    color: white;
     font-weight: 800;
     font-size: 18px;
-    color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
   }
 
-  /* --- DÒNG 2: HEADER XÁM --- */
-  #hdr2 {
+  .header-gray {
     background: #555;
-    color: #fff;
-    text-align: center;
+    color: white;
     font-weight: 800;
     font-size: 15px;
-    padding: 7px 0;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* --- DÒNG 3: CONTAINER --- */
+  /* --- BẢNG KẾT QUẢ --- */
   .container {
     background: #fff;
     padding: 15px 10px;
@@ -113,13 +122,10 @@
   @media (max-width: 768px) {
     .main-wrapper { max-width: 90%; }
 
-    .header-inner img {
-      width: 50px;
-      height: 50px;
-    }
+    .logo-cell img { width: 55px; height: 55px; }
 
-    #hdr1 { font-size: 16px; }
-    #hdr2 { font-size: 13px; }
+    .header-green { font-size: 16px; padding: 8px; }
+    .header-gray { font-size: 13px; padding: 7px; }
 
     .score { font-size: 44px; width: 70px; }
     .team { font-size: 18px; width: 250px; }
@@ -127,17 +133,24 @@
   }
 
   @media (max-width: 500px) {
-    .header-inner {
-      flex-direction: column;
-      text-align: center;
+    .header-block {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
     }
 
-    .header-inner img {
-      margin: 0 auto 8px auto;
+    .logo-cell {
+      grid-row: 1;
+      grid-column: 1;
+      padding: 8px;
     }
 
-    #hdr1 { font-size: 14px; }
-    #hdr2 { font-size: 12px; }
+    .logo-cell img {
+      width: 50px;
+      height: 50px;
+    }
+
+    .header-green { font-size: 14px; }
+    .header-gray { font-size: 12px; }
 
     .score { font-size: 36px; width: 60px; }
     .team { font-size: 16px; width: 220px; }
@@ -149,16 +162,14 @@
 <body>
 
   <div class="main-wrapper">
-    <!-- Dòng 1 -->
-    <div class="header-inner">
-      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
-      <div class="header-text" id="hdr1">TRỰC TIẾP</div>
+    <div class="header-block">
+      <div class="logo-cell">
+        <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
+      </div>
+      <div id="hdr1" class="header-green">TRỰC TIẾP</div>
+      <div id="hdr2" class="header-gray">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
     </div>
 
-    <!-- Dòng 2 -->
-    <div id="hdr2">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
-
-    <!-- Dòng 3 -->
     <div class="container">
       <div id="matchArea" class="match">
         <div id="dot1" class="dot"></div>
