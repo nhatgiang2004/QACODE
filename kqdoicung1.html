@@ -147,37 +147,37 @@
     </div>
   </div>
 
-<script defer>
+<script>
   const SHEET_ID = "17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ";
   const SHEET_NAME = "HIENTHI1";
   const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq=&sheet=${encodeURIComponent(SHEET_NAME)}&headers=0`;
 
+  let lastData = ""; // 🔸 Dùng để so sánh dữ liệu cũ/mới
+
+  function showError(title, msg){
+    document.getElementById('hdr1').innerText = title;
+    document.getElementById('hdr2').innerText = msg;
+  }
+
   function safe(v){return v===undefined||v===null?"":String(v);}
 
   function parseGviz(text){
-    const start=text.indexOf('{');
-    const end=text.lastIndexOf('}');
+    const start=text.indexOf('{');const end=text.lastIndexOf('}');
     if(start<0||end<0) throw new Error("Không đọc được JSON GVIZ");
     return JSON.parse(text.substring(start,end+1));
   }
 
   async function loadData(){
     try{
-      const res = await fetch(GVIZ_URL, {cache: "no-store"});
-      const txt = await res.text();
+      let txt = await fetch(GVIZ_URL + "&rnd=" + Date.now()).then(r=>r.text()); 
       const json = parseGviz(txt);
       const rows = json.table.rows || [];
-
-      if(rows.length < 3){
-        document.getElementById("hdr1").innerText = "LỖI DỮ LIỆU";
-        document.getElementById("hdr2").innerText = "Không đủ dữ liệu trong Sheet";
-        return;
-      }
+      if(rows.length<3) return;
 
       const vong = safe(rows[0]?.c?.[2]?.v);
       const giai = safe(rows[1]?.c?.[2]?.v);
 
-      const cells = rows[2]?.c || [];
+      const cells = rows[2].c;
       const serveA = safe(cells[0]?.v);
       const score1 = safe(cells[1]?.v) || "0";
       const team1  = safe(cells[2]?.v) || "---";
@@ -185,30 +185,38 @@
       const score2 = safe(cells[5]?.v) || "0";
       const serveG = safe(cells[6]?.v);
 
-      document.getElementById("hdr1").innerText = vong || "TRỰC TIẾP";
-      document.getElementById("hdr2").innerText = giai || "";
+      // 🔸 Ghép dữ liệu hiện tại để so sánh
+      const currentData = [vong,giai,score1,team1,team2,score2,serveA,serveG].join("|");
 
-      document.getElementById("score1").innerText = score1;
-      document.getElementById("team1").innerText  = team1;
-      document.getElementById("team2").innerText  = team2;
-      document.getElementById("score2").innerText = score2;
+      // 🔸 Nếu dữ liệu khác lần trước => cập nhật giao diện
+      if (currentData !== lastData) {
+        lastData = currentData;
 
-      const dot1=document.getElementById("dot1");
-      const dot2=document.getElementById("dot2");
-      dot1.style.display=dot2.style.display="none";
-      if(serveA) dot1.style.display="block";
-      else if(serveG) dot2.style.display="block";
+        document.getElementById("hdr1").innerText = vong || "TRỰC TIẾP";
+        document.getElementById("hdr2").innerText = giai || "";
+
+        document.getElementById("score1").innerText = score1;
+        document.getElementById("team1").innerText  = team1;
+        document.getElementById("team2").innerText  = team2;
+        document.getElementById("score2").innerText = score2;
+
+        const dot1=document.getElementById("dot1");
+        const dot2=document.getElementById("dot2");
+        dot1.style.display=dot2.style.display="none";
+        if(serveA) dot1.style.display="block";
+        else if(serveG) dot2.style.display="block";
+      }
 
     }catch(err){
-      console.error("❌ Lỗi tải dữ liệu:", err);
-      document.getElementById("hdr1").innerText = "LỖI KẾT NỐI";
-      document.getElementById("hdr2").innerText = "Không thể lấy dữ liệu từ Google Sheet";
+      console.error("Lỗi tải dữ liệu:", err);
+      showError("LỖI KẾT NỐI","Không thể lấy dữ liệu từ Sheet");
     }
   }
 
   loadData();
-  setInterval(loadData, 5000);
+  setInterval(loadData, 1000); // 🔹 Cập nhật mỗi 1 giây, chỉ render khi có thay đổi thật
 </script>
+
 
 </body>
 </html>
