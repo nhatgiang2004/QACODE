@@ -1,30 +1,36 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta name="referrer" content="no-referrer">
 <title>Kết quả Pickleball - Đội Cung 1</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
 <style>
   body {
     margin: 0;
-    background: transparent;
     font-family: 'Lexend', sans-serif;
-    font-weight: bold;
+    background: #fff;
+    color: #222;
   }
 
   .main-wrapper {
-    width: 750px;
-    margin: auto;
+    max-width: 1000px;
+    margin: 0 auto;
     border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     border: 1px solid #ccc;
   }
 
+  /* --- Header gồm 2 dòng, logo gộp cột --- */
   .header-block {
     display: grid;
     grid-template-columns: 120px 1fr;
     grid-template-rows: auto auto;
+    position: relative;
+    overflow: hidden;
   }
 
   .logo-cell {
@@ -39,136 +45,169 @@
     width: 70px;
     height: 70px;
     border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
 
   .header-green {
     background: #28a745;
     color: white;
+    font-weight: 800;
     font-size: 20px;
+    padding: 10px;
     text-align: center;
-    padding: 6px;
   }
 
   .header-gray {
     background: #555;
     color: white;
+    font-weight: 800;
     font-size: 17px;
+    padding: 8px;
     text-align: center;
-    padding: 6px;
   }
 
   .container {
     background: #fff;
-    text-align: center;
-    padding: 8px;
+    padding: 15px 10px;
   }
 
   .match {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    gap: 12px;
     flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .team {
-    width: 300px;
-    text-align: center;
-    font-size: 18px;
-    color: #FF8C00;
-    font-weight: 900;
   }
 
   .score {
-    font-size: 54px;
-    font-weight: 900;
+    font-size: 56px;
     color: #a40000;
+    font-weight: 900;
     width: 80px;
     text-align: center;
-    transition: color 0.4s ease;
+  }
+
+  .team {
+    font-size: 18px;
+    color: #FF8C00; /* Vàng đậm */
+    font-weight: 900;
+    text-transform: uppercase;
+    width: 320px;
+    text-align: center;
+    word-wrap: break-word;
+  }
+
+  .vs {
+    font-size: 30px;
+    color: #FFB400;
+    font-weight: 900;
+    text-shadow: 1px 1px 0 #000;
   }
 
   .dot {
-    width: 20px;
-    height: 20px;
-    background: red;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
+    background: red;
     display: none;
   }
 
+  /* --- Ảnh giữa --- */
   .center-logo {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     object-fit: cover;
-  }
-
-  @keyframes flash {
-    0%, 100% { color: #a40000; }
-    50% { color: #FFD700; }
   }
 </style>
 </head>
 <body>
 
-<div class="main-wrapper">
-  <div class="header-block">
-    <div class="logo-cell">
-      <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
+  <div class="main-wrapper">
+    <div class="header-block">
+      <div class="logo-cell">
+        <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
+      </div>
+      <div id="hdr1" class="header-green"></div>
+      <div id="hdr2" class="header-gray"></div>
     </div>
-    <div id="hdr1" class="header-green">TRỰC TIẾP</div>
-    <div id="hdr2" class="header-gray">PICKLEBALL CHICKENBAY CHALLENGE 2025</div>
-  </div>
 
-  <div class="container">
-    <div class="match">
-      <div id="dot1" class="dot"></div>
-      <div id="score1" class="score">0</div>
-      <div id="team1" class="team">---</div>
+    <div class="container">
+      <div id="matchArea" class="match">
+        <div id="dot1" class="dot"></div>
+        <div id="score1" class="score">6</div>
+        <div id="team1" class="team"></div>
 
-      <img src="https://i.ibb.co/jPMhJhSG/sv.jpg" alt="logo" class="center-logo">
+        <img src="https://i.ibb.co/jPMhJhSG/sv.jpg" alt="logo" class="center-logo">
 
-      <div id="team2" class="team">---</div>
-      <div id="score2" class="score">0</div>
-      <div id="dot2" class="dot"></div>
+        <div id="team2" class="team"></div>
+        <div id="score2" class="score">4</div>
+        <div id="dot2" class="dot"></div>
+      </div>
     </div>
   </div>
-</div>
 
 <script>
-  const SHEET_URL = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
-  let lastScore1 = "", lastScore2 = "";
+  const SHEET_ID = "17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ";
+  const SHEET_NAME = "HIENTHI1";
+  const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq=&sheet=${encodeURIComponent(SHEET_NAME)}&headers=0`;
 
-  function flashScore(el) {
-    el.style.animation = "flash 0.5s ease";
-    setTimeout(() => el.style.animation = "", 500);
+  let lastData = "";
+  let lastScore1 = "";
+  let lastScore2 = "";
+
+  function showError(title, msg){
+    document.getElementById('hdr1').innerText = title;
+    document.getElementById('hdr2').innerText = msg;
   }
 
-  function fetchData() {
-    fetch(SHEET_URL)
-      .then(res => res.text())
-      .then(rep => {
-        const json = JSON.parse(rep.substring(47, rep.length - 2));
-        const rows = json.table.rows;
+  function safe(v){return v===undefined||v===null?"":String(v);}
 
-        const vong = rows[0].c[2]?.v || "TRỰC TIẾP";
-        const giai = rows[1].c[2]?.v || "";
+  function parseGviz(text){
+    const start=text.indexOf('{');const end=text.lastIndexOf('}');
+    if(start<0||end<0) throw new Error("Không đọc được JSON GVIZ");
+    return JSON.parse(text.substring(start,end+1));
+  }
 
-        const serveA = rows[2].c[0]?.v;
-        const score1 = rows[2].c[1]?.v || "0";
-        const team1 = rows[2].c[2]?.v || "---";
-        const team2 = rows[2].c[4]?.v || "---";
-        const score2 = rows[2].c[5]?.v || "0";
-        const serveG = rows[2].c[6]?.v;
+  // 🔸 Hàm hiệu ứng đổi màu điểm
+  function flashScore(element) {
+    element.style.transition = "color 0.3s ease";
+    element.style.color = "#FFD700"; // vàng sáng
+    setTimeout(() => {
+      element.style.color = "#a40000"; // trở lại đỏ than
+    }, 500);
+  }
 
-        document.getElementById("hdr1").innerText = vong;
-        document.getElementById("hdr2").innerText = giai;
-        document.getElementById("team1").innerText = team1;
-        document.getElementById("team2").innerText = team2;
+  async function loadData(){
+    try{
+      const txt = await fetch(GVIZ_URL + "&rnd=" + Date.now()).then(r=>r.text()); 
+      const json = parseGviz(txt);
+      const rows = json.table.rows || [];
+      if(rows.length < 3) return;
+
+      const vong = safe(rows[0]?.c?.[2]?.v);
+      const giai = safe(rows[1]?.c?.[2]?.v);
+
+      const cells = rows[2].c;
+      const serveA = safe(cells[0]?.v);
+      const score1 = safe(cells[1]?.v) || "0";
+      const team1  = safe(cells[2]?.v) || "---";
+      const team2  = safe(cells[4]?.v) || "---";
+      const score2 = safe(cells[5]?.v) || "0";
+      const serveG = safe(cells[6]?.v);
+
+      const currentData = [vong,giai,score1,team1,team2,score2,serveA,serveG].join("|");
+
+      if (currentData !== lastData) {
+        lastData = currentData;
+
+        document.getElementById("hdr1").innerText = vong || "TRỰC TIẾP";
+        document.getElementById("hdr2").innerText = giai || "";
 
         const s1 = document.getElementById("score1");
         const s2 = document.getElementById("score2");
 
+        // 🔸 Cập nhật và kiểm tra nếu có thay đổi điểm thì kích hoạt hiệu ứng
         if (score1 !== lastScore1) {
           flashScore(s1);
           lastScore1 = score1;
@@ -181,21 +220,27 @@
         s1.innerText = score1;
         s2.innerText = score2;
 
-        const dot1 = document.getElementById("dot1");
-        const dot2 = document.getElementById("dot2");
-        dot1.style.display = dot2.style.display = "none";
-        if (serveA) dot1.style.display = "block";
-        else if (serveG) dot2.style.display = "block";
-      })
-      .catch(err => {
-        document.getElementById("hdr1").innerText = "MẤT KẾT NỐI";
-        document.getElementById("hdr2").innerText = "Không thể tải dữ liệu";
-      });
+        document.getElementById("team1").innerText = team1;
+        document.getElementById("team2").innerText = team2;
+
+        const dot1=document.getElementById("dot1");
+        const dot2=document.getElementById("dot2");
+        dot1.style.display=dot2.style.display="none";
+        if(serveA) dot1.style.display="block";
+        else if(serveG) dot2.style.display="block";
+      }
+
+    } catch (err) {
+      console.error("Lỗi tải dữ liệu:", err);
+      showError("LỖI KẾT NỐI","Không thể lấy dữ liệu từ Sheet");
+    }
   }
 
-  fetchData();
-  setInterval(fetchData, 1000);
+  loadData();
+  setInterval(loadData, 1000); // 🔁 kiểm tra mỗi 1 giây
 </script>
+
+
 
 </body>
 </html>
