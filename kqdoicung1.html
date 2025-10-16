@@ -7,6 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <title>Kết quả Pickleball - Đội Cung 1</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
+
 <style>
   body {
     margin: 0;
@@ -24,7 +25,6 @@
     border: 1px solid #ccc;
   }
 
-  /* --- Header gồm 2 dòng, logo gộp cột --- */
   .header-block {
     display: grid;
     grid-template-columns: 120px 1fr;
@@ -85,23 +85,17 @@
     font-weight: 900;
     width: 80px;
     text-align: center;
+    transition: all 0.3s ease;
   }
 
   .team {
     font-size: 18px;
-    color: #FF8C00; /* Vàng đậm */
+    color: #FFD700; /* vàng đậm */
     font-weight: 900;
     text-transform: uppercase;
     width: 320px;
     text-align: center;
     word-wrap: break-word;
-  }
-
-  .vs {
-    font-size: 30px;
-    color: #FFB400;
-    font-weight: 900;
-    text-shadow: 1px 1px 0 #000;
   }
 
   .dot {
@@ -112,17 +106,24 @@
     display: none;
   }
 
-  /* --- Ảnh giữa --- */
   .center-logo {
     width: 70px;
     height: 70px;
     border-radius: 50%;
     object-fit: cover;
   }
+
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+  }
 </style>
 </head>
-<body>
 
+<body>
   <div class="main-wrapper">
     <div class="header-block">
       <div class="logo-cell">
@@ -135,13 +136,13 @@
     <div class="container">
       <div id="matchArea" class="match">
         <div id="dot1" class="dot"></div>
-        <div id="score1" class="score">6</div>
+        <div id="score1" class="score"></div>
         <div id="team1" class="team"></div>
 
         <img src="https://i.ibb.co/jPMhJhSG/sv.jpg" alt="logo" class="center-logo">
 
         <div id="team2" class="team"></div>
-        <div id="score2" class="score">4</div>
+        <div id="score2" class="score"></div>
         <div id="dot2" class="dot"></div>
       </div>
     </div>
@@ -169,30 +170,26 @@
     return JSON.parse(text.substring(start,end+1));
   }
 
-  // 🔸 Thêm hiệu ứng sáng vàng và rung nhẹ
   function flashAndShake(element) {
     element.style.transition = "color 0.3s ease";
-    element.style.color = "#FFD700"; // vàng sáng
-
-    // Hiệu ứng rung nhẹ
+    element.style.color = "#FFD700";
     element.style.animation = "shake 0.3s ease";
-
     setTimeout(() => {
-      element.style.color = "#a40000"; // trở lại đỏ than
-      element.style.animation = ""; // reset animation
+      element.style.color = "#a40000";
+      element.style.animation = "";
     }, 500);
   }
 
   async function loadData(){
     try{
-      const txt = await fetch(GVIZ_URL + "&rnd=" + Date.now()).then(r=>r.text()); 
+      const proxyURL = "https://corsproxy.io/?" + encodeURIComponent(GVIZ_URL + "&rnd=" + Date.now());
+      const txt = await fetch(proxyURL).then(r=>r.text());
       const json = parseGviz(txt);
       const rows = json.table.rows || [];
       if(rows.length < 3) return;
 
       const vong = safe(rows[0]?.c?.[2]?.v);
       const giai = safe(rows[1]?.c?.[2]?.v);
-
       const cells = rows[2].c;
       const serveA = safe(cells[0]?.v);
       const score1 = safe(cells[1]?.v) || "0";
@@ -233,7 +230,6 @@
         if(serveA) dot1.style.display="block";
         else if(serveG) dot2.style.display="block";
       }
-
     } catch (err) {
       console.error("Lỗi tải dữ liệu:", err);
       showError("LỖI KẾT NỐI","Không thể lấy dữ liệu từ Sheet");
@@ -241,20 +237,7 @@
   }
 
   loadData();
-  setInterval(loadData, 1000); // 🔁 cập nhật mỗi 1 giây
+  setInterval(loadData, 500); // cập nhật mỗi 0.5 giây
 </script>
-
-<style>
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-3px); }
-  50% { transform: translateX(3px); }
-  75% { transform: translateX(-3px); }
-  100% { transform: translateX(0); }
-}
-</style>
-
-
-
 </body>
 </html>
