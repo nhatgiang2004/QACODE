@@ -7,7 +7,6 @@
 <meta name="referrer" content="no-referrer">
 <title>Kết quả Pickleball - Đội Cung 1</title>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
-
 <style>
   body {
     margin: 0;
@@ -85,17 +84,23 @@
     font-weight: 900;
     width: 80px;
     text-align: center;
-    transition: all 0.3s ease;
   }
 
   .team {
     font-size: 18px;
-    color: #FFD700; /* vàng đậm */
+    color: #FF8C00;
     font-weight: 900;
     text-transform: uppercase;
     width: 320px;
     text-align: center;
     word-wrap: break-word;
+  }
+
+  .vs {
+    font-size: 30px;
+    color: #FFB400;
+    font-weight: 900;
+    text-shadow: 1px 1px 0 #000;
   }
 
   .dot {
@@ -122,8 +127,8 @@
   }
 </style>
 </head>
-
 <body>
+
   <div class="main-wrapper">
     <div class="header-block">
       <div class="logo-cell">
@@ -149,95 +154,73 @@
   </div>
 
 <script>
-  const SHEET_ID = "17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ";
-  const SHEET_NAME = "HIENTHI1";
-  const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq=&sheet=${encodeURIComponent(SHEET_NAME)}&headers=0`;
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTwMmzVA4Tn64y48649hywWVL5UqaqIA6lgaQI_psAixoHZ9lHE419NvRKKMj1EvV3wntwDVBwdXM12/pub?output=csv";
 
-  let lastData = "";
   let lastScore1 = "";
   let lastScore2 = "";
 
-  function showError(title, msg){
-    document.getElementById('hdr1').innerText = title;
-    document.getElementById('hdr2').innerText = msg;
-  }
-
-  function safe(v){return v===undefined||v===null?"":String(v);}
-
-  function parseGviz(text){
-    const start=text.indexOf('{');const end=text.lastIndexOf('}');
-    if(start<0||end<0) throw new Error("Không đọc được JSON GVIZ");
-    return JSON.parse(text.substring(start,end+1));
-  }
-
-  function flashAndShake(element) {
-    element.style.transition = "color 0.3s ease";
-    element.style.color = "#FFD700";
-    element.style.animation = "shake 0.3s ease";
+  function flashAndShake(el) {
+    el.style.transition = "color 0.3s ease";
+    el.style.color = "#FFD700";
+    el.style.animation = "shake 0.3s ease";
     setTimeout(() => {
-      element.style.color = "#a40000";
-      element.style.animation = "";
+      el.style.color = "#a40000";
+      el.style.animation = "";
     }, 500);
   }
 
-  async function loadData(){
-    try{
-      const proxyURL = "https://corsproxy.io/?" + encodeURIComponent(GVIZ_URL + "&rnd=" + Date.now());
-      const txt = await fetch(proxyURL).then(r=>r.text());
-      const json = parseGviz(txt);
-      const rows = json.table.rows || [];
-      if(rows.length < 3) return;
+  async function loadData() {
+    try {
+      const res = await fetch(CSV_URL + "&t=" + Date.now());
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(r => r.split(","));
 
-      const vong = safe(rows[0]?.c?.[2]?.v);
-      const giai = safe(rows[1]?.c?.[2]?.v);
-      const cells = rows[2].c;
-      const serveA = safe(cells[0]?.v);
-      const score1 = safe(cells[1]?.v) || "0";
-      const team1  = safe(cells[2]?.v) || "---";
-      const team2  = safe(cells[4]?.v) || "---";
-      const score2 = safe(cells[5]?.v) || "0";
-      const serveG = safe(cells[6]?.v);
+      // Giả sử dòng 3 chứa dữ liệu chính
+      const vong = rows[0][2] || "TRỰC TIẾP";
+      const giai = rows[1][2] || "";
+      const team1 = rows[2][2] || "---";
+      const score1 = rows[2][1] || "0";
+      const team2 = rows[2][4] || "---";
+      const score2 = rows[2][5] || "0";
+      const serveA = rows[2][0];
+      const serveG = rows[2][6];
 
-      const currentData = [vong,giai,score1,team1,team2,score2,serveA,serveG].join("|");
+      document.getElementById("hdr1").innerText = vong;
+      document.getElementById("hdr2").innerText = giai;
 
-      if (currentData !== lastData) {
-        lastData = currentData;
+      const s1 = document.getElementById("score1");
+      const s2 = document.getElementById("score2");
 
-        document.getElementById("hdr1").innerText = vong || "TRỰC TIẾP";
-        document.getElementById("hdr2").innerText = giai || "";
-
-        const s1 = document.getElementById("score1");
-        const s2 = document.getElementById("score2");
-
-        if (score1 !== lastScore1) {
-          flashAndShake(s1);
-          lastScore1 = score1;
-        }
-        if (score2 !== lastScore2) {
-          flashAndShake(s2);
-          lastScore2 = score2;
-        }
-
-        s1.innerText = score1;
-        s2.innerText = score2;
-
-        document.getElementById("team1").innerText = team1;
-        document.getElementById("team2").innerText = team2;
-
-        const dot1=document.getElementById("dot1");
-        const dot2=document.getElementById("dot2");
-        dot1.style.display=dot2.style.display="none";
-        if(serveA) dot1.style.display="block";
-        else if(serveG) dot2.style.display="block";
+      if (score1 !== lastScore1) {
+        flashAndShake(s1);
+        lastScore1 = score1;
       }
-    } catch (err) {
-      console.error("Lỗi tải dữ liệu:", err);
-      showError("LỖI KẾT NỐI","Không thể lấy dữ liệu từ Sheet");
+      if (score2 !== lastScore2) {
+        flashAndShake(s2);
+        lastScore2 = score2;
+      }
+
+      s1.innerText = score1;
+      s2.innerText = score2;
+      document.getElementById("team1").innerText = team1;
+      document.getElementById("team2").innerText = team2;
+
+      const dot1 = document.getElementById("dot1");
+      const dot2 = document.getElementById("dot2");
+      dot1.style.display = dot2.style.display = "none";
+      if (serveA) dot1.style.display = "block";
+      else if (serveG) dot2.style.display = "block";
+
+    } catch (e) {
+      console.log("Lỗi tải CSV:", e);
+      document.getElementById("hdr1").innerText = "MẤT KẾT NỐI";
+      document.getElementById("hdr2").innerText = "Không đọc được dữ liệu từ Sheet";
     }
   }
 
   loadData();
-  setInterval(loadData, 500); // cập nhật mỗi 0.5 giây
+  setInterval(loadData, 2000);
 </script>
+
 </body>
 </html>
