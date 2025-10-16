@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Lò Chum - Sân 2</title>
+  <title>Kết quả Lò Chum - Sân 1</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,60 +12,47 @@
       font-family: 'Lexend', sans-serif;
       font-weight: bold;
     }
-
     table {
       border-collapse: collapse;
       width: 470px;
       font-size: 14px;
-      border-radius: 16px;
-      overflow: hidden;
-      border: none;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
     td {
       border: 1px solid #ccc;
       padding: 4px 6px;
       vertical-align: middle;
     }
-
     .logo {
       width: 60px;
       text-align: center;
     }
-
     .logo img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
     }
-
     .col2 {
       background: #555;
       color: white;
       text-transform: uppercase;
       text-align: left;
     }
-
     .col3 {
       background: #FFD700;
-      color: #212121; /* Đen than */
-      font-size: 22px; /* To hơn */
-      font-weight: bold;
+      color: black;
+      font-size: 16px;
       text-align: center;
       width: 45px;
     }
-
     .col4 {
       background: #FFD700;
       color: black;
       font-size: 16px;
       text-align: center;
       width: 45px;
-      border: none; /* Bỏ viền */
     }
 
-    /* Bỏ viền ngang trên/dưới của cột 4 dòng 1 và 2 */
+    /* Bỏ kẻ viền ngang (trên và dưới) của cột 4 dòng 1 và 2 */
     tr:nth-child(1) td.col4,
     tr:nth-child(2) td.col4 {
       border-top: none;
@@ -88,8 +75,7 @@
 
   <script>
     function fetchData() {
-      const url =
-        'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI2';
+      const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI1';
 
       fetch(url)
         .then(res => res.text())
@@ -106,24 +92,23 @@
       if (!table.rows || table.rows.length < 3) return;
 
       let html = '<table><tr>';
-      html +=
-        '<td class="logo" rowspan="2">' +
-        '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
-        '</td>';
+      html += '<td class="logo" rowspan="2">' +
+              '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
+              '</td>';
 
       // Dòng 1
       table.rows[0].c.slice(1).forEach((cell, i) => {
-        let cls = i === 0 ? "col2" : i === 1 ? "col3" : "col4";
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
         html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
       });
-      html += "</tr><tr>";
+      html += '</tr><tr>';
 
       // Dòng 2
       table.rows[1].c.slice(1).forEach((cell, i) => {
-        let cls = i === 0 ? "col2" : i === 1 ? "col3" : "col4";
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
         html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
       });
-      html += "</tr>";
+      html += '</tr>';
 
       // Dòng 3
       const val2 = table.rows[2].c[1]?.v || "";
@@ -135,8 +120,8 @@
                  <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
                </tr>`;
 
-      html += "</table>";
-      document.getElementById("table").innerHTML = html;
+      html += '</table>';
+      document.getElementById('table').innerHTML = html;
     }
 
     fetchData();
