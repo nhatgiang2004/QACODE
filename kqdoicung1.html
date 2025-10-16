@@ -1,154 +1,157 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta name="referrer" content="no-referrer">
-<title>Kết quả Thi đấu Pickleball Đội Cung - Sân 1</title>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin: 0;
-    font-family: 'Lexend', sans-serif;
-    background: #fff;
-    color: #222;
-  }
+  <meta charset="UTF-8">
+  <title>Bảng tỉ số Pickleball</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: bold;
+    }
 
-  .main-wrapper {
-    max-width: 1000px;
-    margin: 0 auto;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    border: 1px solid #ccc;
-  }
+    .scoreboard {
+      width: 700px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin: 10px auto;
+    }
 
-  /* --- Header gồm 2 dòng, logo gộp cột --- */
-  .header-block {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    grid-template-rows: auto auto;
-    position: relative;
-    overflow: hidden;
-  }
+    /* Hàng đầu */
+    .header {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      grid-template-rows: 40px 35px;
+    }
 
-  .logo-cell {
-    grid-row: 1 / span 2;
-    background: #28a745;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    .logo {
+      grid-row: 1 / span 2;
+      background: #28a745;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .logo-cell img {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
+    .logo img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+    }
 
-  .header-green {
-    background: #28a745;
-    color: white;
-    font-weight: 800;
-    font-size: 20px;
-    padding: 10px;
-    text-align: center;
-  }
+    .header-green {
+      background: #28a745;
+      color: white;
+      text-align: center;
+      line-height: 40px;
+      font-size: 20px;
+    }
 
-  .header-gray {
-    background: #555;
-    color: white;
-    font-weight: 800;
-    font-size: 17px;
-    padding: 8px;
-    text-align: center;
-  }
+    .header-gray {
+      background: #555;
+      color: white;
+      text-align: center;
+      line-height: 35px;
+      font-size: 16px;
+    }
 
-  .container {
-    background: #fff;
-    padding: 15px 10px;
-  }
+    /* Dòng tỷ số */
+    .content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      padding: 15px 50px;
+    }
 
-  .match {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
+    .score {
+      font-size: 70px;
+      color: #a40000;
+      font-weight: 900;
+      width: 80px;
+      text-align: center;
+      transition: color 0.4s ease;
+    }
 
-  .score {
-    font-size: 56px;
-    color: #a40000;
-    font-weight: 900;
-    width: 80px;
-    text-align: center;
-  }
+    .vs {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+    }
 
-  .team {
-    font-size: 18px;
-    color: #FF8C00; /* Vàng đậm */
-    font-weight: 900;
-    text-transform: uppercase;
-    width: 320px;
-    text-align: center;
-    word-wrap: break-word;
-  }
-
-  .vs {
-    font-size: 30px;
-    color: #FFB400;
-    font-weight: 900;
-    text-shadow: 1px 1px 0 #000;
-  }
-
-  .dot {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: red;
-    display: none;
-  }
-
-  /* --- Ảnh giữa --- */
-  .center-logo {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-</style>
+    @keyframes flash {
+      0%, 100% { color: #a40000; }
+      50% { color: #FFD700; }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="main-wrapper">
-    <div class="header-block">
-      <div class="logo-cell">
-        <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
-      </div>
-      <div id="hdr1" class="header-green"></div>
-      <div id="hdr2" class="header-gray"></div>
-    </div>
-
-    <div class="container">
-      <div id="matchArea" class="match">
-        <div id="dot1" class="dot"></div>
-        <div id="score1" class="score">6</div>
-        <div id="team1" class="team"></div>
-
-        <img src="https://i.ibb.co/jPMhJhSG/sv.jpg" alt="logo" class="center-logo">
-
-        <div id="team2" class="team"></div>
-        <div id="score2" class="score">4</div>
-        <div id="dot2" class="dot"></div>
-      </div>
-    </div>
+<div class="scoreboard">
+  <div class="header">
+    <div class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo"></div>
+    <div id="hdr1" class="header-green">TRỰC TIẾP</div>
+    <div id="hdr2" class="header-gray">PICKLEBALL CHICKENBAY CHALLENGE</div>
   </div>
 
+  <div class="content">
+    <div id="score1" class="score">0</div>
+    <img src="https://i.ibb.co/tXjxT90/vs.png" alt="VS" class="vs">
+    <div id="score2" class="score">0</div>
+  </div>
+</div>
 
+<script>
+  const SHEET_URL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
+  let lastScore1 = "", lastScore2 = "";
 
+  function flashScore(el) {
+    el.style.animation = "flash 0.5s ease";
+    setTimeout(() => el.style.animation = "", 500);
+  }
+
+  function fetchData() {
+    fetch(SHEET_URL)
+      .then(res => res.text())
+      .then(rep => {
+        const json = JSON.parse(rep.substring(47, rep.length - 2));
+        const rows = json.table.rows;
+
+        const vong = rows[0].c[2]?.v || "TRỰC TIẾP";
+        const giai = rows[1].c[2]?.v || "";
+        const score1 = rows[2].c[1]?.v || "0";
+        const score2 = rows[2].c[5]?.v || "0";
+
+        document.getElementById("hdr1").innerText = vong;
+        document.getElementById("hdr2").innerText = giai;
+
+        const s1 = document.getElementById("score1");
+        const s2 = document.getElementById("score2");
+
+        if (score1 !== lastScore1) {
+          flashScore(s1);
+          lastScore1 = score1;
+        }
+        if (score2 !== lastScore2) {
+          flashScore(s2);
+          lastScore2 = score2;
+        }
+
+        s1.innerText = score1;
+        s2.innerText = score2;
+      })
+      .catch(err => {
+        document.getElementById("hdr1").innerText = "MẤT KẾT NỐI";
+        document.getElementById("hdr2").innerText = "Không tải được dữ liệu";
+      });
+  }
+
+  fetchData();
+  setInterval(fetchData, 1000);
+</script>
 
 </body>
 </html>
