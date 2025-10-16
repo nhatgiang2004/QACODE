@@ -1,0 +1,133 @@
+
+<!DOCTYPE html> 
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Kết quả Lò Chum - Sân 2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: bold;
+    }
+    table {
+      border-collapse: collapse;
+      width: 470px;
+      font-size: 14px;
+    }
+    td {
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      vertical-align: middle;
+    }
+    .logo {
+      width: 60px;
+      text-align: center;
+    }
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+    .col2 {
+      background: #555;
+      color: white;
+      text-transform: uppercase;
+      text-align: left;
+    }
+    .col3 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      width: 45px;
+    }
+    .col4 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      width: 45px;
+    }
+
+    /* Bỏ kẻ viền ngang (trên và dưới) của cột 4 dòng 1 và 2 */
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: none;
+      border-bottom: none;
+    }
+
+    /* Dòng 3 */
+    .row3 td.data {
+      background: #2E8B57;
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+      padding: 4px 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="table"></div>
+
+  <script>
+    function fetchData() {
+      const url = 'https://docs.google.com/spreadsheets/d/16b_vb7G_4I-EmcWlzFIljJhmTWmiU9eybM126pMKNP0/gviz/tq?sheet=HIENTHI2';
+
+      fetch(url)
+        .then(res => res.text())
+        .then(rep => {
+          const json = JSON.parse(rep.substring(47, rep.length - 2));
+          renderTable(json.table);
+        })
+        .catch(err => {
+          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+        });
+    }
+
+    function renderTable(table) {
+      if (!table.rows || table.rows.length < 3) return;
+
+      let html = '<table><tr>';
+      html += '<td class="logo" rowspan="2">' +
+              '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
+              '</td>';
+
+      // Dòng 1
+      table.rows[0].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += '</tr><tr>';
+
+      // Dòng 2
+      table.rows[1].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += '</tr>';
+
+      // Dòng 3
+      const val2 = table.rows[2].c[1]?.v || "";
+      const val3 = table.rows[2].c[2]?.v || "";
+      const val4 = table.rows[2].c[3]?.v || "";
+      const val5 = table.rows[2].c[4]?.v || "";
+
+      html += `<tr class="row3">
+                 <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
+               </tr>`;
+
+      html += '</table>';
+      document.getElementById('table').innerHTML = html;
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
+
