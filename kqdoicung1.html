@@ -152,7 +152,9 @@
   const SHEET_NAME = "HIENTHI1";
   const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq=&sheet=${encodeURIComponent(SHEET_NAME)}&headers=0`;
 
-  let lastData = ""; // 🔸 Dùng để so sánh dữ liệu cũ/mới
+  let lastData = "";
+  let lastScore1 = "";
+  let lastScore2 = "";
 
   function showError(title, msg){
     document.getElementById('hdr1').innerText = title;
@@ -167,12 +169,26 @@
     return JSON.parse(text.substring(start,end+1));
   }
 
+  // 🔸 Thêm hiệu ứng sáng vàng và rung nhẹ
+  function flashAndShake(element) {
+    element.style.transition = "color 0.3s ease";
+    element.style.color = "#FFD700"; // vàng sáng
+
+    // Hiệu ứng rung nhẹ
+    element.style.animation = "shake 0.3s ease";
+
+    setTimeout(() => {
+      element.style.color = "#a40000"; // trở lại đỏ than
+      element.style.animation = ""; // reset animation
+    }, 500);
+  }
+
   async function loadData(){
     try{
-      let txt = await fetch(GVIZ_URL + "&rnd=" + Date.now()).then(r=>r.text()); 
+      const txt = await fetch(GVIZ_URL + "&rnd=" + Date.now()).then(r=>r.text()); 
       const json = parseGviz(txt);
       const rows = json.table.rows || [];
-      if(rows.length<3) return;
+      if(rows.length < 3) return;
 
       const vong = safe(rows[0]?.c?.[2]?.v);
       const giai = safe(rows[1]?.c?.[2]?.v);
@@ -185,20 +201,31 @@
       const score2 = safe(cells[5]?.v) || "0";
       const serveG = safe(cells[6]?.v);
 
-      // 🔸 Ghép dữ liệu hiện tại để so sánh
       const currentData = [vong,giai,score1,team1,team2,score2,serveA,serveG].join("|");
 
-      // 🔸 Nếu dữ liệu khác lần trước => cập nhật giao diện
       if (currentData !== lastData) {
         lastData = currentData;
 
         document.getElementById("hdr1").innerText = vong || "TRỰC TIẾP";
         document.getElementById("hdr2").innerText = giai || "";
 
-        document.getElementById("score1").innerText = score1;
-        document.getElementById("team1").innerText  = team1;
-        document.getElementById("team2").innerText  = team2;
-        document.getElementById("score2").innerText = score2;
+        const s1 = document.getElementById("score1");
+        const s2 = document.getElementById("score2");
+
+        if (score1 !== lastScore1) {
+          flashAndShake(s1);
+          lastScore1 = score1;
+        }
+        if (score2 !== lastScore2) {
+          flashAndShake(s2);
+          lastScore2 = score2;
+        }
+
+        s1.innerText = score1;
+        s2.innerText = score2;
+
+        document.getElementById("team1").innerText = team1;
+        document.getElementById("team2").innerText = team2;
 
         const dot1=document.getElementById("dot1");
         const dot2=document.getElementById("dot2");
@@ -207,15 +234,26 @@
         else if(serveG) dot2.style.display="block";
       }
 
-    }catch(err){
+    } catch (err) {
       console.error("Lỗi tải dữ liệu:", err);
       showError("LỖI KẾT NỐI","Không thể lấy dữ liệu từ Sheet");
     }
   }
 
   loadData();
-  setInterval(loadData, 1000); // 🔹 Cập nhật mỗi 1 giây, chỉ render khi có thay đổi thật
+  setInterval(loadData, 1000); // 🔁 cập nhật mỗi 1 giây
 </script>
+
+<style>
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
+}
+</style>
+
 
 
 </body>
