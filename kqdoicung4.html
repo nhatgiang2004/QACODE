@@ -1,8 +1,8 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Đội cung - Sân 4</title>
+  <title>Kết quả Đội Cung - Sân 4</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,42 +12,42 @@
       font-family: 'Lexend', sans-serif;
       font-weight: bold;
     }
+
     table {
       border-collapse: collapse;
       width: 470px;
       font-size: 14px;
     }
+
     td {
-      border: 1px solid #ccc;
-      padding: 4px 6px;
+      border: 1px solid #bbb;   /* viền mảnh, đồng bộ màu */
+      padding: 2px 4px;         /* thu hẹp chiều cao dòng */
       vertical-align: middle;
+      line-height: 1.1;         /* giảm khoảng cách chữ trong ô */
     }
+
     .logo {
-      width: 60px;
+      width: 55px;
       text-align: center;
     }
+
     .logo img {
-      width: 60px;
-      height: 60px;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
     }
+
     .col2 {
       background: #555;
       color: white;
       text-transform: uppercase;
       text-align: left;
     }
-    .col3 {
+
+    .col3, .col4 {
       background: #FFD700;
       color: black;
-      font-size: 16px;
-      text-align: center;
-      width: 45px;
-    }
-    .col4 {
-      background: #FFD700;
-      color: black;
-      font-size: 16px;
+      font-size: 15px;
       text-align: center;
       width: 45px;
     }
@@ -63,10 +63,11 @@
     .row3 td.data {
       background: #2E8B57;
       color: #FFFFFF;
-      font-size: 16px;
+      font-size: 15px;
       text-align: center;
       font-weight: bold;
-      padding: 4px 6px;
+      padding: 2px 4px; /* thấp hơn */
+      border: 1px solid #bbb; /* viền đồng bộ */
     }
   </style>
 </head>
@@ -83,7 +84,7 @@
           const json = JSON.parse(rep.substring(47, rep.length - 2));
           renderTable(json.table);
         })
-        .catch(err => {
+        .catch(() => {
           document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
         });
     }
@@ -99,14 +100,14 @@
       // Dòng 1
       table.rows[0].c.slice(1).forEach((cell, i) => {
         let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
       });
       html += '</tr><tr>';
 
       // Dòng 2
       table.rows[1].c.slice(1).forEach((cell, i) => {
         let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
       });
       html += '</tr>';
 
