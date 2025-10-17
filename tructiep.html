@@ -2,22 +2,28 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<title>Trực tiếp</title>
 <style>
   body {
     margin: 0;
     padding: 0;
-    background: transparent; /* 🔹 nền trong suốt */
-    text-align: center;
+    background: transparent;
+    font-family: 'Lexend', sans-serif;
+    font-weight: bold;
+    color: white;
   }
 
-  .blink {
-    font-size: 20px;
-    font-weight: bold;
-    color: #FF3030; /* 🔴 Đỏ tươi nổi bật */
-    text-transform: uppercase;
-    text-shadow: 0 0 12px #FF8080; /* 🔹 hiệu ứng ánh sáng */
+  .live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px; /* 👉 chỉnh kích thước chữ ở đây */
+  }
+
+  .dot {
+    color: #FF3030;
+    font-size: 48px;
     animation: blink 1s infinite;
-    font-family: 'Lexend', sans-serif;
   }
 
   @keyframes blink {
@@ -27,6 +33,9 @@
 </style>
 </head>
 <body>
-  <div class="blink">🔴 TRỰC TIẾP </div>
+  <div class="live">
+    <span class="dot">🔴</span>
+    <span>TRỰC TIẾP</span>
+  </div>
 </body>
 </html>
