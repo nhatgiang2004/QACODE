@@ -1,8 +1,8 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Đội cung - Sân 1</title>
+  <title>Kết quả Đội Cung - Sân 1</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
@@ -14,59 +14,69 @@
     }
     table {
       border-collapse: collapse;
-      width: 470px;
-      font-size: 14px;
+      width: 480px;
+      table-layout: fixed; /* 👈 giúp các cột đều nhau */
     }
     td {
-      border: 1px solid #ccc;
-      padding: 4px 6px;
+      border: 2px solid #ccc; /* 👈 viền rõ hơn, đều nhau */
+      padding: 6px;
       vertical-align: middle;
     }
+
+    /* Cột logo */
     .logo {
-      width: 60px;
+      width: 70px;
       text-align: center;
+      background: #fff;
     }
     .logo img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
     }
+
+    /* Cột tên đội */
     .col2 {
       background: #555;
       color: white;
       text-transform: uppercase;
       text-align: left;
-    }
-    .col3 {
-      background: #FFD700;
-      color: black;
-      font-size: 16px;
-      text-align: center;
-      width: 45px;
-    }
-    .col4 {
-      background: #FFD700;
-      color: black;
-      font-size: 16px;
-      text-align: center;
-      width: 45px;
+      font-size: 15px;
+      padding-left: 8px;
+      width: 270px;
     }
 
-    /* Bỏ kẻ viền ngang (trên và dưới) của cột 4 dòng 1 và 2 */
-    tr:nth-child(1) td.col4,
-    tr:nth-child(2) td.col4 {
-      border-top: none;
-      border-bottom: none;
+    /* Cột điểm số */
+    .col3, .col4 {
+      background: #FFD700;
+      color: #000;
+      font-size: 24px;
+      text-align: center;
+      width: 60px;
     }
 
-    /* Dòng 3 */
+    /* Dòng tiêu đề giải đấu */
     .row3 td.data {
       background: #2E8B57;
       color: #FFFFFF;
-      font-size: 16px;
+      font-size: 18px;
       text-align: center;
       font-weight: bold;
-      padding: 4px 6px;
+      letter-spacing: 1px;
+      padding: 8px 4px;
+      border: 2px solid #2E8B57;
+    }
+
+    /* 👇 Làm các ô cùng chiều cao */
+    tr {
+      height: 60px;
+    }
+
+    /* Bỏ viền thừa trên/dưới của cột cuối (nếu có) */
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: 2px solid #ccc;
+      border-bottom: 2px solid #ccc;
     }
   </style>
 </head>
@@ -76,7 +86,6 @@
   <script>
     function fetchData() {
       const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
-
       fetch(url)
         .then(res => res.text())
         .then(rep => {
@@ -99,18 +108,18 @@
       // Dòng 1
       table.rows[0].c.slice(1).forEach((cell, i) => {
         let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
       });
       html += '</tr><tr>';
 
       // Dòng 2
       table.rows[1].c.slice(1).forEach((cell, i) => {
         let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
-        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
       });
       html += '</tr>';
 
-      // Dòng 3
+      // Dòng 3 (tên vòng)
       const val2 = table.rows[2].c[1]?.v || "";
       const val3 = table.rows[2].c[2]?.v || "";
       const val4 = table.rows[2].c[3]?.v || "";
@@ -119,8 +128,8 @@
       html += `<tr class="row3">
                  <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
                </tr>`;
-
       html += '</table>';
+
       document.getElementById('table').innerHTML = html;
     }
 
