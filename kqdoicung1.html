@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Kết quả Đội Cung - Sân 1</title>
+  <title>Kết quả doi cung - Sân 1</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,138 +12,111 @@
       font-family: 'Lexend', sans-serif;
       font-weight: bold;
     }
-
     table {
       border-collapse: collapse;
-      width: 700px;
-      text-align: center;
+      width: 470px;
+      font-size: 14px;
     }
-
     td {
+      border: 1px solid #ccc;
       padding: 4px 6px;
       vertical-align: middle;
     }
-
-    /* --- Dòng 1: tiêu đề xanh --- */
-    .header-green {
-      background: #2E8B57;
-      color: white;
-      font-size: 18px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 6px 0;
-    }
-
-    /* --- Dòng 2: tiêu đề xám --- */
-    .header-gray {
-      background: #555;
-      color: white;
-      font-size: 16px;
-      text-transform: uppercase;
-      padding: 4px 0;
-    }
-
-    /* --- Dòng 3: khu vực thi đấu --- */
-    .match {
-      background: #fff;
-      color: #000;
-    }
-
-    .team-name {
-      color: #FFA500;
-      font-size: 18px;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-
-    .score {
-      color: #8B0000;
-      font-size: 40px;
-      font-weight: 900;
-    }
-
     .logo {
-      width: 80px;
+      width: 60px;
       text-align: center;
     }
-
     .logo img {
       width: 60px;
       height: 60px;
       border-radius: 50%;
     }
-
-    .dot {
-      width: 16px;
-      height: 16px;
-      background: red;
-      border-radius: 50%;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 6px;
+    .col2 {
+      background: #555;
+      color: white;
+      text-transform: uppercase;
+      text-align: left;
+    }
+    .col3, .col4 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      width: 45px;
     }
 
-    .vs img {
-      width: 40px;
-      height: auto;
-      vertical-align: middle;
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: none;
+      border-bottom: none;
     }
 
-    /* Giữa cân đối */
-    .team-name span {
-      vertical-align: middle;
+    /* Dòng 1: dữ liệu từ dòng 3 trong Sheet */
+    .row1 td.data {
+      background: #2E8B57;
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+      padding: 6px;
     }
   </style>
 </head>
 <body>
-  <div id="table"></div>
+  <div id="table">⏳ Đang tải...</div>
 
   <script>
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
+
     function fetchData() {
-      const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
-      fetch(url)
+      fetch(SHEET_URL)
         .then(res => res.text())
         .then(rep => {
           const json = JSON.parse(rep.substring(47, rep.length - 2));
           renderTable(json.table);
         })
-        .catch(err => {
+        .catch(() => {
           document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
         });
     }
 
     function renderTable(table) {
-      if (!table.rows || table.rows.length < 3) return;
+      if (!table.rows || table.rows.length < 3) {
+        document.getElementById('table').innerHTML = "⚠️ Không có dữ liệu hiển thị";
+        return;
+      }
 
-      const row1 = table.rows[0].c;
-      const row2 = table.rows[1].c;
-      const row3 = table.rows[2].c;
+      // Lấy dữ liệu an toàn
+      const getVal = (r, c) => (table.rows[r]?.c?.[c]?.v) || "";
 
-      const valTitle1 = row1[1]?.v || "";
-      const valTitle2 = row2[1]?.v || "";
-      const leftScore = row3[1]?.v || "";
-      const leftTeam = row3[2]?.v || "";
-      const rightTeam = row3[3]?.v || "";
-      const rightScore = row3[4]?.v || "";
+      let html = '<table>';
 
-      let html = `
-      <table>
-        <tr><td colspan="7" class="header-green">${valTitle1}</td></tr>
-        <tr><td colspan="7" class="header-gray">${valTitle2}</td></tr>
-        <tr class="match">
-          <td class="logo"><img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg"></td>
-          <td><span class="dot"></span></td>
-          <td class="score">${leftScore}</td>
-          <td class="team-name">
-            ${leftTeam}
-            <span class="vs"><img src="https://i.ibb.co/zSP3DkY/vs.png" alt="VS"></span>
-            ${rightTeam}
-          </td>
-          <td class="score">${rightScore}</td>
-        </tr>
-      </table>
-      `;
+      // --- Dòng 1 (lấy từ dòng 3 trong Sheet) ---
+      const d1 = [getVal(2, 1), getVal(2, 2), getVal(2, 3), getVal(2, 4)].join(" ");
+      html += `<tr class="row1">
+                 <td class="logo" rowspan="2">
+                   <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">
+                 </td>
+                 <td class="data" colspan="4">${d1}</td>
+               </tr>`;
 
+      // --- Dòng 2 (giữ nguyên dòng 1 trong Sheet) ---
+      html += '<tr>';
+      [1, 2, 3].forEach(i => {
+        let cls = i === 1 ? "col2" : (i === 2 ? "col3" : "col4");
+        html += `<td class="${cls}">${getVal(0, i)}</td>`;
+      });
+      html += '</tr>';
+
+      // --- Dòng 3 (giữ nguyên dòng 2 trong Sheet) ---
+      html += '<tr>';
+      [1, 2, 3].forEach(i => {
+        let cls = i === 1 ? "col2" : (i === 2 ? "col3" : "col4");
+        html += `<td class="${cls}">${getVal(1, i)}</td>`;
+      });
+      html += '</tr>';
+
+      html += '</table>';
       document.getElementById('table').innerHTML = html;
     }
 
