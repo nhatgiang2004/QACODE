@@ -1,127 +1,129 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Kết quả doi cung - Sân 1</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Lexend', sans-serif;
-      font-weight: bold;
-    }
-    table {
-      border-collapse: collapse;
-      width: 470px;
-      font-size: 14px;
-    }
-    td {
-      border: 1px solid #ccc;
-      padding: 4px 6px;
-      vertical-align: middle;
-    }
-    .logo {
-      width: 60px;
-      text-align: center;
-    }
-    .logo img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-    }
-    .col2 {
-      background: #555;
-      color: white;
-      text-transform: uppercase;
-      text-align: left;
-    }
-    .col3, .col4 {
-      background: #FFD700;
-      color: black;
-      font-size: 16px;
-      text-align: center;
-      width: 45px;
-    }
-
-    tr:nth-child(1) td.col4,
-    tr:nth-child(2) td.col4 {
-      border-top: none;
-      border-bottom: none;
-    }
-
-    /* Dòng 1: dữ liệu từ dòng 3 trong Sheet */
-    .row1 td.data {
-      background: #2E8B57;
-      color: #FFFFFF;
-      font-size: 16px;
-      text-align: center;
-      font-weight: bold;
-      padding: 6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Kết quả Bán Kết - CLB Hướng Đỏ</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: 'Lexend', sans-serif;
+    font-weight: 700;
+  }
+  table {
+    border-collapse: collapse;
+    width: 470px;
+    font-size: 14px;
+  }
+  td {
+    padding: 4px 6px;
+    vertical-align: middle;
+  }
+  .logo {
+    width: 60px;
+    text-align: center;
+  }
+  .logo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+  .team {
+    background: #555;
+    color: white;
+    text-transform: uppercase;
+    text-align: left;
+    font-size: 14px;
+  }
+  .score {
+    background: #FFD700;
+    color: #000;
+    font-size: 20px;
+    text-align: center;
+    font-weight: 900;
+    width: 45px;
+  }
+  .dot {
+    background: #FFD700;
+    text-align: center;
+    width: 45px;
+  }
+  .dot span {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background: red;
+    border-radius: 50%;
+  }
+  .footer td {
+    background: #2E8B57;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    padding: 6px;
+    text-transform: uppercase;
+  }
+</style>
 </head>
 <body>
-  <div id="table">⏳ Đang tải...</div>
+  <div id="table">⏳ Đang tải dữ liệu...</div>
 
   <script>
     const SHEET_URL = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
-    function fetchData() {
-      fetch(SHEET_URL)
-        .then(res => res.text())
-        .then(rep => {
-          const json = JSON.parse(rep.substring(47, rep.length - 2));
-          renderTable(json.table);
-        })
-        .catch(() => {
-          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
-        });
+    async function fetchCSV() {
+      try {
+        const res = await fetch(sheetURL);
+        const text = await res.text();
+        const rows = text.trim().split('\n').map(r => r.split(','));
+
+        renderTable(rows);
+      } catch (e) {
+        document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+      }
     }
 
-    function renderTable(table) {
-      if (!table.rows || table.rows.length < 3) {
+    function renderTable(rows) {
+      if (!rows || rows.length < 3) {
         document.getElementById('table').innerHTML = "⚠️ Không có dữ liệu hiển thị";
         return;
       }
 
-      // Lấy dữ liệu an toàn
-      const getVal = (r, c) => (table.rows[r]?.c?.[c]?.v) || "";
+      // Giả định:
+      // Row 0: đội 1, Row 1: đội 2, Row 2: vòng đấu
+      const team1 = rows[0][1] || "";
+      const score1 = rows[0][2] || "";
+      const team2 = rows[1][1] || "";
+      const score2 = rows[1][2] || "";
+      const round = rows[2][1] || "ĐANG CẬP NHẬT";
 
-      let html = '<table>';
+      let html = `
+      <table>
+        <tr>
+          <td class="logo" rowspan="2">
+            <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">
+          </td>
+          <td class="team">${team1}</td>
+          <td class="score">${score1}</td>
+          <td class="dot"></td>
+        </tr>
+        <tr>
+          <td class="team">${team2}</td>
+          <td class="score">${score2}</td>
+          <td class="dot"><span></span></td>
+        </tr>
+        <tr class="footer">
+          <td colspan="4">${round}</td>
+        </tr>
+      </table>`;
 
-      // --- Dòng 1 (lấy từ dòng 3 trong Sheet) ---
-      const d1 = [getVal(2, 1), getVal(2, 2), getVal(2, 3), getVal(2, 4)].join(" ");
-      html += `<tr class="row1">
-                 <td class="logo" rowspan="2">
-                   <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">
-                 </td>
-                 <td class="data" colspan="4">${d1}</td>
-               </tr>`;
-
-      // --- Dòng 2 (giữ nguyên dòng 1 trong Sheet) ---
-      html += '<tr>';
-      [1, 2, 3].forEach(i => {
-        let cls = i === 1 ? "col2" : (i === 2 ? "col3" : "col4");
-        html += `<td class="${cls}">${getVal(0, i)}</td>`;
-      });
-      html += '</tr>';
-
-      // --- Dòng 3 (giữ nguyên dòng 2 trong Sheet) ---
-      html += '<tr>';
-      [1, 2, 3].forEach(i => {
-        let cls = i === 1 ? "col2" : (i === 2 ? "col3" : "col4");
-        html += `<td class="${cls}">${getVal(1, i)}</td>`;
-      });
-      html += '</tr>';
-
-      html += '</table>';
       document.getElementById('table').innerHTML = html;
     }
 
-    fetchData();
-    setInterval(fetchData, 5000);
+    fetchCSV();
+    setInterval(fetchCSV, 5000);
   </script>
 </body>
 </html>
