@@ -1,246 +1,132 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta name="referrer" content="no-referrer">
-<title>Kết quả Thi đấu Pickleball Đội Cung - Sân 3</title>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin: 0;
-    font-family: 'Lexend', sans-serif;
-    background: #fff;
-    color: #222;
-  }
+  <meta charset="UTF-8">
+  <title>Kết quả Đội Cung - Sân 3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: bold;
+    }
 
-  .main-wrapper {
-    max-width: 1000px;
-    margin: 0 auto;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    border: 1px solid #ccc;
-  }
+    table {
+      border-collapse: collapse;
+      width: 470px;
+      font-size: 14px;
+    }
 
-  /* --- Header gồm 2 dòng, logo gộp cột --- */
-  .header-block {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    grid-template-rows: auto auto;
-    position: relative;
-    overflow: hidden;
-  }
+    td {
+      border: 1px solid #bbb;   /* viền mảnh, đồng bộ màu */
+      padding: 2px 4px;         /* thu hẹp chiều cao dòng */
+      vertical-align: middle;
+      line-height: 1.1;         /* giảm khoảng cách chữ trong ô */
+    }
 
-  .logo-cell {
-    grid-row: 1 / span 2;
-    background: #28a745;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    .logo {
+      width: 55px;
+      text-align: center;
+    }
 
-  .logo-cell img {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
+    .logo img {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+    }
 
-  .header-green {
-    background: #28a745;
-    color: white;
-    font-weight: 800;
-    font-size: 20px;
-    padding: 10px;
-    text-align: center;
-  }
+    .col2 {
+      background: #555;
+      color: white;
+      text-transform: uppercase;
+      text-align: left;
+    }
 
-  .header-gray {
-    background: #555;
-    color: white;
-    font-weight: 800;
-    font-size: 17px;
-    padding: 8px;
-    text-align: center;
-  }
+    .col3, .col4 {
+      background: #FFD700;
+      color: black;
+      font-size: 15px;
+      text-align: center;
+      width: 45px;
+    }
 
-  .container {
-    background: #fff;
-    padding: 15px 10px;
-  }
+    /* Bỏ kẻ viền ngang (trên và dưới) của cột 4 dòng 1 và 2 */
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: none;
+      border-bottom: none;
+    }
 
-  .match {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .score {
-    font-size: 56px;
-    color: #a40000;
-    font-weight: 900;
-    width: 80px;
-    text-align: center;
-  }
-
-  .team {
-    font-size: 18px;
-    color: #FF8C00; /* Vàng đậm */
-    font-weight: 900;
-    text-transform: uppercase;
-    width: 320px;
-    text-align: center;
-    word-wrap: break-word;
-  }
-
-  .vs {
-    font-size: 30px;
-    color: #FFB400;
-    font-weight: 900;
-    text-shadow: 1px 1px 0 #000;
-  }
-
-  .dot {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: red;
-    display: none;
-  }
-
-  /* --- Ảnh giữa --- */
-  .center-logo {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-</style>
+    /* Dòng 3 */
+    .row3 td.data {
+      background: #2E8B57;
+      color: #FFFFFF;
+      font-size: 15px;
+      text-align: center;
+      font-weight: bold;
+      padding: 2px 4px; /* thấp hơn */
+      border: 1px solid #bbb; /* viền đồng bộ */
+    }
+  </style>
 </head>
 <body>
+  <div id="table"></div>
 
-  <div class="main-wrapper">
-    <div class="header-block">
-      <div class="logo-cell">
-        <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg" alt="logo">
-      </div>
-      <div id="hdr1" class="header-green"></div>
-      <div id="hdr2" class="header-gray"></div>
-    </div>
+  <script>
+    function fetchData() {
+      const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI3';
 
-    <div class="container">
-      <div id="matchArea" class="match">
-        <div id="dot1" class="dot"></div>
-        <div id="score1" class="score">6</div>
-        <div id="team1" class="team"></div>
-
-        <img src="https://i.ibb.co/jPMhJhSG/sv.jpg" alt="logo" class="center-logo">
-
-        <div id="team2" class="team"></div>
-        <div id="score2" class="score">4</div>
-        <div id="dot2" class="dot"></div>
-      </div>
-    </div>
-  </div>
-
-<script>
-  const SHEET_ID = "17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ";
-  const SHEET_NAME = "HIENTHI3";
-  const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tq=&sheet=${encodeURIComponent(SHEET_NAME)}&headers=0`;
-
-  let lastData = "";
-  let lastScore1 = "";
-  let lastScore2 = "";
-
-  function showError(title, msg){
-    document.getElementById('hdr1').innerText = title;
-    document.getElementById('hdr2').innerText = msg;
-  }
-
-  function safe(v){return v===undefined||v===null?"":String(v);}
-
-  function parseGviz(text){
-    const start=text.indexOf('{');const end=text.lastIndexOf('}');
-    if(start<0||end<0) throw new Error("Không đọc được JSON GVIZ");
-    return JSON.parse(text.substring(start,end+1));
-  }
-
-  // 🔸 Hàm hiệu ứng đổi màu điểm
-  function flashScore(element) {
-    element.style.transition = "color 0.3s ease";
-    element.style.color = "#FFD700"; // vàng sáng
-    setTimeout(() => {
-      element.style.color = "#a40000"; // trở lại đỏ than
-    }, 500);
-  }
-
-  async function loadData(){
-    try{
-      const txt = await fetch(GVIZ_URL + "&rnd=" + Date.now()).then(r=>r.text()); 
-      const json = parseGviz(txt);
-      const rows = json.table.rows || [];
-      if(rows.length < 3) return;
-
-      const vong = safe(rows[0]?.c?.[2]?.v);
-      const giai = safe(rows[1]?.c?.[2]?.v);
-
-      const cells = rows[2].c;
-      const serveA = safe(cells[0]?.v);
-      const score1 = safe(cells[1]?.v) || "0";
-      const team1  = safe(cells[2]?.v) || "---";
-      const team2  = safe(cells[4]?.v) || "---";
-      const score2 = safe(cells[5]?.v) || "0";
-      const serveG = safe(cells[6]?.v);
-
-      const currentData = [vong,giai,score1,team1,team2,score2,serveA,serveG].join("|");
-
-      if (currentData !== lastData) {
-        lastData = currentData;
-
-        document.getElementById("hdr1").innerText = vong || "TRỰC TIẾP";
-        document.getElementById("hdr2").innerText = giai || "";
-
-        const s1 = document.getElementById("score1");
-        const s2 = document.getElementById("score2");
-
-        // 🔸 Cập nhật và kiểm tra nếu có thay đổi điểm thì kích hoạt hiệu ứng
-        if (score1 !== lastScore1) {
-          flashScore(s1);
-          lastScore1 = score1;
-        }
-        if (score2 !== lastScore2) {
-          flashScore(s2);
-          lastScore2 = score2;
-        }
-
-        s1.innerText = score1;
-        s2.innerText = score2;
-
-        document.getElementById("team1").innerText = team1;
-        document.getElementById("team2").innerText = team2;
-
-        const dot1=document.getElementById("dot1");
-        const dot2=document.getElementById("dot2");
-        dot1.style.display=dot2.style.display="none";
-        if(serveA) dot1.style.display="block";
-        else if(serveG) dot2.style.display="block";
-      }
-
-    } catch (err) {
-      console.error("Lỗi tải dữ liệu:", err);
-      showError("LỖI KẾT NỐI","Không thể lấy dữ liệu từ Sheet");
+      fetch(url)
+        .then(res => res.text())
+        .then(rep => {
+          const json = JSON.parse(rep.substring(47, rep.length - 2));
+          renderTable(json.table);
+        })
+        .catch(() => {
+          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+        });
     }
-  }
 
-  loadData();
-  setInterval(loadData, 1000); // 🔁 kiểm tra mỗi 1 giây
-</script>
+    function renderTable(table) {
+      if (!table.rows || table.rows.length < 3) return;
 
+      let html = '<table><tr>';
+      html += '<td class="logo" rowspan="2">' +
+              '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
+              '</td>';
 
+      // Dòng 1
+      table.rows[0].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
+      });
+      html += '</tr><tr>';
 
+      // Dòng 2
+      table.rows[1].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell?.v || ""}</td>`;
+      });
+      html += '</tr>';
+
+      // Dòng 3
+      const val2 = table.rows[2].c[1]?.v || "";
+      const val3 = table.rows[2].c[2]?.v || "";
+      const val4 = table.rows[2].c[3]?.v || "";
+      const val5 = table.rows[2].c[4]?.v || "";
+
+      html += `<tr class="row3">
+                 <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
+               </tr>`;
+
+      html += '</table>';
+      document.getElementById('table').innerHTML = html;
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
 </body>
 </html>
