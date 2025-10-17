@@ -1,129 +1,131 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<title>Kết quả Bán Kết - CLB Hướng Đỏ</title>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@600;700&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    font-family: 'Lexend', sans-serif;
-    font-weight: 700;
-  }
-  table {
-    border-collapse: collapse;
-    width: 470px;
-    font-size: 14px;
-  }
-  td {
-    padding: 4px 6px;
-    vertical-align: middle;
-  }
-  .logo {
-    width: 60px;
-    text-align: center;
-  }
-  .logo img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-  }
-  .team {
-    background: #555;
-    color: white;
-    text-transform: uppercase;
-    text-align: left;
-    font-size: 14px;
-  }
-  .score {
-    background: #FFD700;
-    color: #000;
-    font-size: 20px;
-    text-align: center;
-    font-weight: 900;
-    width: 45px;
-  }
-  .dot {
-    background: #FFD700;
-    text-align: center;
-    width: 45px;
-  }
-  .dot span {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    background: red;
-    border-radius: 50%;
-  }
-  .footer td {
-    background: #2E8B57;
-    color: #fff;
-    text-align: center;
-    font-size: 16px;
-    padding: 6px;
-    text-transform: uppercase;
-  }
-</style>
-</head>
-<body>
-  <div id="table">⏳ Đang tải dữ liệu...</div>
-
-  <script>
-   const sheetURL = 'https://docs.google.com/spreadsheets/d/e/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/pub?output=csv';
-
-    async function fetchCSV() {
-      try {
-        const res = await fetch(sheetURL);
-        const text = await res.text();
-        const rows = text.trim().split('\n').map(r => r.split(','));
-
-        renderTable(rows);
-      } catch (e) {
-        document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
-      }
+  <meta charset="UTF-8">
+  <title>Kết quả Lò Chum - Sân 1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: 'Lexend', sans-serif;
+      font-weight: bold;
+    }
+    table {
+      border-collapse: collapse;
+      width: 470px;
+      font-size: 14px;
+    }
+    td {
+      border: 1px solid #ccc;
+      padding: 4px 6px;
+      vertical-align: middle;
+    }
+    .logo {
+      width: 60px;
+      text-align: center;
+    }
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
+    .col2 {
+      background: #555;
+      color: white;
+      text-transform: uppercase;
+      text-align: left;
+    }
+    .col3 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      width: 45px;
+    }
+    .col4 {
+      background: #FFD700;
+      color: black;
+      font-size: 16px;
+      text-align: center;
+      width: 45px;
     }
 
-    function renderTable(rows) {
-      if (!rows || rows.length < 3) {
-        document.getElementById('table').innerHTML = "⚠️ Không có dữ liệu hiển thị";
-        return;
-      }
+    /* Bỏ kẻ viền ngang (trên và dưới) của cột 4 dòng 1 và 2 */
+    tr:nth-child(1) td.col4,
+    tr:nth-child(2) td.col4 {
+      border-top: none;
+      border-bottom: none;
+    }
 
-      // Giả định:
-      // Row 0: đội 1, Row 1: đội 2, Row 2: vòng đấu
-      const team1 = rows[0][1] || "";
-      const score1 = rows[0][2] || "";
-      const team2 = rows[1][1] || "";
-      const score2 = rows[1][2] || "";
-      const round = rows[2][1] || "ĐANG CẬP NHẬT";
+    /* Dòng 3 */
+    .row3 td.data {
+      background: #2E8B57;
+      color: #FFFFFF;
+      font-size: 16px;
+      text-align: center;
+      font-weight: bold;
+      padding: 4px 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="table"></div>
 
-      let html = `
-      <table>
-        <tr>
-          <td class="logo" rowspan="2">
-            <img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">
-          </td>
-          <td class="team">${team1}</td>
-          <td class="score">${score1}</td>
-          <td class="dot"></td>
-        </tr>
-        <tr>
-          <td class="team">${team2}</td>
-          <td class="score">${score2}</td>
-          <td class="dot"><span></span></td>
-        </tr>
-        <tr class="footer">
-          <td colspan="4">${round}</td>
-        </tr>
-      </table>`;
+  <script>
+    function fetchData() {
+      const url = 'https://docs.google.com/spreadsheets/d/17l3xrP5q_5miTrFEsp5VFU880oS9Kx6lOe2qfSEBwQQ/gviz/tq?sheet=HIENTHI1';
 
+      fetch(url)
+        .then(res => res.text())
+        .then(rep => {
+          const json = JSON.parse(rep.substring(47, rep.length - 2));
+          renderTable(json.table);
+        })
+        .catch(err => {
+          document.getElementById('table').innerHTML = "❌ Lỗi tải dữ liệu";
+        });
+    }
+
+    function renderTable(table) {
+      if (!table.rows || table.rows.length < 3) return;
+
+      let html = '<table><tr>';
+      html += '<td class="logo" rowspan="2">' +
+              '<img src="https://i.ibb.co/XwPyvS5/1-Logo-100358.jpg">' +
+              '</td>';
+
+      // Dòng 1
+      table.rows[0].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += '</tr><tr>';
+
+      // Dòng 2
+      table.rows[1].c.slice(1).forEach((cell, i) => {
+        let cls = (i === 0) ? "col2" : (i === 1) ? "col3" : "col4";
+        html += `<td class="${cls}">${cell && cell.v ? cell.v : ""}</td>`;
+      });
+      html += '</tr>';
+
+      // Dòng 3
+      const val2 = table.rows[2].c[1]?.v || "";
+      const val3 = table.rows[2].c[2]?.v || "";
+      const val4 = table.rows[2].c[3]?.v || "";
+      const val5 = table.rows[2].c[4]?.v || "";
+
+      html += `<tr class="row3">
+                 <td class="data" colspan="5">${val2} ${val3} ${val4} ${val5}</td>
+               </tr>`;
+
+      html += '</table>';
       document.getElementById('table').innerHTML = html;
     }
 
-    fetchCSV();
-    setInterval(fetchCSV, 5000);
+    fetchData();
+    setInterval(fetchData, 5000);
   </script>
 </body>
 </html>
