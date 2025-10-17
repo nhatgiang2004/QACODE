@@ -5,17 +5,21 @@
 <style>
   body {
     margin: 0;
-    background: #555; /* nền xám */
+    padding: 0;
+    background: transparent; /* 🔹 nền trong suốt */
     text-align: center;
   }
+
   .blink {
-    font-size: 36px;
+    font-size: 30px;
     font-weight: bold;
-    color: #FF3030;
+    color: #FF3030; /* 🔴 Đỏ tươi nổi bật */
     text-transform: uppercase;
-    text-shadow: 0 0 12px #FF8080;
+    text-shadow: 0 0 12px #FF8080; /* 🔹 hiệu ứng ánh sáng */
     animation: blink 1s infinite;
+    font-family: 'Lexend', sans-serif;
   }
+
   @keyframes blink {
     0%, 50%, 100% { opacity: 1; }
     25%, 75% { opacity: 0; }
@@ -23,6 +27,6 @@
 </style>
 </head>
 <body>
-  <div class="blink">🔴 Trực tiếp </div>
+  <div class="blink">🔴 TRỰC TIẾP </div>
 </body>
 </html>
