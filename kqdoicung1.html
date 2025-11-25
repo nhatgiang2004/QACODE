@@ -4,72 +4,77 @@
   <meta charset="UTF-8">
   <title>Kết quả Đội Cung - Sân 1</title>
   <link href="https://fonts.googleapis.com/css2?family=Lexend&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      font-family: 'Lexend', sans-serif;
-      font-weight: bold;
-    }
+ <style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: 'Lexend', sans-serif;
+    font-weight: bold;
+  }
 
-    table {
-      border-collapse: collapse;
-      width: 470px;
-      font-size: 14px;
-    }
+  /* Tăng độ rộng + font tổng thể */
+  table {
+    border-collapse: collapse;
+    width: 600px;           /* tăng từ 470 → 600 */
+    font-size: 20px;        /* tăng từ 14px → 20px */
+  }
 
-    td {
-      border: 1px solid #bbb;   /* viền mảnh, đồng bộ màu */
-      padding: 2px 4px;         /* thu hẹp chiều cao dòng */
-      vertical-align: middle;
-      line-height: 1.1;         /* giảm khoảng cách chữ trong ô */
-    }
+  td {
+    border: 1px solid #bbb;
+    padding: 6px 10px;      /* tăng padding */
+    vertical-align: middle;
+    line-height: 1.25;      /* tăng khoảng cách */
+  }
 
-    .logo {
-      width: 55px;
-      text-align: center;
-    }
+  /* Logo to hơn */
+  .logo {
+    width: 80px;
+    text-align: center;
+  }
 
-    .logo img {
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-    }
+  .logo img {
+    width: 80px;            /* tăng từ 55 */
+    height: 80px;
+    border-radius: 50%;
+  }
 
-    .col2 {
-      background: #555;
-      color: white;
-      text-transform: uppercase;
-      text-align: left;
-    }
+  /* Cột tiêu đề */
+  .col2 {
+    background: #555;
+    color: white;
+    text-transform: uppercase;
+    text-align: left;
+    font-size: 20px;
+  }
 
-    .col3, .col4 {
-      background: #FFD700;
-      color: black;
-      font-size: 15px;
-      text-align: center;
-      width: 45px;
-    }
+  .col3, .col4 {
+    background: #FFD700;
+    color: black;
+    font-size: 22px;        /* tăng */
+    text-align: center;
+    width: 60px;            /* tăng từ 45px */
+  }
 
-    /* Bỏ kẻ viền ngang (trên và dưới) của cột 4 dòng 1 và 2 */
-    tr:nth-child(1) td.col4,
-    tr:nth-child(2) td.col4 {
-      border-top: none;
-      border-bottom: none;
-    }
+  /* Bỏ viền ngang cột 4 dòng 1 & 2 */
+  tr:nth-child(1) td.col4,
+  tr:nth-child(2) td.col4 {
+    border-top: none;
+    border-bottom: none;
+  }
 
-    /* Dòng 3 */
-    .row3 td.data {
-      background: #2E8B57;
-      color: #FFFFFF;
-      font-size: 15px;
-      text-align: center;
-      font-weight: bold;
-      padding: 2px 4px; /* thấp hơn */
-      border: 1px solid #bbb; /* viền đồng bộ */
-    }
-  </style>
+  /* Dòng 3 */
+  .row3 td.data {
+    background: #2E8B57;
+    color: #FFFFFF;
+    font-size: 26px;        /* tăng mạnh dòng kết quả */
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 4px;
+    border: 1px solid #bbb;
+  }
+</style>
+
 </head>
 <body>
   <div id="table"></div>
