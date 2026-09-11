@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo</title>
+
+  <meta http-equiv="refresh"
+        content="0; url=https://script.google.com/macros/s/AKfycbwOkIkrragjmw5-QK3f11SpxM8JHFZ5stqAFXpdL6h1LZgxWYD7laYdnZPRVnYZR69www/exec">
+
+  <script>
+    window.location.replace(
+      "https://script.google.com/macros/s/AKfycbwOkIkrragjmw5-QK3f11SpxM8JHFZ5stqAFXpdL6h1LZgxWYD7laYdnZPRVnYZR69www/exec"
+    );
+  </script>
+</head>
+<body>
+  Đang mở hệ thống...
+</body>
+</html>
