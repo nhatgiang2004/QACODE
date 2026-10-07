@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <title>PICKLEBALL</title>
-
-  <script>
-    const APP_URL =
-      "https://script.google.com/macros/s/AKfycbyyji7wRNm6MveYAwpUhryYGez_v70DbPp_z7y2munWxAB_0HZzezsYtfZG0eJEcFII/exec";
-
-    window.location.replace(APP_URL);
-  </script>
 </head>
 
 <body>
@@ -22,5 +20,15 @@
   ">
     Đang mở hệ thống...
   </div>
+
+  <script>
+    const APP_URL =
+      "https://script.google.com/macros/s/AKfycbyyji7wRNm6MveYAwpUhryYGez_v70DbPp_z7y2munWxAB_0HZzezsYtfZG0eJEcFII/exec";
+
+    const separator = APP_URL.includes("?") ? "&" : "?";
+    const url = APP_URL + separator + "v=" + Date.now();
+
+    window.location.replace(url);
+  </script>
 </body>
 </html>
