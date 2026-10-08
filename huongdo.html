@@ -1,20 +1,250 @@
-<!-- Mobile App / PWA -->
-<meta name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
 
-<meta name="theme-color" content="#0b4a87">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  >
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Hường Đỗ">
+  <title>Hường Đỗ Pickleball</title>
 
-<link rel="apple-touch-icon"
-      href="./icons/logo.png?v=1">
+  <!-- Màu thanh trạng thái Android -->
+  <meta name="theme-color" content="#0b4a87">
 
-<link rel="icon"
-      type="image/png"
-      sizes="192x192"
-      href="./icons/logo.png?v=1">
+  <!-- iPhone / iPad -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
 
-<link rel="manifest"
-      href="./manifest-huongdo.json?v=1">
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  >
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Hường Đỗ"
+  >
+
+  <!-- ICON CHO IPHONE -->
+  <link
+    rel="apple-touch-icon"
+    sizes="180x180"
+    href="./icons/logo.png?v=1"
+  >
+
+  <!-- ICON TRÌNH DUYỆT -->
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="192x192"
+    href="./icons/logo.png?v=1"
+  >
+
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="512x512"
+    href="./icons/logo.png?v=1"
+  >
+
+  <!-- PWA MANIFEST -->
+  <link
+    rel="manifest"
+    href="./manifest-huongdo.json?v=1"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          145deg,
+          #06172d 0%,
+          #0b4a87 55%,
+          #0877be 100%
+        );
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      color: #ffffff;
+
+      overflow: hidden;
+    }
+
+    .loading-box {
+      width: 90%;
+      max-width: 380px;
+
+      text-align: center;
+    }
+
+    .logo {
+      width: 105px;
+      height: 105px;
+
+      margin: 0 auto 22px;
+
+      border-radius: 24px;
+
+      object-fit: cover;
+
+      box-shadow:
+        0 12px 35px
+        rgba(0, 0, 0, 0.28);
+    }
+
+    .title {
+      margin-bottom: 8px;
+
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .sub-title {
+      margin-bottom: 25px;
+
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+
+      margin: auto;
+
+      border: 4px solid
+        rgba(255, 255, 255, 0.25);
+
+      border-top-color: #ffffff;
+
+      border-radius: 50%;
+
+      animation:
+        spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="loading-box">
+
+    <img
+      src="./icons/logo.png?v=1"
+      class="logo"
+      alt="Hường Đỗ"
+    >
+
+    <div class="title">
+      HƯỜNG ĐỖ PICKLEBALL
+    </div>
+
+    <div class="sub-title">
+      Đang mở hệ thống...
+    </div>
+
+    <div class="spinner"></div>
+
+  </div>
+
+
+  <script>
+    /*
+    ==================================================
+    LINK GOOGLE APPS SCRIPT HIỆN TẠI
+    ==================================================
+
+    Khi Apps Script đổi link:
+    CHỈ sửa APP_URL bên dưới.
+
+    Link shortcut trên điện thoại vẫn luôn là:
+
+    https://nhatgiang2004.github.io/QACODE/huongdo.html
+
+    ==================================================
+    */
+
+    const APP_URL =
+      "DAN_LINK_GOOGLE_APPS_SCRIPT_CUA_ANH_VAO_DAY";
+
+
+    /*
+    ==================================================
+    CHUYỂN SANG ỨNG DỤNG
+    ==================================================
+    */
+
+    function openApp() {
+
+      if (
+        !APP_URL ||
+        APP_URL.includes("DAN_LINK")
+      ) {
+
+        document.querySelector(
+          ".sub-title"
+        ).innerHTML =
+          "Chưa cấu hình link hệ thống";
+
+        return;
+      }
+
+
+      /*
+      Dùng replace để người dùng
+      bấm Back không quay lại màn hình tải.
+      */
+
+      window.location.replace(
+        APP_URL
+      );
+    }
+
+
+    /*
+    Chờ một chút để giao diện
+    khởi động hiển thị đẹp hơn.
+    */
+
+    window.addEventListener(
+      "load",
+      function () {
+
+        setTimeout(
+          openApp,
+          350
+        );
+
+      }
+    );
+  </script>
+
+</body>
+</html>
