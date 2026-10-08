@@ -1,309 +1,104 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
+<script>
 
-  <!-- Hiển thị chuẩn trên mobile -->
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-  >
-
-  <title>Hường Đỗ Pickleball</title>
-
-  <!-- Màu thanh trạng thái Android -->
-  <meta name="theme-color" content="#0b4a87">
-
-  <!-- Hỗ trợ chạy như app trên iPhone / iPad -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-
-  <meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="default"
-  >
-
-  <meta
-    name="apple-mobile-web-app-title"
-    content="Hường Đỗ"
-  >
-
-  <!--
+  /*
   ==========================================================
-  ICON APP TRÊN IPHONE
+  CHỈ THAY LINK NÀY KHI GOOGLE APPS SCRIPT ĐỔI URL /exec
   ==========================================================
+  */
 
-  Nếu sau này muốn thay icon:
-  - Thay file: /icon/logo.png
-  - Không cần sửa link huongdo.html
+  const APP_URL =
+    "https://script.google.com/macros/s/AKfycbwWaxwFUIkHOveuIBMn1coj159C4ZHDzobyQVbP47VxHioyCuUeersUCvtOLsk99SHh/exec";
 
-  Nếu điện thoại vẫn giữ icon cũ:
-  đổi ?v=1 thành ?v=2
+
+  /*
   ==========================================================
-  -->
-  <link
-    rel="apple-touch-icon"
-    sizes="180x180"
-    href="./icon/logo.png?v=1"
-  >
+  KHÔNG CẦN SỬA PHẦN BÊN DƯỚI
+  ==========================================================
+  */
 
-  <!-- ICON TRÊN ANDROID / TRÌNH DUYỆT -->
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="192x192"
-    href="./icon/logo.png?v=1"
-  >
+  const statusText =
+    document.getElementById("statusText");
 
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="512x512"
-    href="./icon/logo.png?v=1"
-  >
+  const spinner =
+    document.getElementById("spinner");
 
-  <!-- File manifest PWA -->
-  <link
-    rel="manifest"
-    href="./manifest-huongdo.json?v=1"
-  >
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  function isValidAppUrl(url) {
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: linear-gradient(
-        145deg,
-        #06172d 0%,
-        #0b4a87 55%,
-        #0877be 100%
-      );
-
-      font-family: Arial, Helvetica, sans-serif;
-      color: #ffffff;
-      overflow: hidden;
-    }
-
-    .loading-box {
-      width: 90%;
-      max-width: 380px;
-      text-align: center;
-    }
-
-    .logo {
-      width: 105px;
-      height: 105px;
-
-      margin: 0 auto 22px;
-
-      border-radius: 24px;
-      object-fit: cover;
-
-      box-shadow:
-        0 12px 35px
-        rgba(0, 0, 0, 0.28);
-    }
-
-    .title {
-      margin-bottom: 8px;
-
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .sub-title {
-      margin-bottom: 25px;
-
-      font-size: 14px;
-      opacity: 0.85;
-    }
-
-    .spinner {
-      width: 36px;
-      height: 36px;
-
-      margin: auto;
-
-      border: 4px solid
-        rgba(255, 255, 255, 0.25);
-
-      border-top-color: #ffffff;
-
-      border-radius: 50%;
-
-      animation:
-        spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
-</head>
-
-
-<body>
-
-  <div class="loading-box">
-
-    <!-- Logo hiển thị lúc đang mở hệ thống -->
-    <img
-      src="./icon/logo.png?v=1"
-      class="logo"
-      alt="Hường Đỗ Pickleball"
-    >
-
-    <div class="title">
-      HƯỜNG ĐỖ PICKLEBALL
-    </div>
-
-    <div
-      class="sub-title"
-      id="statusText"
-    >
-      Đang mở hệ thống...
-    </div>
-
-    <div
-      class="spinner"
-      id="spinner"
-    ></div>
-
-  </div>
-
-
-  <script>
-    /*
-    ==========================================================
-    QUAN TRỌNG - CHỈ THAY ĐOẠN NÀY KHI APPS SCRIPT ĐỔI LINK
-    ==========================================================
-
-    Khi anh Deploy Google Apps Script lại và có link mới:
-
-    Ví dụ link mới:
-
-    https://script.google.com/macros/s/AKfycbXXXXXXXXXXXX/exec
-
-    thì chỉ cần thay toàn bộ nội dung nằm giữa 2 dấu " "
-    ở biến APP_URL bên dưới.
-
-    KHÔNG CẦN sửa các phần khác của file này.
-
-    Link shortcut trên điện thoại vẫn giữ nguyên:
-
-    https://nhatgiang2004.github.io/QACODE/huongdo.html
-
-    ==========================================================
-    */
-
-
-    const APP_URL =
-      "https://script.google.com/macros/s/AKfycbwWaxwFUIkHOveuIBMn1coj159C4ZHDzobyQVbP47VxHioyCuUeersUCvtOLsk99SHh/exec";
-
-
-    /*
-    ==========================================================
-    KHÔNG CẦN SỬA PHẦN BÊN DƯỚI
-    ==========================================================
-    */
-
-
-    const statusText =
-      document.getElementById("statusText");
-
-    const spinner =
-      document.getElementById("spinner");
-
-
-    function isValidAppUrl(url) {
-
-      return (
-        typeof url === "string" &&
-        url.startsWith(
-          "https://script.google.com/macros/s/"
-        ) &&
-        url.endsWith("/exec")
-      );
-
-    }
-
-
-    function showError(message) {
-
-      statusText.textContent =
-        message;
-
-      spinner.style.display =
-        "none";
-
-    }
-
-
-    function openApp() {
-
-      /*
-      Kiểm tra xem link Apps Script
-      đã được nhập đúng chưa.
-      */
-
-      if (!isValidAppUrl(APP_URL)) {
-
-        showError(
-          "Link hệ thống chưa đúng. Vui lòng kiểm tra APP_URL."
-        );
-
-        return;
-      }
-
-
-      /*
-      Mở ứng dụng.
-
-      Dùng replace() để khi bấm nút Back
-      không quay lại màn hình "Đang mở hệ thống".
-      */
-
-      window.location.replace(
-        APP_URL
-      );
-
-    }
-
-
-    /*
-    Khi trang GitHub tải xong,
-    chờ 300ms rồi mở Apps Script.
-    */
-
-    window.addEventListener(
-      "load",
-      function () {
-
-        setTimeout(
-          openApp,
-          300
-        );
-
-      }
+    return (
+      typeof url === "string" &&
+      url.startsWith(
+        "https://script.google.com/macros/s/"
+      ) &&
+      url.includes("/exec")
     );
 
-  </script>
+  }
 
-</body>
-</html>
+
+  function showError(message) {
+
+    statusText.textContent = message;
+
+    spinner.style.display = "none";
+
+  }
+
+
+  function openApp() {
+
+    if (!isValidAppUrl(APP_URL)) {
+
+      showError(
+        "Link hệ thống chưa đúng. Vui lòng kiểm tra APP_URL."
+      );
+
+      return;
+    }
+
+
+    /*
+    ==========================================================
+    CHỐNG CACHE TRÊN MOBILE
+
+    Mỗi lần mở app sẽ tự thêm một mã thời gian mới.
+    Ví dụ:
+
+    /exec?_v=1791430000000
+
+    Không cần chỉnh tay.
+    ==========================================================
+    */
+
+    const separator =
+      APP_URL.includes("?")
+        ? "&"
+        : "?";
+
+    const freshUrl =
+      APP_URL +
+      separator +
+      "_v=" +
+      Date.now();
+
+
+    window.location.replace(
+      freshUrl
+    );
+
+  }
+
+
+  window.addEventListener(
+    "load",
+    function () {
+
+      setTimeout(
+        openApp,
+        300
+      );
+
+    }
+  );
+
+</script>
