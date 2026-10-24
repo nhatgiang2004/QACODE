@@ -114,7 +114,11 @@
 
     // GitHub Pages chỉ hiển thị giao diện. Apps Script chỉ cấp dữ liệu JSONP công khai.
     const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbyyji7wRNm6MveYAwpUhryYGez_v70DbPp_z7y2munWxAB_0HZzezsYtfZG0eJEcFII/exec';
-    const API_URL=(new URLSearchParams(location.search).get('apiUrl')||DEFAULT_API_URL).trim();
+    const QUERY=new URLSearchParams(location.search);
+    const API_URL=(QUERY.get('apiUrl')||DEFAULT_API_URL).trim();
+    const EXPECTED_MATCH_ID=String(QUERY.get('matchId')||'').trim();
+    const EXPECTED_MATCH_INDEX=Number(QUERY.get('matchIndex'));
+    const EXPECTED_KIND=String(QUERY.get('kind')||'').trim();
     let pollBusy=false;
     let pollTimer=null;
     let jsonpSeq=0;
@@ -155,7 +159,14 @@
       pollBusy=true;
       try{
         const data=await loadJsonp();
-        render(data);
+        const idOk=!EXPECTED_MATCH_ID||String(data?.matchId||'')===EXPECTED_MATCH_ID;
+        const idxOk=!Number.isInteger(EXPECTED_MATCH_INDEX)||EXPECTED_MATCH_INDEX<0||Number(data?.matchIndex)===EXPECTED_MATCH_INDEX;
+        const kindOk=!EXPECTED_KIND||String(data?.kind||'')===EXPECTED_KIND;
+        if(idOk&&idxOk&&kindOk){
+          render(data);
+        }else{
+          showConnectionError('Đang đồng bộ đúng trận Live đã chọn...');
+        }
         pollBusy=false;
         schedulePoll(350);
       }catch(err){
