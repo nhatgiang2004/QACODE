@@ -171,10 +171,9 @@
       pollBusy=true;
       try{
         const data=await loadJsonp();
-        // Chỉ nhận đúng phiên Live đã mở. Snapshot cũ/phiên khác tuyệt đối không được ghi đè giao diện.
-        if(!EXPECTED_SESSION_ID || String(data?.sessionId||'')===EXPECTED_SESSION_ID){
-          render(data);
-        }
+        // Luôn bám trận Live đang được chọn mới nhất trong App.
+        // Khi đổi trận, snapshot mới phải ghi đè ngay lên màn hình Live đang mở.
+        render(data);
         pollBusy=false;
         schedulePoll(350);
       }catch(err){
