@@ -147,11 +147,8 @@
     }
 
     async function loadJsonp(){
-      try{
-        return await loadJsonpEndpoint('livev2',3500);
-      }catch(e){
-        return await loadJsonpEndpoint('live',6000);
-      }
+      // Đọc thẳng snapshot Live đã lưu, không qua lớp biến đổi lại trận.
+      return await loadJsonpEndpoint('live',6000);
     }
 
     async function poll(){
