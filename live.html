@@ -159,14 +159,9 @@
       pollBusy=true;
       try{
         const data=await loadJsonp();
-        const idOk=!EXPECTED_MATCH_ID||String(data?.matchId||'')===EXPECTED_MATCH_ID;
-        const idxOk=!Number.isInteger(EXPECTED_MATCH_INDEX)||EXPECTED_MATCH_INDEX<0||Number(data?.matchIndex)===EXPECTED_MATCH_INDEX;
-        const kindOk=!EXPECTED_KIND||String(data?.kind||'')===EXPECTED_KIND;
-        if(idOk&&idxOk&&kindOk){
-          render(data);
-        }else{
-          showConnectionError('Đang đồng bộ đúng trận Live đã chọn...');
-        }
+        // API trả về snapshot Live mới nhất đã được App khóa đúng cặp đội khi người dùng chọn trận.
+        // Không chặn giao diện bằng matchId/matchIndex nữa vì dữ liệu cũ có thể tái sử dụng id/chỉ số.
+        render(data);
         pollBusy=false;
         schedulePoll(350);
       }catch(err){
