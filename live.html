@@ -119,6 +119,21 @@
     const EXPECTED_MATCH_ID=String(QUERY.get('matchId')||'').trim();
     const EXPECTED_MATCH_INDEX=Number(QUERY.get('matchIndex'));
     const EXPECTED_KIND=String(QUERY.get('kind')||'').trim();
+    const EXPECTED_SESSION_ID=String(QUERY.get('sessionId')||'').trim();
+    const INITIAL_SNAPSHOT={
+      active:true,
+      sessionId:EXPECTED_SESSION_ID,
+      kind:EXPECTED_KIND,
+      matchId:EXPECTED_MATCH_ID,
+      matchIndex:Number.isFinite(EXPECTED_MATCH_INDEX)?EXPECTED_MATCH_INDEX:-1,
+      teamA:String(QUERY.get('teamA')||''),
+      teamB:String(QUERY.get('teamB')||''),
+      scoreA:Number(QUERY.get('scoreA')||0),
+      scoreB:Number(QUERY.get('scoreB')||0),
+      displayLabel:String(QUERY.get('displayLabel')||'Trực tiếp'),
+      liveResultPosition:String(QUERY.get('liveResultPosition')||'current'),
+      updatedAt:Date.now()
+    };
     let pollBusy=false;
     let pollTimer=null;
     let jsonpSeq=0;
@@ -156,9 +171,10 @@
       pollBusy=true;
       try{
         const data=await loadJsonp();
-        // API trả về snapshot Live mới nhất đã được App khóa đúng cặp đội khi người dùng chọn trận.
-        // Không chặn giao diện bằng matchId/matchIndex nữa vì dữ liệu cũ có thể tái sử dụng id/chỉ số.
-        render(data);
+        // Chỉ nhận đúng phiên Live đã mở. Snapshot cũ/phiên khác tuyệt đối không được ghi đè giao diện.
+        if(!EXPECTED_SESSION_ID || String(data?.sessionId||'')===EXPECTED_SESSION_ID){
+          render(data);
+        }
         pollBusy=false;
         schedulePoll(350);
       }catch(err){
@@ -167,6 +183,7 @@
         schedulePoll(1500);
       }
     }
+    if(INITIAL_SNAPSHOT.teamA||INITIAL_SNAPSHOT.teamB)render(INITIAL_SNAPSHOT);
     poll();
   </script>
 </body>
