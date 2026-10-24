@@ -12,7 +12,7 @@
 </head>
 <body>
   <iframe id="appFrame"
-    src="https://script.google.com/macros/s/AKfycbzM5NB7i1Qm8yuq4WL6RHNAjMYFXvmzdPh1RFN-_v8w4_8v67gWc1qD1cHcdCl6cM7F_w/exec"
+    src="https://script.google.com/macros/s/AKfycbyyji7wRNm6MveYAwpUhryYGez_v70DbPp_z7y2munWxAB_0HZzezsYtfZG0eJEcFII/exec"
     allow="clipboard-read; clipboard-write"
     referrerpolicy="strict-origin-when-cross-origin"></iframe>
   <script>
@@ -32,7 +32,11 @@
       if(ev.source!==frame.contentWindow)return;
       const msg=ev.data||{};
       if(msg.key!==STORAGE_KEY)return;
-      if(msg.type==='HUONGDO_AUTH_GET'){
+      if(msg.type==='HUONGDO_OPEN_LIVE'){
+        // Mở file Live cùng thư mục/repo GitHub Pages hiện tại.
+        // Không hard-code username/domain: luôn trỏ tới ./live.html.
+        window.open(new URL('./live.html', window.location.href).href,'_blank','noopener');
+      }else if(msg.type==='HUONGDO_AUTH_GET'){
         sendSaved();
       }else if(msg.type==='HUONGDO_AUTH_SAVE'){
         try{localStorage.setItem(STORAGE_KEY,JSON.stringify(msg.data||{}));}catch(e){}
