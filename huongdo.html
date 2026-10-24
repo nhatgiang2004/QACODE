@@ -31,12 +31,20 @@
     window.addEventListener('message',ev=>{
       if(ev.source!==frame.contentWindow)return;
       const msg=ev.data||{};
-      if(msg.key!==STORAGE_KEY)return;
+
+      // Lệnh mở Live không liên quan tới STORAGE_KEY đăng nhập, phải xử lý trước.
       if(msg.type==='HUONGDO_OPEN_LIVE'){
-        // Mở file Live cùng thư mục/repo GitHub Pages hiện tại.
-        // Không hard-code username/domain: luôn trỏ tới ./live.html.
-        window.open(new URL('./live.html', window.location.href).href,'_blank','noopener');
-      }else if(msg.type==='HUONGDO_AUTH_GET'){
+        const liveUrl=new URL('./live.html',window.location.href).href;
+        let opened=null;
+        try{opened=window.open(liveUrl,'_blank','noopener');}catch(e){}
+        // Một số trình duyệt chặn popup được mở sau postMessage.
+        // Fallback chắc chắn: chuyển chính trang GitHub wrapper sang Live.
+        if(!opened){window.location.assign(liveUrl);}
+        return;
+      }
+
+      if(msg.key!==STORAGE_KEY)return;
+      if(msg.type==='HUONGDO_AUTH_GET'){
         sendSaved();
       }else if(msg.type==='HUONGDO_AUTH_SAVE'){
         try{localStorage.setItem(STORAGE_KEY,JSON.stringify(msg.data||{}));}catch(e){}
