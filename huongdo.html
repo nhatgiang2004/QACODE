@@ -28,17 +28,21 @@
     function sendSaved(){
       try{frame.contentWindow.postMessage({type:'HUONGDO_AUTH_DATA',key:STORAGE_KEY,data:readSaved()},'*');}catch(e){}
     }
+    function sendContext(){
+      try{
+        const liveUrl=new URL('./live.html',window.location.href).href;
+        frame.contentWindow.postMessage({type:'HUONGDO_CONTEXT',liveUrl},'*');
+      }catch(e){}
+    }
     window.addEventListener('message',ev=>{
       if(ev.source!==frame.contentWindow)return;
       const msg=ev.data||{};
 
       // Lệnh mở Live không liên quan tới STORAGE_KEY đăng nhập, phải xử lý trước.
       if(msg.type==='HUONGDO_OPEN_LIVE'){
-        const liveUrl=new URL('./live.html',window.location.href).href;
+        const liveUrl=String(msg.liveUrl||new URL('./live.html',window.location.href).href);
         let opened=null;
         try{opened=window.open(liveUrl,'_blank','noopener');}catch(e){}
-        // Một số trình duyệt chặn popup được mở sau postMessage.
-        // Fallback chắc chắn: chuyển chính trang GitHub wrapper sang Live.
         if(!opened){window.location.assign(liveUrl);}
         return;
       }
@@ -52,7 +56,7 @@
         try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
       }
     });
-    frame.addEventListener('load',()=>{setTimeout(sendSaved,150);setTimeout(sendSaved,700);});
+    frame.addEventListener('load',()=>{setTimeout(()=>{sendSaved();sendContext();},150);setTimeout(()=>{sendSaved();sendContext();},700);});
   })();
   </script>
 </body>
