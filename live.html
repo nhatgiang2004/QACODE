@@ -124,7 +124,7 @@
       pollTimer=setTimeout(poll,delay);
     }
 
-    function loadJsonp(){
+    function loadJsonpEndpoint(apiName, timeoutMs=6000){
       return new Promise((resolve,reject)=>{
         const cb='__PB_LIVE_GH_'+Date.now()+'_'+(++jsonpSeq);
         const script=document.createElement('script');
@@ -133,13 +133,21 @@
           try{delete window[cb]}catch(e){window[cb]=undefined}
           script.remove();
         };
-        const timer=setTimeout(()=>{if(done)return;done=true;cleanup();reject(new Error('Quá thời gian tải dữ liệu Live'));},8000);
+        const timer=setTimeout(()=>{if(done)return;done=true;cleanup();reject(new Error('Quá thời gian tải '+apiName));},timeoutMs);
         window[cb]=(data)=>{if(done)return;done=true;clearTimeout(timer);cleanup();resolve(data||{active:false});};
-        script.onerror=()=>{if(done)return;done=true;clearTimeout(timer);cleanup();reject(new Error('Không kết nối được API Live'));};
+        script.onerror=()=>{if(done)return;done=true;clearTimeout(timer);cleanup();reject(new Error('Không kết nối được '+apiName));};
         const sep=API_URL.includes('?')?'&':'?';
-        script.src=API_URL+sep+'api=livev2&callback='+encodeURIComponent(cb)+'&_=' + Date.now();
+        script.src=API_URL+sep+'api='+encodeURIComponent(apiName)+'&callback='+encodeURIComponent(cb)+'&_=' + Date.now();
         document.head.appendChild(script);
       });
+    }
+
+    async function loadJsonp(){
+      try{
+        return await loadJsonpEndpoint('livev2',3500);
+      }catch(e){
+        return await loadJsonpEndpoint('live',6000);
+      }
     }
 
     async function poll(){
@@ -160,4 +168,3 @@
   </script>
 </body>
 </html>
-
