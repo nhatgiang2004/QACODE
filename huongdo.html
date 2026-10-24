@@ -12,7 +12,7 @@
 </head>
 <body>
   <iframe id="appFrame"
-    src="https://script.google.com/macros/s/AKfycbyyji7wRNm6MveYAwpUhryYGez_v70DbPp_z7y2munWxAB_0HZzezsYtfZG0eJEcFII/exec"
+    src="https://script.google.com/macros/s/AKfycbyl0Nn0TkXZnoy9nXY9-nmsmAcXWVFVt1mdH86cSYfz7SBWHtC8h8a50U5LMs4Wo1GzOw/exec"
     allow="clipboard-read; clipboard-write"
     referrerpolicy="strict-origin-when-cross-origin"></iframe>
   <script>
@@ -30,7 +30,7 @@
     }
     function sendContext(){
       try{
-        const liveUrl=new URL('./live.html',window.location.href).href;
+        const liveUrl='https://nhatgiang2004.github.io/QACODE/live.html';
         frame.contentWindow.postMessage({type:'HUONGDO_CONTEXT',liveUrl},'*');
       }catch(e){}
     }
@@ -40,7 +40,7 @@
 
       // Lệnh mở Live không liên quan tới STORAGE_KEY đăng nhập, phải xử lý trước.
       if(msg.type==='HUONGDO_OPEN_LIVE'){
-        const liveUrl=String(msg.liveUrl||new URL('./live.html',window.location.href).href);
+        const liveUrl=String(msg.liveUrl||'https://nhatgiang2004.github.io/QACODE/live.html');
         let opened=null;
         try{opened=window.open(liveUrl,'_blank','noopener');}catch(e){}
         if(!opened){window.location.assign(liveUrl);}
