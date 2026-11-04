@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <title>Hường Đỗ Hotel - HomeStay</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f4f7fb}
+    #appFrame{display:block;width:100%;height:100dvh;border:0;background:#f4f7fb}
+  </style>
+</head>
+<body>
+  <iframe id="appFrame"
+    src="https://script.google.com/macros/s/AKfycbwweBtLXEaoni08p9MModBdKHggnrnassgHfjw4i5RTI0q5fPNhDao912YEGQS5qsMx/exec"
+    allow="clipboard-read; clipboard-write"
+    referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  <script>
+  (()=>{
+    const STORAGE_KEY='pb_login_saved_credentials_v1';
+    const frame=document.getElementById('appFrame');
+    function readSaved(){
+      try{
+        const raw=localStorage.getItem(STORAGE_KEY);
+        return raw?JSON.parse(raw):null;
+      }catch(e){return null;}
+    }
+    function sendSaved(){
+      try{frame.contentWindow.postMessage({type:'HUONGDO_AUTH_DATA',key:STORAGE_KEY,data:readSaved()},'*');}catch(e){}
+    }
+    function sendContext(){
+      try{
+        const liveUrl='https://nhatgiang2004.github.io/QACODE/live.html';
+        frame.contentWindow.postMessage({type:'HUONGDO_CONTEXT',liveUrl},'*');
+      }catch(e){}
+    }
+    window.addEventListener('message',ev=>{
+      if(ev.source!==frame.contentWindow)return;
+      const msg=ev.data||{};
+
+      // Lệnh mở Live không liên quan tới STORAGE_KEY đăng nhập, phải xử lý trước.
+      if(msg.type==='HUONGDO_OPEN_LIVE'){
+        const liveUrl=String(msg.liveUrl||'https://nhatgiang2004.github.io/QACODE/live.html');
+        let opened=null;
+        try{opened=window.open(liveUrl,'_blank','noopener');}catch(e){}
+        if(!opened){window.location.assign(liveUrl);}
+        return;
+      }
+
+      if(msg.key!==STORAGE_KEY)return;
+      if(msg.type==='HUONGDO_AUTH_GET'){
+        sendSaved();
+      }else if(msg.type==='HUONGDO_AUTH_SAVE'){
+        try{localStorage.setItem(STORAGE_KEY,JSON.stringify(msg.data||{}));}catch(e){}
+      }else if(msg.type==='HUONGDO_AUTH_CLEAR'){
+        try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
+      }
+    });
+    frame.addEventListener('load',()=>{setTimeout(()=>{sendSaved();sendContext();},150);setTimeout(()=>{sendSaved();sendContext();},700);});
+  })();
+  </script>
+</body>
+</html>
