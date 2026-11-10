@@ -83,7 +83,7 @@
   </style>
 </head>
 <body>
-  <main class="stage" id="app"><div class="empty-state"><h1>LIVE STREAM</h1><p>Đang chờ BTC chọn trận đấu.</p></div></main>
+  <main class="stage" id="app"></main>
   <script>
     const app=document.getElementById('app');
     const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -98,7 +98,8 @@
       app.style.background='transparent';
     }
     function render(d){
-      if(!d||!d.active){app.classList.remove('bottom-stage');app.innerHTML='<div class="empty-state"><h1>LIVE STREAM</h1><p>Đang chờ BTC chọn trận đấu.</p></div>';previous={scoreA:null,scoreB:null};return;}
+      if(!d||!d.active){app.classList.remove('bottom-stage');app.innerHTML=SHOW_WAIT?'<div class="empty-state"><h1>LIVE STREAM</h1><p>Đang chờ BTC chọn trận đấu.</p></div>':'';previous={scoreA:null,scoreB:null};shownActive=false;return;}
+      shownActive=true;
       const logo=safeLogo(d);
       const aChanged=previous.scoreA!==null&&Number(d.scoreA)!==Number(previous.scoreA);
       const bChanged=previous.scoreB!==null&&Number(d.scoreB)!==Number(previous.scoreB);
@@ -117,11 +118,25 @@
       previous={scoreA:Number(d.scoreA||0),scoreB:Number(d.scoreB||0)};
       if(aChanged||bChanged)setTimeout(()=>document.querySelectorAll('.score.flash').forEach(x=>x.classList.remove('flash')),220);
     }
-    function showConnectionError(msg){app.innerHTML=`<div class="empty-state"><h1>LIVE STREAM</h1><p>${esc(msg||'Không kết nối được dữ liệu Live.')}</p></div>`;fitOverlay('current');}
+    // Chống nháy khi XSplit/OBS chuyển cảnh (trang Live bị tải lại):
+    // - Mở trang là hiện ngay bảng điểm gần nhất đã lưu trong máy, không hiện "Đang chờ BTC chọn trận đấu".
+    // - Chỉ xóa bảng điểm khi máy chủ báo "không có trận" 2 lần liên tiếp.
+    // - Khi không có trận: để trong suốt (thêm ?wait=1 vào link nếu muốn hiện dòng "Đang chờ BTC chọn trận đấu").
+    var SHOW_WAIT=/^(1|true|yes)$/i.test(new URLSearchParams(location.search).get('wait')||'');
+    var shownActive=false,inactiveCount=0;
+    const CACHE_KEY='pbLiveCache:'+location.pathname;
+    function readCache(){try{const c=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');if(c&&c.data&&c.data.active&&Date.now()-Number(c.at||0)<12*3600*1000)return c.data;}catch(e){}return null;}
+    function writeCache(d){try{if(d&&d.active)localStorage.setItem(CACHE_KEY,JSON.stringify({at:Date.now(),data:d}));else localStorage.removeItem(CACHE_KEY);}catch(e){}}
+    function applyLive(d){
+      if(d&&d.active){inactiveCount=0;writeCache(d);render(d);return;}
+      inactiveCount++;
+      if(!shownActive||inactiveCount>=2){writeCache(null);render(d);}
+    }
+    function showConnectionError(msg){if(shownActive&&!SHOW_WAIT)return;app.innerHTML=`<div class="empty-state"><h1>LIVE STREAM</h1><p>${esc(msg||'Không kết nối được dữ liệu Live.')}</p></div>`;fitOverlay('current');}
     // ===== Bản chạy trên GitHub Pages =====
     // GitHub chỉ hiển thị giao diện; dữ liệu lấy từ Web App Apps Script qua JSONP: <WebApp>/exec?api=live&callback=...
     // Đổi Web App khác: thêm ?apiUrl=<link /exec> vào cuối địa chỉ trang (vd: livehuongdo.html?apiUrl=https://script.google.com/macros/s/XXX/exec)
-    const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbyn5qtFeeh5PXr0Fh8e52GAvNzXvAGd8BYYaHRHpL8T2wfhULQ3HWT6jjpJGNBHk8i7/exec';
+    const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbydyehtRFDUD2HR5cnz74FBPpq9IDnm7fft9cEvW6ruj5bv06gbAfEqlo75i1D7lnKl/exec';
     const QUERY=new URLSearchParams(location.search);
     const API_URL=String(QUERY.get('apiUrl')||QUERY.get('api')||DEFAULT_API_URL).trim();
     const LIVE_SCALE=Number(QUERY.get('scale'));if(LIVE_SCALE>=0.3&&LIVE_SCALE<=1.5)document.documentElement.style.setProperty('--live-scale',String(LIVE_SCALE));
@@ -149,7 +164,7 @@
       try{
         const data=await loadLive();
         failCount=0;pollBusy=false;
-        if(data&&data.error&&!data.active)showConnectionError('Lỗi dữ liệu Live: '+data.error);else render(data);
+        if(data&&data.error&&!data.active)showConnectionError('Lỗi dữ liệu Live: '+data.error);else applyLive(data);
         schedulePoll(POLL_MS);
       }catch(err){
         pollBusy=false;failCount++;
@@ -159,6 +174,7 @@
       }
     }
     document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedulePoll(50);});
+    {const c=readCache();if(c)render(c);}
     poll();
   </script>
 </body>
