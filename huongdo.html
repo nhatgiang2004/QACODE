@@ -136,7 +136,7 @@
     // ===== Bản chạy trên GitHub Pages =====
     // GitHub chỉ hiển thị giao diện; dữ liệu lấy từ Web App Apps Script qua JSONP: <WebApp>/exec?api=live&callback=...
     // Đổi Web App khác: thêm ?apiUrl=<link /exec> vào cuối địa chỉ trang (vd: livehuongdo.html?apiUrl=https://script.google.com/macros/s/XXX/exec)
-    const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbyn5qtFeeh5PXr0Fh8e52GAvNzXvAGd8BYYaHRHpL8T2wfhULQ3HWT6jjpJGNBHk8i7/exec';
+    const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbydyehtRFDUD2HR5cnz74FBPpq9IDnm7fft9cEvW6ruj5bv06gbAfEqlo75i1D7lnKl/exec';
     const QUERY=new URLSearchParams(location.search);
     const API_URL=String(QUERY.get('apiUrl')||QUERY.get('api')||DEFAULT_API_URL).trim();
     const LIVE_SCALE=Number(QUERY.get('scale'));if(LIVE_SCALE>=0.3&&LIVE_SCALE<=1.5)document.documentElement.style.setProperty('--live-scale',String(LIVE_SCALE));
