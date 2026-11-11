@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Hường Đỗ Hotel - kho</title>
+  <meta name="theme-color" content="#0b4a87">
+
+  <!-- iPhone / iPad -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Hệ thống Quản lý kho hàng hóa">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Icon -->
+  <link rel="icon" type="image/png" href="./icon/kho-192.png?v=6">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon/kho-180.png?v=6">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon/kho-192.png?v=6">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon/kho-512.png?v=6">
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest-bdth.json?v=6">
+
+  <script>
+    /*
+    ==========================================================
+    CHỈ THAY ĐOẠN NÀY KHI GOOGLE APPS SCRIPT ĐỔI LINK
+    ==========================================================
+    */
+    const APP_URL =
+      "https://script.google.com/macros/s/AKfycbyTg6VTot0rW0WQYPlS80Ah7u8Z0vmzg-uD2tNcUCfpegOEy5V1p8QiDjnvqkX0hVKvBQ/exec";
+
+    /* Chuyển thẳng vào màn hình đăng nhập, không cần bấm nút */
+    const FRESH_URL = APP_URL + (APP_URL.includes("?") ? "&" : "?") + "_v=" + Date.now();
+    window.location.replace(FRESH_URL);
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; }
+    body {
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, #06172d 0%, #0b4a87 55%, #0877be 100%);
+      font-family: Arial, Helvetica, sans-serif; color: #fff; text-align: center;
+    }
+    .box { padding: 20px; }
+    .logo { width: 88px; height: 88px; border-radius: 22px; margin: 0 auto 18px; display: block; box-shadow: 0 12px 35px rgba(0,0,0,.28); }
+    .spinner {
+      width: 32px; height: 32px; margin: 18px auto 14px;
+      border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    a { color: #fff; font-size: 14px; opacity: .85; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <img class="logo" src="./icon/kho-180.png?v=6" alt="Hường Đỗ Hotel - kho">
+    <div style="font-weight:700;font-size:18px">Đang mở màn hình đăng nhập…</div>
+    <div class="spinner"></div>
+    <!-- Dự phòng: nếu trình duyệt không tự chuyển -->
+    <a id="fallback" href="#">Bấm vào đây nếu trang không tự chuyển</a>
+  </div>
+  <script>
+    document.getElementById("fallback").href = FRESH_URL;
+  </script>
+</body>
+</html>
