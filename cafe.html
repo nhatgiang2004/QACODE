@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-  <title>Hường Đỗ Cafe</title>
+  <title>Hường Đỗ - Cafe</title>
   <meta name="theme-color" content="#0b4a87">
 
   <!-- iPhone / iPad: hiện icon khi "Thêm vào Màn hình chính" -->
@@ -11,11 +11,11 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Hường Đỗ">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" sizes="180x180" href="./icon/homestay-180.png?v=7">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon/cafe-180.png?v=7">
 
   <!-- Android / trình duyệt -->
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon/homestay-192.png?v=7">
-  <link rel="icon" type="image/png" sizes="512x512" href="./icon/homestay-512.png?v=7">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon/cafe-192.png?v=7">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon/cafe-512.png?v=7">
   <link rel="manifest" href="./manifest-homestay.json?v=7">
 
   <style>
@@ -42,12 +42,12 @@
   <!-- Màn hình chờ trong lúc trang đăng nhập đang tải (tự ẩn) -->
   <div id="splash">
     <img src="./icon/homestay-180.png?v=7" alt="">
-    <div class="t">Hường Đỗ Hotel - HomeStay</div>
+    <div class="t">Hường Đỗ - Cafe</div>
     <div class="s" id="msg">Đang mở hệ thống…</div>
     <div class="spin"></div>
     <a id="direct" href="#">Mở trực tiếp</a>
   </div>
-  <iframe id="app" title="Hường Đỗ - Quản lý" allow="clipboard-read; clipboard-write; camera; fullscreen"></iframe>
+  <iframe id="app" title="Hường Đỗ - Cafe" allow="clipboard-read; clipboard-write; camera; fullscreen"></iframe>
 
   <script>
     /*
@@ -56,7 +56,7 @@
     ==========================================================
     */
     const APP_URL =
-      "https://script.google.com/macros/s/AKfycbwZ7aWdG-Y8nofIB_kfEhZsoEEvwu7dAYpU25tN_n5F-ZtwZolBcrFgO9A1puLh1gh7/exec?trang=quan-tri";
+      "https://script.google.com/macros/s/AKfycbyRPywO9ojoyPI5-ulkKO7W6EisV_KHh62lx-M0gGS2v7SgXx--w7kvLZCDUPHi_1Q/exec";
 
     /* ===== KHÔNG CẦN SỬA PHẦN BÊN DƯỚI ===== */
     const splash = document.getElementById("splash");
