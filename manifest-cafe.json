@@ -1,7 +1,7 @@
 {
-  "name": "Hường Đỗ - Cafe",
-  "short_name": "Hường Đỗ",
-  "description": "Hệ thống Theo dõi Bán hàng Cafe",
+  "name": "Hường Đỗ Cafe",
+  "short_name": "Hường Đỗ Cafe",
+  "description": "Theo dõi Bán hàng Cafe",
 
   "start_url": "./cafe.html",
   "scope": "./",
