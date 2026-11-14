@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Trung tâm gia sư</title>
+  <meta name="theme-color" content="#0b4a87">
+
+  <!-- iPhone / iPad: hiện icon khi "Thêm vào Màn hình chính" -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Trung tâm gia sư">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon/cafe-180.png?v=7">
+
+  <!-- Android / trình duyệt -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon/cafe-192.png?v=7">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon/cafe-512.png?v=7">
+  <link rel="manifest" href="./manifest-cafe.json?v=7">
+
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #06172d; }
+    #app { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #f3f6f8; }
+    #splash {
+      position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, #06172d 0%, #0b4a87 55%, #0877be 100%);
+      color: #fff; font-family: Arial, Helvetica, sans-serif; text-align: center; padding: 24px;
+      transition: opacity .35s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+    #splash img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 12px 35px rgba(0,0,0,.28); }
+    #splash .t { margin-top: 18px; font-size: 20px; font-weight: 700; }
+    #splash .s { margin-top: 6px; font-size: 14px; opacity: .85; }
+    #splash .spin { width: 32px; height: 32px; margin-top: 22px; border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+    #splash a { display: none; margin-top: 22px; background: #fff; color: #0b4a87; text-decoration: none; font-weight: 700; padding: 13px 22px; border-radius: 12px; }
+    #splash.slow a { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <!-- Màn hình chờ trong lúc trang đăng nhập đang tải (tự ẩn) -->
+  <div id="splash">
+    <img src="./icon/cafe-180.png?v=7" alt="">
+    <div class="t">Trung tâm gia sư</div>
+    <div class="s" id="msg">Đang mở hệ thống…</div>
+    <div class="spin"></div>
+    <a id="direct" href="#">Mở trực tiếp</a>
+  </div>
+  <iframe id="app" title="Trung tâm gia sư" allow="clipboard-read; clipboard-write; camera; fullscreen"></iframe>
+
+  <script>
+    /*
+    ==========================================================
+    CHỈ THAY ĐOẠN NÀY KHI GOOGLE APPS SCRIPT ĐỔI LINK
+    ==========================================================
+    */
+    const APP_URL =
+      "https://script.google.com/macros/s/AKfycbx10P1__HSza9Ber4Pzs2k19mdUHi970WSaOwA9o8zoQeqFnWgYBuiUiKVa_-LqconP/exec";
+
+    /* ===== KHÔNG CẦN SỬA PHẦN BÊN DƯỚI ===== */
+    const splash = document.getElementById("splash");
+    const msg = document.getElementById("msg");
+    const frame = document.getElementById("app");
+    const direct = document.getElementById("direct");
+
+    const ok = typeof APP_URL === "string" && APP_URL.startsWith("https://script.google.com/macros/s/") && APP_URL.includes("/exec");
+    if (!ok) {
+      msg.textContent = "Link hệ thống chưa đúng. Vui lòng kiểm tra APP_URL.";
+      document.querySelector("#splash .spin").style.display = "none";
+    } else {
+      const url = APP_URL + (APP_URL.includes("?") ? "&" : "?") + "_v=" + Date.now();
+      direct.href = url;
+      /* Trang đăng nhập hiện ngay trong khung, địa chỉ vẫn là hotel.html nên icon trên màn hình chính giữ nguyên */
+      frame.addEventListener("load", function () { setTimeout(function () { splash.classList.add("hide"); }, 400); });
+      frame.src = url;
+      /* Mạng chậm hoặc trình duyệt chặn khung: hiện nút mở trực tiếp */
+      setTimeout(function () {
+        if (!splash.classList.contains("hide")) { splash.classList.add("slow"); msg.textContent = "Mạng chậm? Bấm để mở trực tiếp."; }
+      }, 12000);
+    }
+  </script>
+</body>
+</html>
