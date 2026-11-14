@@ -3,22 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-  <title>Hệ thống Quản lý kho hàng hóa</title>
+  <title>Quản lý kho hàng hóa</title>
   <meta name="theme-color" content="#0b4a87">
 
-  <!-- iPhone / iPad -->
+  <!-- iPhone / iPad: hiện icon khi "Thêm vào Màn hình chính" -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Hệ thống Quản lý kho hàng hóa">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Quản lý kho hàng hóa">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon/kho-180.png?v=7">
 
-  <!-- Icon -->
-  <link rel="icon" type="image/png" href="./icon/kho-192.png?v=6">
-  <link rel="apple-touch-icon" sizes="180x180" href="./icon/kho-180.png?v=6">
-  <link rel="icon" type="image/png" sizes="192x192" href="./icon/kho-192.png?v=6">
-  <link rel="icon" type="image/png" sizes="512x512" href="./icon/kho-512.png?v=6">
+  <!-- Android / trình duyệt -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon/kho-192.png?v=7">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon/kho-512.png?v=7">
+  <link rel="manifest" href="./manifest-cafe.json?v=7">
 
-  <!-- PWA -->
-  <link rel="manifest" href="./manifest-bdth.json?v=6">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #06172d; }
+    #app { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #f3f6f8; }
+    #splash {
+      position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, #06172d 0%, #0b4a87 55%, #0877be 100%);
+      color: #fff; font-family: Arial, Helvetica, sans-serif; text-align: center; padding: 24px;
+      transition: opacity .35s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+    #splash img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 12px 35px rgba(0,0,0,.28); }
+    #splash .t { margin-top: 18px; font-size: 20px; font-weight: 700; }
+    #splash .s { margin-top: 6px; font-size: 14px; opacity: .85; }
+    #splash .spin { width: 32px; height: 32px; margin-top: 22px; border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+    #splash a { display: none; margin-top: 22px; background: #fff; color: #0b4a87; text-decoration: none; font-weight: 700; padding: 13px 22px; border-radius: 12px; }
+    #splash.slow a { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <!-- Màn hình chờ trong lúc trang đăng nhập đang tải (tự ẩn) -->
+  <div id="splash">
+    <img src="./icon/kho-180.png?v=7" alt="">
+    <div class="t">Quản lý kho hàng hóa</div>
+    <div class="s" id="msg">Đang mở hệ thống…</div>
+    <div class="spin"></div>
+    <a id="direct" href="#">Mở trực tiếp</a>
+  </div>
+  <iframe id="app" title="Quản lý kho hàng hóa" allow="clipboard-read; clipboard-write; camera; fullscreen"></iframe>
 
   <script>
     /*
@@ -27,42 +56,29 @@
     ==========================================================
     */
     const APP_URL =
-      "https://script.google.com/macros/s/AKfycbzGkNYN89rydRY_Jz8uHiJrOisTwjzTpPD_bCcyh2SS2qq_jvq00WDihYQBxUAtrLB3cg/exec";
+      "https://script.google.com/macros/s/AKfycbybugvkURxNA4qSOSI88CURWL7F6fYM_g8ZyO9rH65e33Sj3bcRmdg_NNTs4OMh7fCXmw/exec";
 
-    /* Chuyển thẳng vào màn hình đăng nhập, không cần bấm nút */
-    const FRESH_URL = APP_URL + (APP_URL.includes("?") ? "&" : "?") + "_v=" + Date.now();
-    window.location.replace(FRESH_URL);
-  </script>
+    /* ===== KHÔNG CẦN SỬA PHẦN BÊN DƯỚI ===== */
+    const splash = document.getElementById("splash");
+    const msg = document.getElementById("msg");
+    const frame = document.getElementById("app");
+    const direct = document.getElementById("direct");
 
-  <style>
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; }
-    body {
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(145deg, #06172d 0%, #0b4a87 55%, #0877be 100%);
-      font-family: Arial, Helvetica, sans-serif; color: #fff; text-align: center;
+    const ok = typeof APP_URL === "string" && APP_URL.startsWith("https://script.google.com/macros/s/") && APP_URL.includes("/exec");
+    if (!ok) {
+      msg.textContent = "Link hệ thống chưa đúng. Vui lòng kiểm tra APP_URL.";
+      document.querySelector("#splash .spin").style.display = "none";
+    } else {
+      const url = APP_URL + (APP_URL.includes("?") ? "&" : "?") + "_v=" + Date.now();
+      direct.href = url;
+      /* Trang đăng nhập hiện ngay trong khung, địa chỉ vẫn là hotel.html nên icon trên màn hình chính giữ nguyên */
+      frame.addEventListener("load", function () { setTimeout(function () { splash.classList.add("hide"); }, 400); });
+      frame.src = url;
+      /* Mạng chậm hoặc trình duyệt chặn khung: hiện nút mở trực tiếp */
+      setTimeout(function () {
+        if (!splash.classList.contains("hide")) { splash.classList.add("slow"); msg.textContent = "Mạng chậm? Bấm để mở trực tiếp."; }
+      }, 12000);
     }
-    .box { padding: 20px; }
-    .logo { width: 88px; height: 88px; border-radius: 22px; margin: 0 auto 18px; display: block; box-shadow: 0 12px 35px rgba(0,0,0,.28); }
-    .spinner {
-      width: 32px; height: 32px; margin: 18px auto 14px;
-      border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    a { color: #fff; font-size: 14px; opacity: .85; }
-  </style>
-</head>
-<body>
-  <div class="box">
-    <img class="logo" src="./icon/kho-180.png?v=6" alt="Hường Đỗ Hotel - kho">
-    <div style="font-weight:700;font-size:18px">Đang mở màn hình đăng nhập…</div>
-    <div class="spinner"></div>
-    <!-- Dự phòng: nếu trình duyệt không tự chuyển -->
-    <a id="fallback" href="#">Bấm vào đây nếu trang không tự chuyển</a>
-  </div>
-  <script>
-    document.getElementById("fallback").href = FRESH_URL;
   </script>
 </body>
 </html>
