@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Quản lý Bán hàng</title>
+  <meta name="theme-color" content="#0b4a87">
+
+  <!-- iPhone / iPad: hiện icon khi "Thêm vào Màn hình chính" -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Quản lý Bán hàng">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon/banhang-180.png?v=7">
+
+  <!-- Android / trình duyệt -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon/banhang-192.png?v=7">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon/banhang-512.png?v=7">
+  <link rel="manifest" href="./manifest-banhang.json?v=7">
+
+
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #06172d; }
+    #app { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #f3f6f8; }
+    #splash {
+      position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, #06172d 0%, #0b4a87 55%, #0877be 100%);
+      color: #fff; font-family: Arial, Helvetica, sans-serif; text-align: center; padding: 24px;
+      transition: opacity .35s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+    #splash img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 12px 35px rgba(0,0,0,.28); }
+    #splash .t { margin-top: 18px; font-size: 20px; font-weight: 700; }
+    #splash .s { margin-top: 6px; font-size: 14px; opacity: .85; }
+    #splash .spin { width: 32px; height: 32px; margin-top: 22px; border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+    #splash a { display: none; margin-top: 22px; background: #fff; color: #0b4a87; text-decoration: none; font-weight: 700; padding: 13px 22px; border-radius: 12px; }
+    #splash.slow a { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ===== Máy quét mã vạch dùng camera của trang này (app bên trong gọi sang) ===== */
+    #scn { position: fixed; inset: 0; z-index: 10; background: #000; display: none; flex-direction: column; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #fff; }
+    #scn.on { display: flex; }
+    #scn .top { display: flex; align-items: center; gap: 10px; padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 10px; background: rgba(0,0,0,.55); position: relative; z-index: 2; }
+    #scn .top b { flex: 1; font-size: 17px; }
+    #scn .x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.16); color: #fff; font-size: 22px; line-height: 40px; }
+    #scn .view { position: relative; flex: 1; overflow: hidden; }
+    #scn video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #scn .box { position: absolute; left: 7%; right: 7%; top: 50%; height: 34%; transform: translateY(-50%); border-radius: 18px; box-shadow: 0 0 0 9999px rgba(0,0,0,.45); border: 3px solid rgba(255,255,255,.9); }
+    #scn .box i { position: absolute; left: 6%; right: 6%; top: 50%; height: 2px; background: #ff3b30; box-shadow: 0 0 10px #ff3b30; animation: scl 1.6s ease-in-out infinite; }
+    #scn .box.hit { border-color: #22c55e; }
+    @keyframes scl { 0%,100% { transform: translateY(-38px); } 50% { transform: translateY(38px); } }
+    #scn .hint { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 14px; opacity: .9; padding: 0 20px; }
+    #scn .msg { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; padding: 30px; font-size: 16px; line-height: 1.5; }
+    #scn .msg.on { display: flex; }
+    #scn .bot { background: #fff; color: #0f172a; border-radius: 22px 22px 0 0; padding: 14px 16px calc(env(safe-area-inset-bottom, 0px) + 14px); display: flex; flex-direction: column; gap: 10px; }
+    #scn .last { font-size: 15px; font-weight: 700; color: #047857; min-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #scn .last.err { color: #b91c1c; }
+    #scn .st { font-size: 14px; color: #475569; font-weight: 600; }
+    #scn .row { display: flex; gap: 10px; }
+    #scn .row button { flex: 1; height: 50px; border-radius: 14px; border: 1px solid #dbe3ec; background: #f1f5f9; color: #0f172a; font-size: 16px; font-weight: 700; }
+    #scn .row .ok { background: linear-gradient(135deg, #10b981, #0d9488); color: #fff; border: 0; flex: 2; }
+    #scn .row .torch[hidden] { display: none; }
+    #scn .row .torch.on { background: #fde68a; }
+  </style>
+</head>
+<body>
+  <!-- Màn hình chờ trong lúc trang đăng nhập đang tải (tự ẩn) -->
+  <div id="splash">
+    <img src="./icon/banhang-180.png?v=7" alt="">
+    <div class="t">Quản lý Bán hàng</div>
+    <div class="s" id="msg">Đang mở hệ thống…</div>
+    <div class="spin"></div>
+    <a id="direct" href="#">Mở trực tiếp</a>
+  </div>
+  <iframe id="app" title="Quản lý Bán hàng" allow="clipboard-read; clipboard-write; camera; fullscreen"></iframe>
+
+  <script>
+    /*
+    ==========================================================
+    CHỈ THAY ĐOẠN NÀY KHI GOOGLE APPS SCRIPT ĐỔI LINK
+    ==========================================================
+    */
+    const APP_URL =
+      "https://script.google.com/macros/s/AKfycbxGkzDeSEXheaeoRStLCf6seJ7Q8Azl1ZTKGT01leZUFyPtgKZh5plGUY3W9P2ArgQDAA/exec";
+
+    /* ===== KHÔNG CẦN SỬA PHẦN BÊN DƯỚI ===== */
+    const splash = document.getElementById("splash");
+    const msg = document.getElementById("msg");
+    const frame = document.getElementById("app");
+    const direct = document.getElementById("direct");
+
+    const ok = typeof APP_URL === "string" && APP_URL.startsWith("https://script.google.com/macros/s/") && APP_URL.includes("/exec");
+    if (!ok) {
+      msg.textContent = "Link hệ thống chưa đúng. Vui lòng kiểm tra APP_URL.";
+      document.querySelector("#splash .spin").style.display = "none";
+    } else {
+      const url = APP_URL + (APP_URL.includes("?") ? "&" : "?") + "_v=" + Date.now();
+      direct.href = url;
+      /* Trang đăng nhập hiện ngay trong khung, địa chỉ vẫn là hotel.html nên icon trên màn hình chính giữ nguyên */
+      frame.addEventListener("load", function () { setTimeout(function () { splash.classList.add("hide"); }, 400); });
+      frame.src = url;
+      /* Mạng chậm hoặc trình duyệt chặn khung: hiện nút mở trực tiếp */
+      setTimeout(function () {
+        if (!splash.classList.contains("hide")) { splash.classList.add("slow"); msg.textContent = "Mạng chậm? Bấm để mở trực tiếp."; }
+      }, 12000);
+    }
+  </script>
+  <!-- Màn hình quét mã vạch (camera chạy ở trang này vì Google không cho camera trong khung Apps Script) -->
+  <div id="scn" role="dialog" aria-label="Quét mã vạch">
+    <div class="top"><b id="scn-t">Quét mã vạch</b><button class="x" id="scn-x" aria-label="Đóng">×</button></div>
+    <div class="view"><video id="scn-v" playsinline muted autoplay></video><div class="box" id="scn-box"><i></i></div><div class="hint">Đưa mã vạch nằm ngang vào khung, giữ yên 1 giây</div><div class="msg" id="scn-msg"></div></div>
+    <div class="bot"><div class="last" id="scn-last"></div><div class="st" id="scn-st"></div><div class="row"><button class="torch" id="scn-torch" hidden>Đèn</button><button class="ok" id="scn-ok">Xong</button></div></div>
+  </div>
+  <script>
+    /* ===== CẦU NỐI CAMERA: app (trong khung) nhờ trang này mở camera quét mã vạch ===== */
+    (function () {
+      var ZX = ["https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js", "https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js"];
+      var $ = function (id) { return document.getElementById(id); };
+      var S = { src: null, org: "*", stream: null, timer: 0, cont: false, det: null, zx: null, busy: false, last: "", lastSeen: 0, cand: "", candN: 0, track: null, torch: false };
+      var okOrigin = function (o) { return /^https:\/\/[a-z0-9.-]+\.googleusercontent\.com$/.test(o) || /^https:\/\/script\.google\.com$/.test(o); };
+      function send(t, o) { if (!S.src) return; var m = { qlbh: 1, t: t }; for (var k in o) m[k] = o[k]; try { S.src.postMessage(m, S.org); } catch (e) {} }
+      function loadJs(u) { return new Promise(function (r) { var s = document.createElement("script"); s.src = u; s.async = true; s.onload = function () { r(true); }; s.onerror = function () { r(false); }; document.head.appendChild(s); }); }
+      function eanOk(c) { if (!/^\d{8}$|^\d{12,14}$/.test(c)) return false; var d = c.split("").map(Number), ck = d.pop(), s = 0; d.reverse().forEach(function (x, i) { s += x * (i % 2 ? 1 : 3); }); return (10 - s % 10) % 10 === ck; }
+      async function engine() {
+        if (S.det || S.zx) return true;
+        if ("BarcodeDetector" in window) { try { var f = await BarcodeDetector.getSupportedFormats(); var w = ["ean_13","ean_8","upc_a","upc_e","code_128","code_39","code_93","itf","codabar","qr_code"].filter(function (x) { return f.indexOf(x) >= 0; }); if (w.length) { S.det = new BarcodeDetector({ formats: w }); return true; } } catch (e) {} }
+        for (var i = 0; i < ZX.length && !window.ZXing; i++) await loadJs(ZX[i]);
+        if (!window.ZXing) return false;
+        var Z = ZXing, h = new Map();
+        h.set(Z.DecodeHintType.POSSIBLE_FORMATS, ["EAN_13","EAN_8","UPC_A","UPC_E","CODE_128","CODE_39","CODE_93","ITF","CODABAR","QR_CODE"].map(function (x) { return Z.BarcodeFormat[x]; }).filter(function (x) { return x !== undefined; }));
+        h.set(Z.DecodeHintType.TRY_HARDER, true);
+        var r = new Z.MultiFormatReader(); r.setHints(h); S.zx = r; return true;
+      }
+      async function decode(cv) {
+        if (S.det) { try { var b = await S.det.detect(cv); if (b && b.length) return String(b[0].rawValue).trim(); } catch (e) {} return ""; }
+        try { var Z = ZXing; var bmp = new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(cv))); return String(S.zx.decodeWithState(bmp).getText()).trim(); } catch (e) { return ""; }
+      }
+      function beep() { try { var A = window.__ac || (window.__ac = new (window.AudioContext || window.webkitAudioContext)()); var o = A.createOscillator(), g = A.createGain(); o.frequency.value = 1760; g.gain.value = .08; o.connect(g); g.connect(A.destination); o.start(); o.stop(A.currentTime + .09); } catch (e) {} try { navigator.vibrate && navigator.vibrate(60); } catch (e) {} }
+      function showMsg(t) { var m = $("scn-msg"); m.textContent = t || ""; m.classList.toggle("on", !!t); }
+      function stopCam() { clearTimeout(S.timer); if (S.stream) { S.stream.getTracks().forEach(function (t) { t.stop(); }); S.stream = null; } S.track = null; S.busy = false; }
+      function hide() { stopCam(); $("scn").classList.remove("on"); }
+      async function open(o) {
+        $("scn-t").textContent = o.title || "Quét mã vạch"; $("scn-st").textContent = o.status || ""; $("scn-last").textContent = ""; $("scn-last").className = "last";
+        $("scn-ok").textContent = o.cont ? "Xong" : "Đóng"; S.cont = !!o.cont; S.last = ""; S.cand = ""; $("scn-torch").hidden = true;
+        $("scn").classList.add("on"); showMsg("Đang mở camera…");
+        try { window.__ac = window.__ac || new (window.AudioContext || window.webkitAudioContext)(); window.__ac.resume && window.__ac.resume(); } catch (e) {}
+        if (!(await engine())) { showMsg("Chưa tải được bộ đọc mã vạch. Kiểm tra mạng rồi thử lại."); return; }
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { fail("Trình duyệt này không mở được camera. Hãy mở trang bằng Safari/Chrome qua địa chỉ https."); return; }
+        try {
+          var s = await navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } });
+          if (!$("scn").classList.contains("on")) { s.getTracks().forEach(function (t) { t.stop(); }); return; }
+          S.stream = s; S.track = s.getVideoTracks()[0]; var v = $("scn-v"); v.srcObject = s; await v.play().catch(function () {}); showMsg("");
+          try { var c = S.track.getCapabilities && S.track.getCapabilities(); if (c && c.torch) $("scn-torch").hidden = false; } catch (e) {}
+          loop();
+        } catch (e) {
+          fail(e && e.name === "NotAllowedError" ? "Chưa cho phép dùng camera. Vào Cài đặt của điện thoại → trình duyệt (Safari/Chrome) → cho phép Camera, rồi thử lại." : "Không mở được camera: " + (e && e.message || e));
+        }
+      }
+      function fail(t) { showMsg(t); send("error", { msg: t, keep: true }); }
+      function loop() {
+        var v = $("scn-v"), cv = S.cv || (S.cv = document.createElement("canvas"));
+        var tick = async function () {
+          if (!S.stream) return;
+          if (!S.busy && v.videoWidth) {
+            S.busy = true; var W = v.videoWidth, H = v.videoHeight, cw = W * .9, ch = H * (S.det ? .9 : .45), sc = Math.min(1, 900 / cw);
+            cv.width = cw * sc; cv.height = ch * sc; cv.getContext("2d").drawImage(v, (W - cw) / 2, (H - ch) / 2, cw, ch, 0, 0, cv.width, cv.height);
+            var code = await decode(cv); S.busy = false; var now = Date.now();
+            if (code) {
+              if (code === S.last && now - S.lastSeen < 1500) S.lastSeen = now;
+              else if (S.det || eanOk(code) || (code === S.cand && ++S.candN >= 2)) { S.last = code; S.lastSeen = now; S.cand = ""; hit(code); }
+              else { S.cand = code; S.candN = 1; }
+            }
+          }
+          S.timer = setTimeout(tick, S.det ? 120 : 160);
+        };
+        tick();
+      }
+      function hit(code) {
+        beep(); var b = $("scn-box"); b.classList.add("hit"); setTimeout(function () { b.classList.remove("hit"); }, 400);
+        $("scn-last").textContent = code; send("code", { code: code });
+        if (!S.cont) hide();
+      }
+      function closeByUser() { hide(); send("closed"); }
+      $("scn-x").onclick = closeByUser; $("scn-ok").onclick = closeByUser;
+      $("scn-torch").onclick = function () { if (!S.track) return; S.torch = !S.torch; S.track.applyConstraints({ advanced: [{ torch: S.torch }] }).catch(function () {}); this.classList.toggle("on", S.torch); };
+      window.addEventListener("message", function (e) {
+        var d = e.data; if (!d || typeof d !== "object" || d.qlbh !== 1 || !okOrigin(e.origin)) return;
+        S.src = e.source; S.org = e.origin;
+        if (d.t === "hello") send("hello", { cam: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) && window.isSecureContext !== false, v: 1 });
+        else if (d.t === "scan") open(d);
+        else if (d.t === "status") { $("scn-st").textContent = d.status || ""; var l = $("scn-last"); if (d.last) { l.textContent = "✓ " + d.last; l.className = "last"; } else if (d.miss) { l.textContent = "✗ Không có sản phẩm mã " + d.miss; l.className = "last err"; } }
+        else if (d.t === "stop") hide();
+      });
+    })();
+  </script>
+</body>
+</html>
