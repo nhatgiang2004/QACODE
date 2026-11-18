@@ -60,6 +60,50 @@
       "https://script.google.com/macros/s/AKfycbw8Gs9EanSCspkthnw3GkpM-kzWeXXmiy9axSpngiajVJkCQPyysZ33wuDfQUYzpAYzQw/exec";
 
     /* ===== KHÔNG CẦN SỬA PHẦN BÊN DƯỚI ===== */
+
+    /* Lưu hộ “Ghi nhớ đăng nhập” cho app trong khung.
+       Safari/iPhone (và Chrome khi chặn cookie bên thứ ba) không cho khung Google giữ dữ liệu,
+       nên app gửi phiên đăng nhập ra trang này để lưu trong bộ nhớ của chính trang (tên miền github.io). */
+    (function () {
+      var P = "qlnt:";
+      var KEY_OK = /^nt_[a-z_]{1,24}$/;
+      function tuApp(w) {
+        /* Chỉ nhận tin nhắn từ đúng khung app trên trang này (khung Google có thể lồng 1–2 lớp) */
+        for (var i = 0; i < 5 && w; i++) {
+          if (w === frame.contentWindow) return true;
+          try { if (w === w.parent) break; w = w.parent; } catch (e) { return false; }
+        }
+        return false;
+      }
+      function docKho(kho, tienTo, out) {
+        try {
+          for (var i = 0; i < kho.length; i++) {
+            var k = kho.key(i);
+            if (k && k.indexOf(P) === 0) out[tienTo + k.slice(P.length)] = kho.getItem(k);
+          }
+        } catch (e) {}
+      }
+      window.addEventListener("message", function (e) {
+        var d = e.data;
+        if (!d || typeof d !== "object" || (d.nt !== "kho-get" && d.nt !== "kho-set")) return;
+        if (!/^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(e.origin)) return;
+        if (!tuApp(e.source)) return;
+        if (d.nt === "kho-get") {
+          var data = {};
+          docKho(localStorage, "", data);
+          docKho(sessionStorage, "s:", data);
+          e.source.postMessage({ nt: "kho", id: d.id, data: data }, e.origin);
+          return;
+        }
+        if (!KEY_OK.test(d.k || "")) return;
+        var kho = d.tam ? sessionStorage : localStorage;
+        try {
+          if (d.v == null) kho.removeItem(P + d.k);
+          else if (String(d.v).length < 4000) kho.setItem(P + d.k, String(d.v));
+        } catch (err) {}
+      });
+    })();
+
     const splash = document.getElementById("splash");
     const msg = document.getElementById("msg");
     const frame = document.getElementById("app");
