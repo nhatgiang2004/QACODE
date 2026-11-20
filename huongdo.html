@@ -2,362 +2,83 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-  >
-
-  <title>Live Stream Pickleball</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>Hường Đỗ Pickleball</title>
   <meta name="theme-color" content="#0b4a87">
 
-  <!-- iPhone / iPad -->
-  <meta name="apple-mobile-web-app-capable" content="yes"> 
-  <meta name="apple-mobile-web-app-title" content="Live Stream Pickleball"> 
+  <!-- iPhone / iPad: hiện icon khi "Thêm vào Màn hình chính" -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Hường Đỗ Pickleball">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta
-    name="apple-mobile-web-app-status-bar-style"
-    content="default"
-  >
+  <link rel="apple-touch-icon" sizes="180x180" href="./icon/icon-180.png?v=7">
 
-  <meta
-    name="apple-mobile-web-app-title"
-    content="Live Stream Pickleball"
-  >
-  <!-- Favicon trình duyệt --> 
-  <link 
-    rel="icon" type="image/png" 
-    href="./icon/icon-192.png?v=6">
-  
-  
-  <!-- ICON IPHONE -->
-  <link
-    rel="apple-touch-icon"
-    sizes="180x180"
-    href="./icon/icon-180.png?v=6"
-  >
-
-  <!-- ICON ANDROID / BROWSER -->
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="192x192"
-    href="./icon/icon-192.png?v=6"
-  >
-
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="512x512"
-    href="./icon/icon-512.png?v=6"
-  >
-
-  <!-- PWA -->
-  <link
-    rel="manifest"
-    href="./manifest-bdth.json?v=6"
-  >
+  <!-- Android / trình duyệt -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon/icon-192.png?v=7">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon/icon-512.png?v=7">
+  <link rel="manifest" href="./manifest-huongdo.json?v=7">
 
   <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #06172d; }
+    #app { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #f3f6f8; }
+    #splash {
+      position: fixed; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, #06172d 0%, #0b4a87 55%, #0877be 100%);
+      color: #fff; font-family: Arial, Helvetica, sans-serif; text-align: center; padding: 24px;
+      transition: opacity .35s ease;
     }
-
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background:
-        linear-gradient(
-          145deg,
-          #06172d 0%,
-          #0b4a87 55%,
-          #0877be 100%
-        );
-
-      font-family: Arial, Helvetica, sans-serif;
-      color: #ffffff;
-
-      overflow: hidden;
-    }
-
-    .app-box {
-      width: 90%;
-      max-width: 380px;
-
-      text-align: center;
-
-      padding:
-        calc(20px + env(safe-area-inset-top))
-        20px
-        calc(20px + env(safe-area-inset-bottom));
-    }
-
-    .logo {
-      width: 110px;
-      height: 110px;
-
-      margin: 0 auto 22px;
-
-      border-radius: 24px;
-
-      object-fit: cover;
-      display: block;
-
-      box-shadow:
-        0 12px 35px
-        rgba(0, 0, 0, 0.28);
-    }
-
-    .title {
-      margin-bottom: 8px;
-
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .sub-title {
-      margin-bottom: 24px;
-
-      font-size: 14px;
-      line-height: 1.5;
-
-      opacity: 0.88;
-    }
-
-    .open-btn {
-      width: 100%;
-
-      border: 0;
-      border-radius: 14px;
-
-      padding: 15px 20px;
-
-      background: #ffffff;
-      color: #0b4a87;
-
-      font-size: 16px;
-      font-weight: 700;
-
-      cursor: pointer;
-
-      box-shadow:
-        0 8px 24px
-        rgba(0, 0, 0, 0.20);
-    }
-
-    .open-btn:active {
-      transform: scale(0.98);
-    }
-
-    .spinner {
-      width: 34px;
-      height: 34px;
-
-      margin: 24px auto 0;
-
-      border: 4px solid rgba(255,255,255,0.25);
-      border-top-color: #ffffff;
-
-      border-radius: 50%;
-
-      animation: spin 0.8s linear infinite;
-
-      display: none;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+    #splash img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 12px 35px rgba(0,0,0,.28); }
+    #splash .t { margin-top: 18px; font-size: 20px; font-weight: 700; }
+    #splash .s { margin-top: 6px; font-size: 14px; opacity: .85; }
+    #splash .spin { width: 32px; height: 32px; margin-top: 22px; border: 4px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%; animation: spin .8s linear infinite; }
+    #splash a { display: none; margin-top: 22px; background: #fff; color: #0b4a87; text-decoration: none; font-weight: 700; padding: 13px 22px; border-radius: 12px; }
+    #splash.slow a { display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
-
 <body>
-
-  <div class="app-box">
-
-    <img
-      src="./icon/icon-180.png?v=5"
-      class="logo"
-      alt="Live Stream Pickleball"
-    >
-
-    <div class="title">
-      Live Stream Pickleball
-    </div>
-
-    <div
-      class="sub-title"
-      id="statusText"
-    >
-      Kích "Mở hệ thống" để vào quản lý
-    </div>
-
-    <button
-      class="open-btn"
-      id="openBtn"
-      onclick="openApp()"
-    >
-      MỞ HỆ THỐNG
-    </button>
-
-    <div
-      class="spinner"
-      id="spinner"
-    ></div>
-
+  <!-- Màn hình chờ trong lúc trang đăng nhập đang tải (tự ẩn) -->
+  <div id="splash">
+    <img src="./icon/icon-180.png?v=7" alt="">
+    <div class="t">Hường Đỗ Pickleball</div>
+    <div class="s" id="msg">Đang mở hệ thống…</div>
+    <div class="spin"></div>
+    <a id="direct" href="#">Mở trực tiếp</a>
   </div>
-
+  <iframe id="app" title="Hường Đỗ Pickleball" allow="clipboard-read; clipboard-write; camera; fullscreen"></iframe>
 
   <script>
-
     /*
     ==========================================================
     CHỈ THAY ĐOẠN NÀY KHI GOOGLE APPS SCRIPT ĐỔI LINK
     ==========================================================
     */
-
     const APP_URL =
       "https://script.google.com/macros/s/AKfycbxlp02gnZQJY-AT6_t_gQfGhG1XO0oyCqFzhtkFfzDBY0AcaVFTQVHhw9KqOzYAGBIT/exec";
 
+    /* ===== KHÔNG CẦN SỬA PHẦN BÊN DƯỚI ===== */
+    const splash = document.getElementById("splash");
+    const msg = document.getElementById("msg");
+    const frame = document.getElementById("app");
+    const direct = document.getElementById("direct");
 
-    /*
-    ==========================================================
-    KHÔNG CẦN SỬA PHẦN BÊN DƯỚI
-    ==========================================================
-    */
-
-    const statusText =
-      document.getElementById("statusText");
-
-    const openBtn =
-      document.getElementById("openBtn");
-
-    const spinner =
-      document.getElementById("spinner");
-
-
-    function isValidAppUrl(url) {
-
-      return (
-        typeof url === "string" &&
-        url.startsWith(
-          "https://script.google.com/macros/s/"
-        ) &&
-        url.includes("/exec")
-      );
-
+    const ok = typeof APP_URL === "string" && APP_URL.startsWith("https://script.google.com/macros/s/") && APP_URL.includes("/exec");
+    if (!ok) {
+      msg.textContent = "Link hệ thống chưa đúng. Vui lòng kiểm tra APP_URL.";
+      document.querySelector("#splash .spin").style.display = "none";
+    } else {
+      const url = APP_URL + (APP_URL.includes("?") ? "&" : "?") + "_v=" + Date.now();
+      direct.href = url;
+      /* Trang đăng nhập hiện ngay trong khung, địa chỉ vẫn là hotel.html nên icon trên màn hình chính giữ nguyên */
+      frame.addEventListener("load", function () { setTimeout(function () { splash.classList.add("hide"); }, 400); });
+      frame.src = url;
+      /* Mạng chậm hoặc trình duyệt chặn khung: hiện nút mở trực tiếp */
+      setTimeout(function () {
+        if (!splash.classList.contains("hide")) { splash.classList.add("slow"); msg.textContent = "Mạng chậm? Bấm để mở trực tiếp."; }
+      }, 12000);
     }
-
-
-    function openApp() {
-
-      if (!isValidAppUrl(APP_URL)) {
-
-        statusText.textContent =
-          "Link hệ thống chưa đúng. Vui lòng kiểm tra APP_URL.";
-
-        return;
-      }
-
-
-      openBtn.style.display =
-        "none";
-
-      spinner.style.display =
-        "block";
-
-      statusText.textContent =
-        "Đang mở hệ thống...";
-
-
-      const separator =
-        APP_URL.includes("?")
-          ? "&"
-          : "?";
-
-
-      const freshUrl =
-        APP_URL +
-        separator +
-        "_v=" +
-        Date.now();
-
-
-      window.location.replace(
-        freshUrl
-      );
-
-    }
-
-
-    /*
-    ==========================================================
-    KIỂM TRA CÓ ĐANG CHẠY TỪ ICON NGOÀI MÀN HÌNH CHÍNH KHÔNG
-    ==========================================================
-
-    - Nếu mở bằng Safari:
-      KHÔNG tự chuyển.
-      Anh có thời gian chọn "Thêm vào Màn hình chính".
-
-    - Nếu mở từ icon đã cài:
-      TỰ ĐỘNG vào Apps Script.
-
-    ==========================================================
-    */
-
-    function isStandaloneMode() {
-
-      return (
-        window.navigator.standalone === true ||
-        window.matchMedia(
-          "(display-mode: standalone)"
-        ).matches
-      );
-
-    }
-
-
-    window.addEventListener(
-      "load",
-      function () {
-
-        if (isStandaloneMode()) {
-
-          statusText.textContent =
-            "Đang mở hệ thống...";
-
-          openBtn.style.display =
-            "none";
-
-          spinner.style.display =
-            "block";
-
-
-          setTimeout(
-            openApp,
-            350
-          );
-
-        }
-
-      }
-    );
-
   </script>
-
 </body>
 </html>
