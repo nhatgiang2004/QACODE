@@ -119,12 +119,20 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
 </style>
 </head>
 <body>
-<div id="app"><div class="cho-tai"><div class="xoay"></div>Đang tải thực đơn…</div></div>
+<div id="app"><div class="cho-tai"><div class="xoay"></div><span id="cho-chu">Đang tải thực đơn…</span></div></div>
 <div class="nen" id="nen" data-act="dong"></div>
 <div class="ngan" id="ngan"><div class="tay"></div><div class="dau-ngan"><h2 id="ngan-tieu"></h2><button class="dong-x" data-act="dong" aria-label="Đóng">✕</button></div>
   <div class="than" id="ngan-than"></div><div class="chan" id="ngan-chan"></div></div>
 <div id="toast"></div>
-<script src="config.js"></script>
+<script>
+/* Báo lỗi ngay trên trang nếu trình duyệt không chạy được mã (không để màn hình chờ mãi) */
+window.addEventListener('error', function (e) {
+  var a = document.getElementById('app');
+  if (a && document.getElementById('cho-chu')) a.innerHTML = '<div class="loi-man"><div class="bieu">☕</div><h2>Trình duyệt không chạy được trang</h2><p>' +
+    String(e.message || e).replace(/[<>&]/g, '') + '</p><p>Hãy mở bằng Chrome hoặc Safari.</p></div>';
+});
+</script>
+<script src="config.js?v=2"></script>
 <script>
 (function () {
   'use strict';
@@ -147,26 +155,45 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
   function toast(m, loai) { const t = $('#toast'); t.textContent = m; t.className = 'hien ' + (loai || ''); clearTimeout(toastT); toastT = setTimeout(() => { t.className = ''; }, loai === 'loi' ? 5000 : 3000); }
 
   /* ---------- Gọi API ---------- */
-  async function goi(tsGet, body) {
-    if (!API || /DAN_LINK/.test(API)) throw new Error('Trang chưa được cấu hình link máy chủ (config.js).');
-    let r;
-    if (body) r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(Object.assign({b: B, k: K}, body)), redirect: 'follow'});
-    else r = await fetch(API + (API.includes('?') ? '&' : '?') + new URLSearchParams(Object.assign({b: B, k: K}, tsGet)), {redirect: 'follow'});
-    if (!r.ok) throw new Error('Không kết nối được máy chủ (' + r.status + ').');
-    const j = await r.json();
+  const LOI_KET_NOI = 'Không kết nối được máy chủ của quán. Vui lòng báo nhân viên.';
+  async function goi(tsGet, body, giay) {
+    if (!API || !/^https?:/.test(API) || /DAN_LINK/.test(API)) { const e = new Error('Trang chưa được cấu hình link máy chủ (file config.js).'); e.kyThuat = 1; throw e; }
+    const ctl = window.AbortController ? new AbortController() : null;
+    const hen = setTimeout(() => { if (ctl) ctl.abort(); }, (giay || 25) * 1000);
+    let r, txt;
+    try {
+      if (body) r = await fetch(API, {method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(Object.assign({b: B, k: K}, body)), redirect: 'follow', signal: ctl && ctl.signal});
+      else r = await fetch(API + (API.includes('?') ? '&' : '?') + new URLSearchParams(Object.assign({b: B, k: K}, tsGet)), {redirect: 'follow', signal: ctl && ctl.signal});
+      txt = await r.text();
+    } catch (e) {
+      const loi = new Error(e && e.name === 'AbortError' ? 'Máy chủ phản hồi quá lâu. Vui lòng thử lại.' : LOI_KET_NOI);
+      loi.kyThuat = e && e.name === 'AbortError' ? 2 : 3; throw loi;
+    } finally { clearTimeout(hen); }
+    let j;
+    try { j = JSON.parse(txt); } catch (e) { const loi = new Error(LOI_KET_NOI); loi.kyThuat = /accounts\.google|ServiceLogin/i.test(txt) ? 3 : 4; throw loi; }
     if (!j.ok) throw new Error(j.loi || 'Có lỗi xảy ra.');
     return j.v;
+  }
+  /* Gợi ý cho chủ quán khi trang không kết nối được (khách chỉ cần báo nhân viên) */
+  function goiYKyThuat(m) {
+    const lk = API ? API + (API.includes('?') ? '&' : '?') + 'api=ping' : '';
+    const ly = {1: 'Mở file config.js trên GitHub và dán đúng link /exec của Web App.',
+      2: 'Web App chạy quá lâu. Thử lại; nếu lặp lại, chạy hàm kiemTraHeThong trong Apps Script.',
+      3: 'Web App đang bắt đăng nhập Google hoặc link /exec trong config.js sai. Vào Apps Script → Triển khai → Quản lý các bản triển khai → ✏️ → "Người có quyền truy cập: Bất kỳ ai" → Phiên bản mới → Triển khai.',
+      4: 'Web App chưa có file GoiMon.gs hoặc chưa triển khai Phiên bản mới.'}[m];
+    return ly ? `<details style="margin-top:18px;text-align:left;font-size:13px;color:var(--mo)"><summary>Dành cho chủ quán</summary>
+      <p>${esc(ly)}</p>${lk ? `<p>Kiểm tra nhanh: mở <a href="${esc(lk)}" target="_blank" rel="noopener">link này</a> trong cửa sổ ẩn danh. Đúng thì thấy dòng chữ bắt đầu bằng <code>{"ok":true</code>; nếu ra trang đăng nhập Google là chưa để quyền "Bất kỳ ai".</p>` : ''}</details>` : '';
   }
 
   /* ---------- Lưu yêu cầu đã gửi trên máy khách (trong ngày) ---------- */
   function homNay() { return new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10); }
   function docYC() { try { const o = JSON.parse(localStorage.getItem(KHO) || 'null'); return o && o.ngay === homNay() ? o.ds : []; } catch (e) { return []; } }
-  function luuYC() { try { localStorage.setItem(KHO, JSON.stringify({ngay: homNay(), ds: S.yc.slice(-20)})); } catch (e) {} }
+  function luuYC() { try { localStorage.setItem(KHO, JSON.stringify({ngay: homNay(), ds: S.yc.filter(y => !/^tam/.test(y.MA_YEU_CAU)).slice(-20)})); } catch (e) {} }
 
   /* ---------- Hiển thị ---------- */
-  function loiMan(m) {
+  function loiMan(m, kyThuat) {
     $('#app').innerHTML = `<div class="loi-man"><div class="bieu">☕</div><h2>Không mở được thực đơn</h2><p>${esc(m)}</p>
-      <button class="btn chinh" onclick="location.reload()">Thử lại</button></div>`;
+      <button class="btn chinh" onclick="location.reload()">Thử lại</button>${goiYKyThuat(kyThuat)}</div>`;
     $('#thanh') && $('#thanh').remove();
   }
 
@@ -219,12 +246,13 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
     t.classList.remove('nay'); void t.offsetWidth; t.classList.add('nay');
   }
 
-  const NHAN_TT = {'Chờ xác nhận': ['cho', 'Đang chờ nhân viên'], 'Đang xử lý': ['cho', 'Đang chuyển pha chế'], 'Đã xác nhận': ['ok', 'Đã nhận – đang pha chế'],
+  const NHAN_TT = {'Đang gửi': ['cho', 'Đang gửi…'], 'Lỗi gửi': ['huy', 'Chưa gửi được'], 'Chờ xác nhận': ['cho', 'Đang chờ nhân viên'], 'Đang xử lý': ['cho', 'Đang chuyển pha chế'], 'Đã xác nhận': ['ok', 'Đã nhận – đang pha chế'],
     'Đã xử lý': ['ok', 'Nhân viên đã nhận'], 'Từ chối': ['huy', 'Không thực hiện được']};
   function renderYC() {
     const o = $('#yc-ds'); if (!o) return;
     const ds = S.yc.slice(-4).reverse();
-    o.innerHTML = ds.map(y => { const n = NHAN_TT[y.TRANG_THAI] || ['cho', y.TRANG_THAI];
+    o.innerHTML = ds.map(y => { let n = NHAN_TT[y.TRANG_THAI] || ['cho', y.TRANG_THAI];
+      if (y.TRANG_THAI === 'Chờ xác nhận' && y.LOAI === 'Gọi món' && S.dm.cheDo === 'Gửi thẳng quầy pha chế') n = ['cho', 'Đang chuyển pha chế'];
       return `<div class="yc"><div class="nd"><b>${esc(y.LOAI)}</b><small>${esc(y.MO_TA || '')}${y.LY_DO ? ' – ' + esc(y.LY_DO) : ''}</small></div>
         <span class="pill ${n[0]}">${n[0] === 'cho' ? '<span class="cham"></span>' : ''}${n[1]}</span></div>`; }).join('');
   }
@@ -290,41 +318,46 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
     for (let i = S.gio.length - 1; i >= 0; i--) if (S.gio[i].ma === ma) { if (--S.gio[i].sl <= 0) S.gio.splice(i, 1); break; }
     renderMenu(); renderThanh();
   }
-  async function guiYC(body, moTa) {
-    if (S.gui) return; S.gui = true; veNgan();
-    try {
-      const kq = await goi(null, body);
-      S.yc.push({MA_YEU_CAU: kq.MA_YEU_CAU, LOAI: body.loai, TRANG_THAI: kq.TRANG_THAI, MO_TA: moTa}); luuYC();
-      return kq;
-    } finally { S.gui = false; }
+  /** Gửi yêu cầu kiểu "lạc quan": hiện ngay trên màn hình, máy chủ xác nhận ở nền (không bắt khách chờ) */
+  function guiYC(body, moTa, khiLoi) {
+    const tam = {MA_YEU_CAU: 'tam' + Date.now(), LOAI: body.loai, TRANG_THAI: 'Đang gửi', MO_TA: moTa};
+    S.yc.push(tam); renderYC();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    const thu = lan => goi(null, body, 40).then(kq => {
+      tam.MA_YEU_CAU = kq.MA_YEU_CAU; tam.TRANG_THAI = kq.TRANG_THAI; luuYC(); renderYC(); lich();
+      toast(body.loai === 'Gọi món' ? (S.dm.cheDo === 'Gửi thẳng quầy pha chế' ? 'Đã gửi món tới quầy pha chế!' : 'Đã gửi! Nhân viên sẽ xác nhận ngay.')
+        : body.loai === 'Xin thanh toán' ? 'Đã báo nhân viên mang hóa đơn tới.' : 'Đã gọi nhân viên, vui lòng đợi trong giây lát.', 'ok');
+    }).catch(e => {
+      /* lỗi mạng: thử lại 1 lần; lỗi nghiệp vụ (hết món, quá nhiều yêu cầu...) thì báo ngay */
+      if (lan < 1 && e.kyThuat) return thu(lan + 1);
+      S.yc.splice(S.yc.indexOf(tam), 1); renderYC();
+      toast(e.message, 'loi');
+      if (khiLoi) khiLoi();
+    });
+    thu(0);
   }
-  async function guiMon() {
-    try {
-      const moTa = S.gio.map(g => g.sl + '× ' + g.ten).join(', ');
-      await guiYC({api: 'dat', loai: 'Gọi món', items: S.gio.map(g => ({ma: g.ma, sl: g.sl, gc: g.gc})), ten: S.ten, ghiChu: S.ghiChu}, moTa);
-      S.gio = []; S.ghiChu = ''; dongNgan(); renderMenu(); renderThanh(); renderYC();
-      toast(S.dm.cheDo === 'Gửi thẳng quầy pha chế' ? 'Đã gửi món tới quầy pha chế!' : 'Đã gửi! Nhân viên sẽ xác nhận ngay.', 'ok');
-      theoDoiNhanh();
-    } catch (e) { toast(e.message, 'loi'); veNgan(); }
+  function guiMon() {
+    if (!S.gio.length) return;
+    const gio = S.gio, ghiChu = S.ghiChu;
+    const moTa = gio.map(g => g.sl + '× ' + g.ten).join(', ');
+    guiYC({api: 'dat', loai: 'Gọi món', items: gio.map(g => ({ma: g.ma, sl: g.sl, gc: g.gc})), ten: S.ten, ghiChu}, moTa,
+      () => { S.gio = gio; S.ghiChu = ghiChu; renderMenu(); renderThanh(); });
+    S.gio = []; S.ghiChu = ''; dongNgan(); renderMenu(); renderThanh();
   }
-  async function guiNV(noiDung) {
-    try {
-      await guiYC({api: 'dat', loai: 'Gọi nhân viên', ghiChu: noiDung, ten: S.ten}, noiDung || 'Cần hỗ trợ tại bàn');
-      dongNgan(); renderYC(); toast('Đã gọi nhân viên, vui lòng đợi trong giây lát.', 'ok'); theoDoiNhanh();
-    } catch (e) { toast(e.message, 'loi'); veNgan(); }
+  function guiNV(noiDung) {
+    guiYC({api: 'dat', loai: 'Gọi nhân viên', ghiChu: noiDung, ten: S.ten}, noiDung || 'Cần hỗ trợ tại bàn');
+    dongNgan();
   }
-  async function xinTT(pt) {
-    try {
-      await guiYC({api: 'dat', loai: 'Xin thanh toán', phuongThuc: pt, ten: S.ten}, pt);
-      dongNgan(); renderYC(); toast('Đã báo nhân viên mang hóa đơn tới.', 'ok'); theoDoiNhanh();
-    } catch (e) { toast(e.message, 'loi'); veNgan(); }
+  function xinTT(pt) {
+    guiYC({api: 'dat', loai: 'Xin thanh toán', phuongThuc: pt, ten: S.ten}, pt);
+    dongNgan();
   }
 
   /* ---------- Theo dõi trạng thái ---------- */
   let hen;
   async function capNhat() {
     try {
-      const ma = S.yc.filter(y => /Chờ|Đang/.test(y.TRANG_THAI)).map(y => y.MA_YEU_CAU);
+      const ma = S.yc.filter(y => /Chờ|Đang xử lý/.test(y.TRANG_THAI) && !/^tam/.test(y.MA_YEU_CAU)).map(y => y.MA_YEU_CAU);
       const kq = await goi({api: 'tt', ma: ma.join(',')});
       let doi = false;
       (kq.yeuCau || []).forEach(n => { const y = S.yc.find(x => x.MA_YEU_CAU === n.MA_YEU_CAU);
@@ -339,7 +372,7 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
   function lich() {
     clearTimeout(hen);
     const dangCho = S.yc.some(y => /Chờ|Đang/.test(y.TRANG_THAI));
-    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? 6000 : 30000);
+    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? 6000 : 60000);
   }
   function theoDoiNhanh() { lich(); }
 
@@ -366,10 +399,11 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
   (async function () {
     if (!B || !K) { loiMan('Hãy quét mã QR dán trên bàn để gọi món.'); return; }
     try {
-      S.dm = await goi({api: 'menu'});
+      const cham = setTimeout(() => { const c = $('#cho-chu'); if (c) c.textContent = 'Đang kết nối máy chủ của quán… (lần đầu có thể mất vài giây)'; }, 4000);
+      try { S.dm = await goi({api: 'menu'}); } finally { clearTimeout(cham); }
       S.don = S.dm.don; S.yc = docYC();
       render(); if (S.yc.length) capNhat(); lich();
-    } catch (e) { loiMan(e.message); }
+    } catch (e) { loiMan(e.message, e.kyThuat); }
   })();
 })();
 </script>
