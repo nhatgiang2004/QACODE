@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><title>Gọi món · Hường Đỗ Hotel - Homestay</title><meta name="theme-color" content="#0b6e75"><link rel="icon" type="image/png" href="./icon/homestay-192.png"><link rel="apple-touch-icon" href="./icon/homestay-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be&#43;Vietnam&#43;Pro:wght@400;600;700;800&amp;display=swap">
+<style>
+:root{--bg:#f4f6f7;--card:#fff;--ink:#132a2d;--ink2:#566b6e;--ink3:#8a9b9d;--line:#e1e7e8;--acc:#0b6e75;--acc2:#e1f0f0;--warn:#a86a00;--warn2:#fbecc8;--ok:#2b7a3d;--ok2:#dcefdf}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 'Be Vietnam Pro',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:90px}
+button,input,textarea{font:inherit;color:inherit}
+.top{background:linear-gradient(140deg,#0b6e75,#0b4a87);color:#fff;padding:22px 16px 18px}
+.top small{opacity:.8;font-size:12.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.top h1{margin:2px 0 0;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.top .pl{display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.16);border-radius:20px;padding:4px 12px;margin-top:10px;font-weight:700}
+.top .wf{font-size:13px;opacity:.85;margin-top:8px}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 16px 8px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.bar input{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#fff;width:100%}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:20px;padding:6px 14px;font-weight:600;font-size:13.5px;white-space:nowrap;cursor:pointer}
+.chips button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.wrap{padding:12px 16px;display:flex;flex-direction:column;gap:10px;max-width:720px;margin:0 auto}
+h2{font-size:15px;margin:10px 0 0;color:var(--ink2)}
+.it{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px}
+.im{width:84px;height:84px;border-radius:10px;background:var(--acc2) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:26px;color:var(--acc)}
+.it b{display:block;font-size:15px;line-height:1.3}.it .d{font-size:12.5px;color:var(--ink3);margin-top:2px}.it .p{font-weight:800;color:var(--acc);margin-top:4px}
+.add{border:0;background:var(--acc);color:#fff;width:38px;height:38px;border-radius:50%;font-size:22px;font-weight:700;cursor:pointer}
+.st{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff}
+.st button{border:0;background:none;width:34px;height:34px;font-size:18px;font-weight:700;cursor:pointer;color:var(--acc)}.st b{min-width:22px;text-align:center}
+.cart{position:fixed;left:12px;right:12px;bottom:12px;z-index:10;display:flex;justify-content:space-between;align-items:center;background:var(--acc);color:#fff;border:0;border-radius:14px;padding:14px 18px;font-weight:700;font-size:15.5px;box-shadow:0 10px 30px rgba(0,0,0,.25);cursor:pointer;max-width:696px;margin:0 auto}
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet>div{background:#fff;width:100%;max-width:720px;max-height:88vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:18px 16px 24px;display:flex;flex-direction:column;gap:12px}
+.sh{display:flex;justify-content:space-between;align-items:center}.sh h3{margin:0;font-size:18px}.x{border:0;background:none;font-size:26px;color:var(--ink3);cursor:pointer}
+.ln{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}
+.ln input{grid-column:1/-1;border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:13.5px}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--ink2)}
+label input,label textarea{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:15px;font-weight:400;color:var(--ink)}
+.go{border:0;background:var(--acc);color:#fff;border-radius:12px;padding:14px;font-weight:800;font-size:16px;cursor:pointer}.go:disabled{opacity:.6}
+.tt{display:flex;justify-content:space-between;font-size:16px;font-weight:800}
+.note{font-size:13px;color:var(--ink2);background:var(--bg);border-radius:10px;padding:10px 12px}
+.ok{background:var(--ok2);color:var(--ok);border-radius:14px;padding:14px;font-weight:600}
+.err{background:#f7dcd8;color:#b03a2e;border-radius:14px;padding:14px;font-weight:600}
+.od{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.od div{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.tag{font-size:11.5px;font-weight:700;border-radius:20px;padding:1px 9px;white-space:nowrap;align-self:center}
+.t-cho{background:var(--warn2);color:var(--warn)}.t-moi{background:var(--acc2);color:var(--acc)}.t-xong{background:var(--ok2);color:var(--ok)}
+.load{min-height:70vh;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;color:var(--ink3);text-align:center;padding:20px}
+.load i{width:34px;height:34px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--acc);animation:sp .8s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.lk{border:0;background:none;color:var(--acc);font-weight:700;cursor:pointer;padding:6px 0;text-align:left}
+</style>
+</head>
+<body>
+<div id="root"><div class="load"><i></i>&#x110;ang t&#x1ea3;i th&#x1ef1;c &#x111;&#x1a1;n&#x2026;</div></div>
+<script>
+ 
+const STATIC_APP = "https://script.google.com/macros/s/AKfycbzPjx87UW-8svEtm2KvGBC4TyHYqLEtnDLPX7fTq7ry28WusNNa0_0aVLAvGxAQxaAW/exec";
+const PARAMS = STATIC_APP ? Object.fromEntries(new URLSearchParams(location.search)) : null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const vnd = n => Math.round(+n || 0).toLocaleString('vi-VN') + ' \u20ab';
+const thumb = u => (u && u.indexOf('googleusercontent.com/d/') > 0 && !/=w\d+$/.test(u) ? u + '=w300' : u);
+const fold = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\u0111/g, 'd');
+const ST = { cho: 'Ch\u1edd nh\u00e2n vi\u00ean x\u00e1c nh\u1eadn', moi: 'B\u1ebfp \u0111ang l\u00e0m', xong: '\u0110\u00e3 xong' };
+const M = { d: null, cart: {}, notes: {}, grp: '', q: '', sheet: '', sent: false, err: '' };
+const Q = { pid: PARAMS.cs, ban: PARAMS.ban, phong: PARAMS.phong, t: PARAMS.t };
+function api(method, path, body) {
+  if (STATIC_APP) {
+    const q = Object.assign({ api: path === '/api/public/menu' ? 'menu' : 'order' }, Q);
+    if (body) { q.items = JSON.stringify(body.items || []); q.name = body.name || ''; q.note = body.note || ''; q.reqId = 'q' + Date.now() + Math.random().toString(36).slice(2, 8); }
+    const url = STATIC_APP + '?' + Object.keys(q).filter(k => q[k] !== undefined && q[k] !== '').map(k => k + '=' + encodeURIComponent(q[k])).join('&');
+    return fetch(url, { redirect: 'follow' }).then(r => r.json(), () => { throw new Error('Kh\u00f4ng k\u1ebft n\u1ed1i \u0111\u01b0\u1ee3c, vui l\u00f2ng th\u1eed l\u1ea1i'); })
+      .then(r => { if (r && r.ok) return r.data; throw new Error((r && r.error) || 'C\u00f3 l\u1ed7i x\u1ea3y ra'); });
+  }
+  return new Promise((ok, no) => google.script.run.withSuccessHandler(t => { let r; try { r = JSON.parse(t); } catch (e) { return no(new Error('L\u1ed7i k\u1ebft n\u1ed1i')); } r.ok ? ok(r.data) : no(new Error(r.error || 'C\u00f3 l\u1ed7i x\u1ea3y ra')); })
+    .withFailureHandler(e => no(new Error('Kh\u00f4ng k\u1ebft n\u1ed1i \u0111\u01b0\u1ee3c, vui l\u00f2ng th\u1eed l\u1ea1i'))).rpc('', method, path, method === 'GET' ? Q : {}, method === 'GET' ? null : Object.assign({}, Q, body)));
+}
+const count = () => Object.keys(M.cart).reduce((s, k) => s + M.cart[k], 0);
+const sum = () => Object.keys(M.cart).reduce((s, k) => { const m = M.d.menu.find(x => x.id === +k); return s + (m ? m.price * M.cart[k] : 0); }, 0);
+function step(id) { const n = M.cart[id] || 0; return n ? `<span class="st"><button data-dec="${id}" aria-label="B\u1edbt">\u2212</button><b>${n}</b><button data-inc="${id}" aria-label="Th\u00eam">+</button></span>` : `<button class="add" data-inc="${id}" aria-label="Th\u00eam m\u00f3n">+</button>`; }
+function render() {
+  const d = M.d, y = window.scrollY;
+  if (!d) { $('#root').innerHTML = `<div class="load">${M.err ? `<div class="err">${esc(M.err)}</div>` : '<i></i>\u0110ang t\u1ea3i th\u1ef1c \u0111\u01a1n\u2026'}</div>`; return; }
+  const groups = [...new Set(d.menu.map(m => m.group))], q = fold(M.q);
+  const list = d.menu.filter(m => (!M.grp || m.group === M.grp) && (!q || fold(m.name).includes(q) || fold(m.desc).includes(q)));
+  const byG = groups.filter(g => list.some(m => m.group === g));
+  $('#root').innerHTML = `<div class="top"><small>${esc(d.business)}</small><h1>${esc(d.restaurant)}</h1><span class="pl">${esc(d.place)}</span>${d.wifi ? `<div class="wf">Wifi: ${esc(d.wifi)}</div>` : ''}</div>
+   <div class="bar"><input type="search" id="q" placeholder="T\u00ecm m\u00f3n\u2026" value="${esc(M.q)}"><div class="chips"><button class="${M.grp ? '' : 'on'}" data-g="">T\u1ea5t c\u1ea3</button>${groups.map(g => `<button class="${g === M.grp ? 'on' : ''}" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div></div>
+   <div class="wrap">${d.ordered.length ? `<button class="lk" data-sheet="done">Xem ${d.ordered.length} m\u00f3n \u0111\u00e3 g\u1ecdi \u203a</button>` : ''}
+    ${byG.map(g => `<h2>${esc(g)}</h2>${list.filter(m => m.group === g).map(m => `<div class="it">${m.image ? `<div class="im" style="background-image:url('${esc(thumb(m.image))}')"></div>` : `<div class="im">${esc(m.name.slice(0, 1).toUpperCase())}</div>`}<div><b>${esc(m.name)}</b>${m.desc ? `<div class="d">${esc(m.desc)}</div>` : ''}<div class="p">${vnd(m.price)}${m.unit ? ` <span class="d" style="display:inline">/ ${esc(m.unit)}</span>` : ''}</div></div>${step(m.id)}</div>`).join('')}`).join('') || '<div class="note">Kh\u00f4ng t\u00ecm th\u1ea5y m\u00f3n ph\u00f9 h\u1ee3p.</div>'}
+    <div class="note">Gi\u00e1 ch\u01b0a g\u1ed3m VAT v\u00e0 ph\u1ee5 thu (n\u1ebfu c\u00f3). Thanh to\u00e1n t\u1ea1i qu\u1ea7y, chuy\u1ec3n kho\u1ea3n ho\u1eb7c ghi v\u00e0o h\u00f3a \u0111\u01a1n ph\u00f2ng.</div></div>
+   ${count() ? `<button class="cart" data-sheet="cart"><span>Gi\u1ecf m\u00f3n \u00b7 ${count()}</span><span>${vnd(sum())} \u203a</span></button>` : ''}
+   ${M.sheet ? sheet() : ''}`;
+  bind(); window.scrollTo(0, y);
+}
+function sheet() {
+  const d = M.d;
+  if (M.sheet === 'done') return `<div class="sheet" data-scrim><div><div class="sh"><h3>M\u00f3n \u0111\u00e3 g\u1ecdi</h3><button class="x" data-close>\u00d7</button></div>
+    ${M.sent ? `<div class="ok">\u0110\u00e3 g\u1eedi g\u1ecdi m\u00f3n. ${d.auto ? 'B\u1ebfp \u0111\u00e3 nh\u1eadn m\u00f3n.' : 'Nh\u00e2n vi\u00ean s\u1ebd x\u00e1c nh\u1eadn v\u00e0 chuy\u1ec3n xu\u1ed1ng b\u1ebfp ngay.'}</div>` : ''}
+    <div class="od">${d.ordered.map(o => `<div><span><b>${o.qty}</b> \u00d7 ${esc(o.name)}${o.note ? `<br><span style="color:var(--ink3);font-size:12.5px">${esc(o.note)}</span>` : ''}</span><span class="tag t-${o.status}">${ST[o.status] || ''}</span></div>`).join('') || '<div>Ch\u01b0a c\u00f3 m\u00f3n n\u00e0o</div>'}</div>
+    <button class="go" data-more>G\u1ecdi th\u00eam m\u00f3n</button>${d.phone ? `<div class="note">C\u1ea7n h\u1ed7 tr\u1ee3? G\u1ecdi ${esc(d.phone)} ho\u1eb7c v\u1eaby nh\u00e2n vi\u00ean.</div>` : ''}</div></div>`;
+  const ids = Object.keys(M.cart).filter(k => M.cart[k] > 0);
+  return `<div class="sheet" data-scrim><div><div class="sh"><h3>Gi\u1ecf m\u00f3n \u00b7 ${esc(d.place)}</h3><button class="x" data-close>\u00d7</button></div>
+    ${ids.map(k => { const m = d.menu.find(x => x.id === +k); return `<div class="ln"><span><b>${esc(m.name)}</b><br><span style="color:var(--ink3);font-size:13px">${vnd(m.price)} \u00d7 ${M.cart[k]} = ${vnd(m.price * M.cart[k])}</span></span>${step(m.id)}<input data-note="${k}" placeholder="Ghi ch\u00fa: \u00edt cay, kh\u00f4ng h\u00e0nh\u2026" value="${esc(M.notes[k] || '')}"></div>`; }).join('')}
+    <div class="tt"><span>T\u1ea1m t\u00ednh</span><span>${vnd(sum())}</span></div>
+    <label>T\u00ean c\u1ee7a b\u1ea1n (kh\u00f4ng b\u1eaft bu\u1ed9c)<input id="nm" maxlength="60" value="${esc(M.name || '')}"></label>
+    ${M.err ? `<div class="err">${esc(M.err)}</div>` : ''}
+    <button class="go" data-send ${ids.length ? '' : 'disabled'}>G\u1eedi g\u1ecdi m\u00f3n</button></div></div>`;
+}
+function bind() {
+  const qi = $('#q'); if (qi) qi.oninput = () => { M.q = qi.value; const p = qi.selectionStart; render(); const n = $('#q'); n.focus(); try { n.setSelectionRange(p, p); } catch (e) {} };
+  document.querySelectorAll('[data-g]').forEach(x => x.onclick = () => { M.grp = x.dataset.g; render(); });
+  document.querySelectorAll('[data-inc]').forEach(x => x.onclick = () => { M.cart[x.dataset.inc] = (M.cart[x.dataset.inc] || 0) + 1; render(); });
+  document.querySelectorAll('[data-dec]').forEach(x => x.onclick = () => { const k = x.dataset.dec; M.cart[k] = Math.max(0, (M.cart[k] || 0) - 1); if (!M.cart[k]) delete M.cart[k]; if (!count() && M.sheet === 'cart') M.sheet = ''; render(); });
+  document.querySelectorAll('[data-note]').forEach(x => x.oninput = () => { M.notes[x.dataset.note] = x.value; });
+  document.querySelectorAll('[data-sheet]').forEach(x => x.onclick = () => { M.sheet = x.dataset.sheet; M.sent = false; M.err = ''; render(); if (M.sheet === 'done') reload(); });
+  const sc = document.querySelector('[data-scrim]'); if (sc) sc.onclick = e => { if (e.target === sc) { M.sheet = ''; render(); } };
+  document.querySelectorAll('[data-close],[data-more]').forEach(x => x.onclick = () => { M.sheet = ''; render(); });
+  const nm = $('#nm'); if (nm) nm.oninput = () => { M.name = nm.value; };
+  const sd = document.querySelector('[data-send]');
+  if (sd) sd.onclick = async () => {
+    sd.disabled = true; sd.textContent = '\u0110ang g\u1eedi\u2026'; M.err = '';
+    const items = Object.keys(M.cart).filter(k => M.cart[k] > 0).map(k => ({ menuId: +k, qty: M.cart[k], note: M.notes[k] || '' }));
+    try { const r = await api('POST', '/api/public/order', { items, name: M.name || '' }); M.d.ordered = r.ordered; M.cart = {}; M.notes = {}; M.sent = true; M.sheet = 'done'; }
+    catch (e) { M.err = e.message; }
+    render();
+  };
+}
+async function reload() { try { const d = await api('GET', '/api/public/menu'); M.d = d; render(); } catch (e) {} }
+api('GET', '/api/public/menu').then(d => { M.d = d; render(); }).catch(e => { M.err = e.message; render(); });
+setInterval(() => { if (M.d && !document.hidden && M.sheet === 'done') reload(); }, 20000);
+</script>
+</body>
+</html>
