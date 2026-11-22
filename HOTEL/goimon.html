@@ -10,7 +10,12 @@
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 'Be Vietnam Pro',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:90px}
 button,input,textarea{font:inherit;color:inherit}
-.top{background:linear-gradient(140deg,#0b6e75,#0b4a87);color:#fff;padding:22px 16px 18px}
+.top{background:linear-gradient(140deg,#0b6e75,#0b4a87);color:#fff;padding:22px 16px 18px;position:relative}
+.cic{position:absolute;right:14px;top:16px;width:46px;height:46px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cic svg{width:24px;height:24px}.cic i{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;border-radius:10px;background:#f59f00;color:#fff;font-style:normal;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 5px;box-shadow:0 0 0 2px #0b5e7a}
+.cic.bump{animation:bump .4s ease}@keyframes bump{50%{transform:scale(1.18)}}
+.cart .ci{display:inline-flex;align-items:center;gap:10px}.cart svg{width:22px;height:22px}
+.it.on{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc2)}
 .top small{opacity:.8;font-size:12.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
 .top h1{margin:2px 0 0;font-size:22px;font-weight:800;letter-spacing:-.01em}
 .top .pl{display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.16);border-radius:20px;padding:4px 12px;margin-top:10px;font-weight:700}
@@ -29,6 +34,12 @@ h2{font-size:15px;margin:10px 0 0;color:var(--ink2)}
 .st{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff}
 .st button{border:0;background:none;width:34px;height:34px;font-size:18px;font-weight:700;cursor:pointer;color:var(--acc)}.st b{min-width:22px;text-align:center}
 .cart{position:fixed;left:12px;right:12px;bottom:12px;z-index:10;display:flex;justify-content:space-between;align-items:center;background:var(--acc);color:#fff;border:0;border-radius:14px;padding:14px 18px;font-weight:700;font-size:15.5px;box-shadow:0 10px 30px rgba(0,0,0,.25);cursor:pointer;max-width:696px;margin:0 auto}
+.ico{width:20px;height:20px;flex:none;vertical-align:-4px;margin-right:7px}
+.sh h3{display:flex;align-items:center}
+.lk{display:inline-flex;align-items:center}
+.lk .ico{width:17px;height:17px;margin-right:6px}
+.odh{display:flex;justify-content:space-between;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3);border-bottom:1px solid #eee;padding-bottom:6px}
+.odh:empty{display:none}
 .sheet{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
 .sheet>div{background:#fff;width:100%;max-width:720px;max-height:88vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:18px 16px 24px;display:flex;flex-direction:column;gap:12px}
 .sh{display:flex;justify-content:space-between;align-items:center}.sh h3{margin:0;font-size:18px}.x{border:0;background:none;font-size:26px;color:var(--ink3);cursor:pointer}
@@ -54,13 +65,15 @@ label input,label textarea{border:1px solid var(--line);border-radius:10px;paddi
 <div id="root"><div class="load"><i></i>&#x110;ang t&#x1ea3;i th&#x1ef1;c &#x111;&#x1a1;n&#x2026;</div></div>
 <script>
  
-const STATIC_APP = "https://script.google.com/macros/s/AKfycbzPjx87UW-8svEtm2KvGBC4TyHYqLEtnDLPX7fTq7ry28WusNNa0_0aVLAvGxAQxaAW/exec";
+const STATIC_APP = "https://script.google.com/macros/s/AKfycbxd3MT9bJRyroSEM-EsEP3KFx7odVSAvrOo6WaGEoNQUNEOtBDQzzZZpVVM8r-GBhUu/exec";
 const PARAMS = STATIC_APP ? Object.fromEntries(new URLSearchParams(location.search)) : null;
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const vnd = n => Math.round(+n || 0).toLocaleString('vi-VN') + ' \u20ab';
 const thumb = u => (u && u.indexOf('googleusercontent.com/d/') > 0 && !/=w\d+$/.test(u) ? u + '=w300' : u);
 const fold = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\u0111/g, 'd');
+const CI = s => CART.replace('<svg ', '<svg class="ico" ');
+const CART = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.6l2.4 12.2a1.6 1.6 0 0 0 1.6 1.3h8.7a1.6 1.6 0 0 0 1.6-1.2L21.5 7H6.2"/></svg>';
 const ST = { cho: 'Ch\u1edd nh\u00e2n vi\u00ean x\u00e1c nh\u1eadn', moi: 'B\u1ebfp \u0111ang l\u00e0m', xong: '\u0110\u00e3 xong' };
 const M = { d: null, cart: {}, notes: {}, grp: '', q: '', sheet: '', sent: false, err: '' };
 const Q = { pid: PARAMS.cs, ban: PARAMS.ban, phong: PARAMS.phong, t: PARAMS.t };
@@ -84,33 +97,33 @@ function render() {
   const groups = [...new Set(d.menu.map(m => m.group))], q = fold(M.q);
   const list = d.menu.filter(m => (!M.grp || m.group === M.grp) && (!q || fold(m.name).includes(q) || fold(m.desc).includes(q)));
   const byG = groups.filter(g => list.some(m => m.group === g));
-  $('#root').innerHTML = `<div class="top"><small>${esc(d.business)}</small><h1>${esc(d.restaurant)}</h1><span class="pl">${esc(d.place)}</span>${d.wifi ? `<div class="wf">Wifi: ${esc(d.wifi)}</div>` : ''}</div>
+  $('#root').innerHTML = `<div class="top"><button class="cic ${M.bump ? 'bump' : ''}" data-sheet="${count() ? 'cart' : 'done'}" aria-label="Gi\u1ecf m\u00f3n">${CART}${count() ? `<i>${count()}</i>` : d.ordered.length ? `<i style="background:#2b7a3d">\u2713</i>` : ''}</button><small>${esc(d.business)}</small><h1>${esc(d.restaurant)}</h1><span class="pl">${esc(d.place)}</span>${d.wifi ? `<div class="wf">Wifi: ${esc(d.wifi)}</div>` : ''}</div>
    <div class="bar"><input type="search" id="q" placeholder="T\u00ecm m\u00f3n\u2026" value="${esc(M.q)}"><div class="chips"><button class="${M.grp ? '' : 'on'}" data-g="">T\u1ea5t c\u1ea3</button>${groups.map(g => `<button class="${g === M.grp ? 'on' : ''}" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div></div>
-   <div class="wrap">${d.ordered.length ? `<button class="lk" data-sheet="done">Xem ${d.ordered.length} m\u00f3n \u0111\u00e3 g\u1ecdi \u203a</button>` : ''}
+   <div class="wrap">${d.ordered.length ? `<button class="lk" data-sheet="done">${CI()}Gi\u1ecf m\u00f3n \u00b7 xem ${d.ordered.length} m\u00f3n \u0111\u00e3 g\u1ecdi \u203a</button>` : ''}
     ${byG.map(g => `<h2>${esc(g)}</h2>${list.filter(m => m.group === g).map(m => `<div class="it">${m.image ? `<div class="im" style="background-image:url('${esc(thumb(m.image))}')"></div>` : `<div class="im">${esc(m.name.slice(0, 1).toUpperCase())}</div>`}<div><b>${esc(m.name)}</b>${m.desc ? `<div class="d">${esc(m.desc)}</div>` : ''}<div class="p">${vnd(m.price)}${m.unit ? ` <span class="d" style="display:inline">/ ${esc(m.unit)}</span>` : ''}</div></div>${step(m.id)}</div>`).join('')}`).join('') || '<div class="note">Kh\u00f4ng t\u00ecm th\u1ea5y m\u00f3n ph\u00f9 h\u1ee3p.</div>'}
     <div class="note">Gi\u00e1 ch\u01b0a g\u1ed3m VAT v\u00e0 ph\u1ee5 thu (n\u1ebfu c\u00f3). Thanh to\u00e1n t\u1ea1i qu\u1ea7y, chuy\u1ec3n kho\u1ea3n ho\u1eb7c ghi v\u00e0o h\u00f3a \u0111\u01a1n ph\u00f2ng.</div></div>
-   ${count() ? `<button class="cart" data-sheet="cart"><span>Gi\u1ecf m\u00f3n \u00b7 ${count()}</span><span>${vnd(sum())} \u203a</span></button>` : ''}
+   ${count() ? `<button class="cart" data-sheet="cart"><span class="ci">${CART}Gi\u1ecf m\u00f3n \u00b7 ${count()} m\u00f3n</span><span>${vnd(sum())} \u203a</span></button>` : ''}
    ${M.sheet ? sheet() : ''}`;
   bind(); window.scrollTo(0, y);
 }
 function sheet() {
   const d = M.d;
-  if (M.sheet === 'done') return `<div class="sheet" data-scrim><div><div class="sh"><h3>M\u00f3n \u0111\u00e3 g\u1ecdi</h3><button class="x" data-close>\u00d7</button></div>
-    ${M.sent ? `<div class="ok">\u0110\u00e3 g\u1eedi g\u1ecdi m\u00f3n. ${d.auto ? 'B\u1ebfp \u0111\u00e3 nh\u1eadn m\u00f3n.' : 'Nh\u00e2n vi\u00ean s\u1ebd x\u00e1c nh\u1eadn v\u00e0 chuy\u1ec3n xu\u1ed1ng b\u1ebfp ngay.'}</div>` : ''}
-    <div class="od">${d.ordered.map(o => `<div><span><b>${o.qty}</b> \u00d7 ${esc(o.name)}${o.note ? `<br><span style="color:var(--ink3);font-size:12.5px">${esc(o.note)}</span>` : ''}</span><span class="tag t-${o.status}">${ST[o.status] || ''}</span></div>`).join('') || '<div>Ch\u01b0a c\u00f3 m\u00f3n n\u00e0o</div>'}</div>
+  if (M.sheet === 'done') return `<div class="sheet" data-scrim><div><div class="sh"><h3>${CI()}Gi\u1ecf m\u00f3n \u00b7 ${esc(d.place)}</h3><button class="x" data-close>\u00d7</button></div>
+    ${M.sent ? `<div class="ok">\u0110\u00e3 g\u1eedi g\u1ecdi m\u00f3n. ${d.auto ? 'B\u1ebfp \u0111\u00e3 nh\u1eadn m\u00f3n.' : 'Qu\u1ea3n l\u00fd \u0111\u00e3 nh\u1eadn th\u00f4ng b\u00e1o, s\u1ebd x\u00e1c nh\u1eadn v\u00e0 chuy\u1ec3n xu\u1ed1ng b\u1ebfp ngay.'}</div>` : ''}
+    <div class="odh"><span>M\u00f3n \u0111\u00e3 g\u1ecdi \u00b7 ${d.ordered.reduce((a, o) => a + o.qty, 0)} m\u00f3n</span><span>Tr\u1ea1ng th\u00e1i</span></div><div class="od">${d.ordered.map(o => `<div><span><b>${o.qty}</b> \u00d7 ${esc(o.name)}${o.note ? `<br><span style="color:var(--ink3);font-size:12.5px">${esc(o.note)}</span>` : ''}</span><span class="tag t-${o.status}">${ST[o.status] || ''}</span></div>`).join('') || '<div>Ch\u01b0a c\u00f3 m\u00f3n n\u00e0o</div>'}</div>
     <button class="go" data-more>G\u1ecdi th\u00eam m\u00f3n</button>${d.phone ? `<div class="note">C\u1ea7n h\u1ed7 tr\u1ee3? G\u1ecdi ${esc(d.phone)} ho\u1eb7c v\u1eaby nh\u00e2n vi\u00ean.</div>` : ''}</div></div>`;
   const ids = Object.keys(M.cart).filter(k => M.cart[k] > 0);
-  return `<div class="sheet" data-scrim><div><div class="sh"><h3>Gi\u1ecf m\u00f3n \u00b7 ${esc(d.place)}</h3><button class="x" data-close>\u00d7</button></div>
+  return `<div class="sheet" data-scrim><div><div class="sh"><h3>${CI()}Gi\u1ecf m\u00f3n \u00b7 ${esc(d.place)}</h3><button class="x" data-close>\u00d7</button></div>
     ${ids.map(k => { const m = d.menu.find(x => x.id === +k); return `<div class="ln"><span><b>${esc(m.name)}</b><br><span style="color:var(--ink3);font-size:13px">${vnd(m.price)} \u00d7 ${M.cart[k]} = ${vnd(m.price * M.cart[k])}</span></span>${step(m.id)}<input data-note="${k}" placeholder="Ghi ch\u00fa: \u00edt cay, kh\u00f4ng h\u00e0nh\u2026" value="${esc(M.notes[k] || '')}"></div>`; }).join('')}
-    <div class="tt"><span>T\u1ea1m t\u00ednh</span><span>${vnd(sum())}</span></div>
+    <div class="odh" style="order:-1"></div><div class="tt"><span>T\u1ea1m t\u00ednh</span><span>${vnd(sum())}</span></div>
     <label>T\u00ean c\u1ee7a b\u1ea1n (kh\u00f4ng b\u1eaft bu\u1ed9c)<input id="nm" maxlength="60" value="${esc(M.name || '')}"></label>
     ${M.err ? `<div class="err">${esc(M.err)}</div>` : ''}
-    <button class="go" data-send ${ids.length ? '' : 'disabled'}>G\u1eedi g\u1ecdi m\u00f3n</button></div></div>`;
+    <button class="go" data-send ${ids.length ? '' : 'disabled'}>G\u1eedi m\u00f3n (${count()}) \u00b7 ${vnd(sum())}</button></div></div>`;
 }
 function bind() {
   const qi = $('#q'); if (qi) qi.oninput = () => { M.q = qi.value; const p = qi.selectionStart; render(); const n = $('#q'); n.focus(); try { n.setSelectionRange(p, p); } catch (e) {} };
   document.querySelectorAll('[data-g]').forEach(x => x.onclick = () => { M.grp = x.dataset.g; render(); });
-  document.querySelectorAll('[data-inc]').forEach(x => x.onclick = () => { M.cart[x.dataset.inc] = (M.cart[x.dataset.inc] || 0) + 1; render(); });
+  document.querySelectorAll('[data-inc]').forEach(x => x.onclick = () => { M.cart[x.dataset.inc] = (M.cart[x.dataset.inc] || 0) + 1; M.bump = true; render(); M.bump = false; try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {} });
   document.querySelectorAll('[data-dec]').forEach(x => x.onclick = () => { const k = x.dataset.dec; M.cart[k] = Math.max(0, (M.cart[k] || 0) - 1); if (!M.cart[k]) delete M.cart[k]; if (!count() && M.sheet === 'cart') M.sheet = ''; render(); });
   document.querySelectorAll('[data-note]').forEach(x => x.oninput = () => { M.notes[x.dataset.note] = x.value; });
   document.querySelectorAll('[data-sheet]').forEach(x => x.onclick = () => { M.sheet = x.dataset.sheet; M.sent = false; M.err = ''; render(); if (M.sheet === 'done') reload(); });
