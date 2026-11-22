@@ -80,6 +80,9 @@
     :root{--live-scale:.6667}
     html body .stage,html body.compact-current .stage{transform:scale(var(--live-scale))!important;transform-origin:0 0!important}
     html body .stage.bottom-stage,html body.compact-bottom .stage{transform:translateX(-50%) scale(var(--live-scale))!important;transform-origin:50% 100%!important}
+      .serve{grid-auto-flow:row;align-content:center;justify-items:center;gap:3px}
+    .serve .hand{font-size:11px;line-height:1;font-weight:900;color:#fcd34d;white-space:nowrap;letter-spacing:.02em;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+    .serve.empty .hand{display:none}
   </style>
 </head>
 <body>
@@ -97,6 +100,8 @@
       document.body.classList.add(mode==='bottom'?'compact-bottom':'compact-current');
       app.style.background='transparent';
     }
+    // Tay phát bóng của bên đang giao (Tay 1 / Tay 2)
+    function serveHandTag(d,side){const n=Number(d&&d.serverHand)||0;return d&&d.servingSide===side&&(n===1||n===2)?`<div class="hand">Tay ${n}</div>`:'';}
     function render(d){
       if(!d||!d.active){app.classList.remove('bottom-stage');app.innerHTML=SHOW_WAIT?'<div class="empty-state"><h1>LIVE STREAM</h1><p>Đang chờ BTC chọn trận đấu.</p></div>':'';previous={scoreA:null,scoreB:null};shownActive=false;return;}
       shownActive=true;
@@ -111,9 +116,9 @@
       app.classList.toggle('bottom-stage',bottom);
       if(bottom){
         const miniLogo=logo?`<img src="${esc(logo)}" alt="Logo">`:'';
-        app.innerHTML=`<section class="scoreboard bottom-layout"><div class="bottom-main"><div class="bottom-score score-a ${aChanged?'flash':''}">${Number(d.scoreA||0)}</div><div class="bottom-team"><div class="bottom-serve ${d.servingSide==='A'?'':'empty'}"><div class="ball"></div></div><div class="bottom-team-name">${esc(d.teamA||'')}</div></div><div class="bottom-label">${miniLogo}<strong>${esc(centerLabel)}</strong></div><div class="bottom-team team-b"><div class="bottom-serve ${d.servingSide==='B'?'':'empty'}"><div class="ball"></div></div><div class="bottom-team-name">${esc(d.teamB||'')}</div></div><div class="bottom-score score-b ${bChanged?'flash':''}">${Number(d.scoreB||0)}</div></div></section>`;fitOverlay('bottom');
+        app.innerHTML=`<section class="scoreboard bottom-layout"><div class="bottom-main"><div class="bottom-score score-a ${aChanged?'flash':''}">${Number(d.scoreA||0)}</div><div class="bottom-team"><div class="bottom-serve ${d.servingSide==='A'?'':'empty'}"><div class="ball"></div>${serveHandTag(d,'A')}</div><div class="bottom-team-name">${esc(d.teamA||'')}</div></div><div class="bottom-label">${miniLogo}<strong>${esc(centerLabel)}</strong></div><div class="bottom-team team-b"><div class="bottom-serve ${d.servingSide==='B'?'':'empty'}"><div class="ball"></div>${serveHandTag(d,'B')}</div><div class="bottom-team-name">${esc(d.teamB||'')}</div></div><div class="bottom-score score-b ${bChanged?'flash':''}">${Number(d.scoreB||0)}</div></div></section>`;fitOverlay('bottom');
       }else{
-        app.innerHTML=`<section class="scoreboard"><div class="main"><div class="brand">${brand}</div><div class="team">${esc(d.teamA||'')}</div><div class="score ${aChanged?'flash':''}">${Number(d.scoreA||0)}</div><div class="serve ${d.servingSide==='A'?'':'empty'}"><div class="ball"></div></div><div class="team b">${esc(d.teamB||'')}</div><div class="score b ${bChanged?'flash':''}">${Number(d.scoreB||0)}</div><div class="serve b ${d.servingSide==='B'?'':'empty'}"><div class="ball"></div></div></div><div class="livebar"><div class="live-title">${esc(centerLabel)}</div></div></section>`;fitOverlay('current');
+        app.innerHTML=`<section class="scoreboard"><div class="main"><div class="brand">${brand}</div><div class="team">${esc(d.teamA||'')}</div><div class="score ${aChanged?'flash':''}">${Number(d.scoreA||0)}</div><div class="serve ${d.servingSide==='A'?'':'empty'}"><div class="ball"></div>${serveHandTag(d,'A')}</div><div class="team b">${esc(d.teamB||'')}</div><div class="score b ${bChanged?'flash':''}">${Number(d.scoreB||0)}</div><div class="serve b ${d.servingSide==='B'?'':'empty'}"><div class="ball"></div>${serveHandTag(d,'B')}</div></div><div class="livebar"><div class="live-title">${esc(centerLabel)}</div></div></section>`;fitOverlay('current');
       }
       previous={scoreA:Number(d.scoreA||0),scoreB:Number(d.scoreB||0)};
       if(aChanged||bChanged)setTimeout(()=>document.querySelectorAll('.score.flash').forEach(x=>x.classList.remove('flash')),220);
@@ -136,7 +141,7 @@
     // ===== Bản chạy trên GitHub Pages =====
     // GitHub chỉ hiển thị giao diện; dữ liệu lấy từ Web App Apps Script qua JSONP: <WebApp>/exec?api=live&callback=...
     // Đổi Web App khác: thêm ?apiUrl=<link /exec> vào cuối địa chỉ trang (vd: livehuongdo.html?apiUrl=https://script.google.com/macros/s/XXX/exec)
-    const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbydyehtRFDUD2HR5cnz74FBPpq9IDnm7fft9cEvW6ruj5bv06gbAfEqlo75i1D7lnKl/exec';
+    const DEFAULT_API_URL='https://script.google.com/macros/s/AKfycbyn5qtFeeh5PXr0Fh8e52GAvNzXvAGd8BYYaHRHpL8T2wfhULQ3HWT6jjpJGNBHk8i7/exec';
     const QUERY=new URLSearchParams(location.search);
     const API_URL=String(QUERY.get('apiUrl')||QUERY.get('api')||DEFAULT_API_URL).trim();
     const LIVE_SCALE=Number(QUERY.get('scale'));if(LIVE_SCALE>=0.3&&LIVE_SCALE<=1.5)document.documentElement.style.setProperty('--live-scale',String(LIVE_SCALE));
