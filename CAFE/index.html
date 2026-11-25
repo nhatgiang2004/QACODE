@@ -447,9 +447,9 @@ window.addEventListener('error', function (e) {
     clearTimeout(hen);
     const dangCho = S.yc.some(y => /Chờ|Đang|Đã xác nhận/.test(y.TRANG_THAI));
     const doiTT = S.yc.some(y => y.TRANG_THAI === 'Đã pha xong');
-    /* Vừa gửi (2 phút đầu): hỏi 3 giây/lần – rất nhẹ vì máy chủ chỉ đọc bộ nhớ chung; đang pha: 8 giây; đã xong, chờ thanh toán: 8 giây; không còn gì: 60 giây */
+    /* Vừa gửi (2 phút đầu): hỏi 2 giây/lần – rất nhẹ vì máy chủ chỉ đọc bộ nhớ chung; đang pha: 4 giây; đã xong, chờ thanh toán: 5 giây; không còn gì: 60 giây */
     const moiGui = Date.now() - (S.tGui || 0) < 120000;
-    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? (moiGui ? 3000 : 8000) : doiTT ? 8000 : 60000);
+    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? (moiGui ? 2000 : 4000) : doiTT ? 5000 : 60000);
   }
   function theoDoiNhanh() { lich(); }
   /* Rung + tiếng "ting" khi trạng thái đổi (trình duyệt chỉ cho phát sau khi khách đã chạm vào trang) */
