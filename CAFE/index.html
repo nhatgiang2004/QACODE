@@ -54,7 +54,18 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
 .buoc span.dang{border-top-color:var(--cam);color:var(--cam);font-weight:700;animation:nhay 1.4s infinite}
 .tien-do{width:100%;height:6px;border-radius:99px;background:var(--kem-dam);overflow:hidden;margin-top:-4px}
 .tien-do i{display:block;height:100%;background:var(--xanh);border-radius:99px;transition:width .4s}
-.yc .nd{flex:1;min-width:0}
+/* Mỗi lần gọi món là một đơn riêng: Đơn 1, Gọi thêm lần 1, 2… */
+.yc .so-don{display:inline-block;white-space:nowrap;width:auto;height:auto;line-height:1.5;font-size:11px;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px;background:var(--kem-dam);color:var(--nau-dam);vertical-align:1px}
+.yc .so-don.them{background:var(--cam);color:#fff}
+.yc-mon{width:100%;margin:-4px 0 0;padding:0;list-style:none;font-size:13.5px}
+.yc-mon li{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--kem-dam)}
+.yc-mon li:last-child{border-bottom:0}
+.yc-mon li.ok{color:var(--xanh)}
+.yc-mon li span:last-child{white-space:nowrap;font-size:12.5px;color:var(--mo)}
+.yc-mon li.ok span:last-child{color:var(--xanh);font-weight:700}
+.goi-them{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;border:1.5px dashed var(--cam);background:#FFF8EE;color:var(--cam);border-radius:14px;padding:11px;font-weight:700;font-size:14.5px}
+.phien-ban{font-size:11px;color:#B9AC9E;text-align:center;margin:8px 0 0}
+.yc .nd{flex:1 1 150px;min-width:0}
 .yc .nd small{display:block;color:var(--mo);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill{font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;white-space:nowrap}
 .pill.cho{background:var(--cam-nhat);color:var(--cam)}
@@ -167,6 +178,7 @@ window.addEventListener('error', function (e) {
     hoaDon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>'
   };
   const KHO = 'goimon_' + B;
+  const PHIEN_BAN_TRANG = '2026.11.25-36';
 
   let toastT;
   function toast(m, loai) { const t = $('#toast'); t.textContent = m; t.className = 'hien ' + (loai || ''); clearTimeout(toastT); toastT = setTimeout(() => { t.className = ''; }, loai === 'loi' ? 5000 : 3000); }
@@ -232,7 +244,8 @@ window.addEventListener('error', function (e) {
       <div class="loc"><input class="tim" id="tim" type="search" placeholder="🔍 Tìm món…" value="${esc(S.tim)}">
         <div class="chips" id="chips"></div></div>
       <div id="ds"></div>
-      <p class="ghi">${d.cheDo === 'Gửi thẳng quầy pha chế' ? 'Món bạn gọi sẽ được gửi thẳng tới quầy pha chế.' : 'Món bạn gọi sẽ được nhân viên xác nhận rồi chuyển tới quầy pha chế.'}</p>`;
+      <p class="ghi" style="margin-bottom:0">${d.cheDo === 'Gửi thẳng quầy pha chế' ? 'Món bạn gọi sẽ được gửi thẳng tới quầy pha chế.' : 'Món bạn gọi sẽ được nhân viên xác nhận rồi chuyển tới quầy pha chế.'}</p>
+      <p class="phien-ban">Trang gọi món · phiên bản ${PHIEN_BAN_TRANG}</p>`;
     $('#tim').addEventListener('input', e => { S.tim = e.target.value; renderMenu(); });
     renderYC(); renderMenu(); renderThanh();
   }
@@ -264,7 +277,7 @@ window.addEventListener('error', function (e) {
     const n = demGio();
     if (!n) { if (t) t.remove(); return; }
     if (!t) { t = document.createElement('div'); t.id = 'thanh'; t.className = 'thanh'; document.body.appendChild(t); }
-    t.innerHTML = `<button data-act="gio"><span class="gio-ic">${IC.gio}<em>${n}</em></span><span class="gian">Xem món đã chọn</span><span>${tien(tongGio())}</span></button>`;
+    t.innerHTML = `<button data-act="gio"><span class="gio-ic">${IC.gio}<em>${n}</em></span><span class="gian">${laGoiThem() ? 'Gọi thêm · xem món đã chọn' : 'Xem món đã chọn'}</span><span>${tien(tongGio())}</span></button>`;
     t.classList.remove('nay'); void t.offsetWidth; t.classList.add('nay');
   }
 
@@ -277,18 +290,29 @@ window.addEventListener('error', function (e) {
   function buocYC(y) {
     return {'Đang gửi': 0, 'Chờ xác nhận': 1, 'Đang xử lý': 1, 'Đã xác nhận': 2, 'Đã pha xong': 4, 'Đã thanh toán': 4}[y.TRANG_THAI];
   }
+  /** Bàn đã có đơn (khách gọi trước đó, hoặc nhân viên đã gọi món cho bàn) → lần gọi này là "gọi thêm" */
+  function laGoiThem() {
+    return S.yc.some(y => y.LOAI === 'Gọi món' && !/Từ chối|Lỗi gửi|Đã hủy/.test(y.TRANG_THAI)) || !!(S.don && S.don.mon && S.don.mon.length);
+  }
   function renderYC() {
     const o = $('#yc-ds'); if (!o) return;
-    const ds = S.yc.slice(-4).reverse();
+    const ds = S.yc.slice(-6).reverse();
+    const coDon = S.yc.some(y => y.LOAI === 'Gọi món' && !/Từ chối|Lỗi gửi|Đã hủy/.test(y.TRANG_THAI));
     o.innerHTML = ds.map(y => { let n = NHAN_TT[y.TRANG_THAI] || ['cho', y.TRANG_THAI];
       if (y.TRANG_THAI === 'Chờ xác nhận' && y.LOAI === 'Gọi món' && S.dm.cheDo === 'Gửi thẳng quầy pha chế') n = ['cho', 'Đang chuyển pha chế'];
       if (y.TRANG_THAI === 'Đã xác nhận' && y.TONG) n = ['pha', 'Đang pha ' + (y.XONG || 0) + '/' + y.TONG + ' món'];
       if (y.TRANG_THAI === 'Đã xử lý' && y.LOAI === 'Xin thanh toán') n = ['ok', 'Nhân viên đang mang hóa đơn tới'];
       const b = y.LOAI === 'Gọi món' ? buocYC(y) : undefined;
-      return `<div class="yc ${y.TRANG_THAI === 'Đã pha xong' ? 'xong' : ''}"><div class="nd"><b>${esc(y.LOAI)}</b><small>${esc(y.MO_TA || '')}${y.LY_DO ? ' – ' + esc(y.LY_DO) : ''}</small></div>
+      const laMon = y.LOAI === 'Gọi món', xi = y.XI || [];
+      const nhan = laMon ? (y.LAN > 1 || y.THEM ? `<span class="so-don them">＋ Gọi thêm${y.LAN > 1 ? ' lần ' + (y.LAN - 1) : ''}</span>` : '<span class="so-don">Đơn 1</span>') : '';
+      return `<div class="yc ${y.TRANG_THAI === 'Đã pha xong' ? 'xong' : ''}"><div class="nd"><b>${nhan}${laMon ? (nhan.indexOf('them') >= 0 ? '' : 'Gọi món') : esc(y.LOAI)}</b>
+          <small>${laMon && y.MON ? '' : esc(y.MO_TA || '')}${y.LY_DO ? (laMon && y.MON ? '' : ' – ') + esc(y.LY_DO) : ''}</small></div>
         <span class="pill ${n[0]}">${n[0] === 'cho' || n[0] === 'pha' ? '<span class="cham"></span>' : ''}${n[1]}</span>
         ${b !== undefined ? `<div class="buoc">${['Đã gửi', 'Quán đã nhận', 'Đang pha', 'Đã xong'].map((t, i) => `<span class="${i < b || (i === 0 && b >= 0 && y.TRANG_THAI !== 'Đang gửi') ? 'xong' : i === b ? 'dang' : ''}">${t}</span>`).join('')}</div>` : ''}
-        ${y.TRANG_THAI === 'Đã xác nhận' && y.TONG ? `<div class="tien-do"><i style="width:${Math.round((y.XONG || 0) / y.TONG * 100)}%"></i></div>` : ''}</div>`; }).join('');
+        ${y.TRANG_THAI === 'Đã xác nhận' && y.TONG ? `<div class="tien-do"><i style="width:${Math.round((y.XONG || 0) / y.TONG * 100)}%"></i></div>` : ''}
+        ${laMon && y.MON ? `<ul class="yc-mon">${y.MON.map((m, i) => { const ok = y.TRANG_THAI === 'Đã pha xong' || y.TRANG_THAI === 'Đã thanh toán' || xi.indexOf(i) >= 0;
+          return `<li class="${ok ? 'ok' : ''}"><span>${esc(m.sl)}× ${esc(m.ten)}</span><span>${ok ? '✓ Xong' : /Đã xác nhận/.test(y.TRANG_THAI) ? 'Đang pha' : ''}</span></li>`; }).join('')}</ul>` : ''}</div>`; }).join('')
+      + (coDon ? `<button class="goi-them" data-act="goiThem">＋ Gọi thêm món</button>` : '');
   }
 
   /* ---------- Ngăn kéo ---------- */
@@ -300,7 +324,7 @@ window.addEventListener('error', function (e) {
   function dongNgan() { S.ngan = null; $('#nen').classList.remove('mo'); $('#ngan').classList.remove('mo'); }
   function veNgan() {
     if (S.ngan === 'gio') {
-      $('#ngan-tieu').innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:22px;height:22px;display:inline-flex;color:var(--nau)">${IC.gio}</span>Món đã chọn</span>`;
+      $('#ngan-tieu').innerHTML = `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:22px;height:22px;display:inline-flex;color:var(--nau)">${IC.gio}</span>${laGoiThem() ? 'Gọi thêm món' : 'Món đã chọn'}</span>`;
       if (!S.gio.length) { dongNgan(); return; }
       $('#ngan-than').innerHTML = S.gio.map((g, i) => `<div class="gio-mon"><div class="tt"><b>${esc(g.ten)}</b><div style="color:var(--nau);font-weight:600">${tien(g.gia * g.sl)}</div>
           <input data-gc="${i}" placeholder="Ghi chú (ít đá, ít ngọt…)" value="${esc(g.gc)}" maxlength="100"></div>
@@ -308,7 +332,7 @@ window.addEventListener('error', function (e) {
         `<label class="o"><span>Tên của bạn (không bắt buộc)</span><input id="g-ten" maxlength="40" value="${esc(S.ten)}" placeholder="VD: Anh Nam"></label>
          <label class="o"><span>Ghi chú cho quán</span><textarea id="g-gc" rows="2" maxlength="200" placeholder="VD: mang nước ra trước">${esc(S.ghiChu)}</textarea></label>`;
       $('#ngan-chan').innerHTML = `<div class="tong lon"><span>Tạm tính</span><span>${tien(tongGio())}</span></div>
-        <button class="btn chinh lon" style="margin-top:10px" data-act="gui" ${S.gui ? 'disabled' : ''}>${S.gui ? 'Đang gửi…' : 'Gửi gọi món (' + demGio() + ')'}</button>`;
+        <button class="btn chinh lon" style="margin-top:10px" data-act="gui" ${S.gui ? 'disabled' : ''}>${S.gui ? 'Đang gửi…' : (laGoiThem() ? 'Gửi gọi thêm (' : 'Gửi gọi món (') + demGio() + ')'}</button>`;
       document.querySelectorAll('[data-gc]').forEach(i => i.addEventListener('input', e => { S.gio[+e.target.dataset.gc].gc = e.target.value; }));
       $('#g-ten').addEventListener('input', e => { S.ten = e.target.value; });
       $('#g-gc').addEventListener('input', e => { S.ghiChu = e.target.value; });
@@ -362,8 +386,8 @@ window.addEventListener('error', function (e) {
     renderMenu(); renderThanh();
   }
   /** Gửi yêu cầu kiểu "lạc quan": hiện ngay trên màn hình, máy chủ xác nhận ở nền (không bắt khách chờ) */
-  function guiYC(body, moTa, khiLoi) {
-    const tam = {MA_YEU_CAU: 'tam' + Date.now(), LOAI: body.loai, TRANG_THAI: 'Đang gửi', MO_TA: moTa};
+  function guiYC(body, moTa, khiLoi, them) {
+    const tam = Object.assign({MA_YEU_CAU: 'tam' + Date.now(), LOAI: body.loai, TRANG_THAI: 'Đang gửi', MO_TA: moTa}, them || {});
     S.yc.push(tam); renderYC();
     window.scrollTo({top: 0, behavior: 'smooth'});
     const thu = lan => goi(null, body, 40).then(kq => {
@@ -383,8 +407,11 @@ window.addEventListener('error', function (e) {
     if (!S.gio.length) return;
     const gio = S.gio, ghiChu = S.ghiChu;
     const moTa = gio.map(g => g.sl + '× ' + g.ten).join(', ');
+    /* Đánh số đơn: lần đầu là "Đơn 1", các lần sau (hoặc bàn đã có món nhân viên gọi) là "Gọi thêm" */
+    const truoc = S.yc.filter(y => y.LOAI === 'Gọi món' && !/Từ chối|Lỗi gửi|Đã hủy/.test(y.TRANG_THAI)).length;
+    const them = {LAN: truoc + 1, THEM: truoc > 0 || !!(S.don && S.don.mon && S.don.mon.length), MON: gio.map(g => ({ten: g.ten, sl: g.sl}))};
     guiYC({api: 'dat', loai: 'Gọi món', items: gio.map(g => ({ma: g.ma, sl: g.sl, gc: g.gc})), ten: S.ten, ghiChu}, moTa,
-      () => { S.gio = gio; S.ghiChu = ghiChu; renderMenu(); renderThanh(); });
+      () => { S.gio = gio; S.ghiChu = ghiChu; renderMenu(); renderThanh(); }, them);
     S.gio = []; S.ghiChu = ''; dongNgan(); renderMenu(); renderThanh();
   }
   function guiNV(noiDung) {
@@ -428,7 +455,7 @@ window.addEventListener('error', function (e) {
       let doi = false;
       (kq.yeuCau || []).forEach(n => { const y = S.yc.find(x => x.MA_YEU_CAU === n.MA_YEU_CAU);
         if (!y) return;
-        if (y.XONG !== n.XONG || y.TONG !== n.TONG) { y.XONG = n.XONG; y.TONG = n.TONG; doi = true; }
+        if (y.XONG !== n.XONG || y.TONG !== n.TONG || String(y.XI) !== String(n.XI || [])) { y.XONG = n.XONG; y.TONG = n.TONG; y.XI = n.XI || []; doi = true; }
         if (y.TRANG_THAI !== n.TRANG_THAI) { y.TRANG_THAI = n.TRANG_THAI; y.LY_DO = n.LY_DO; doi = true;
           if (n.TRANG_THAI === 'Đã xác nhận') { toast('Quán đã nhận món của bạn – đang pha chế ☕', 'ok'); bao(1); }
           if (n.TRANG_THAI === 'Đã pha xong') { toast('Món của bạn đã xong – nhân viên đang mang ra 🥤', 'ok'); bao(2); }
@@ -484,6 +511,7 @@ window.addEventListener('error', function (e) {
     else if (a === 'xemDon') { moNgan('don'); capNhat(true); }
     else if (a === 'xinTT') xinTT(id);
     else if (a === 'moNgoi') moNgan('ngoi');
+    else if (a === 'goiThem') { const l = $('.loc'); if (l) window.scrollTo({top: l.offsetTop, behavior: 'smooth'}); toast('Chọn món muốn gọi thêm rồi bấm "Gọi thêm" ở dưới cùng.', ''); }
     else if (a === 'nhanBan') nhanBan();
   });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && S.dm) capNhat(true); });
@@ -502,4 +530,3 @@ window.addEventListener('error', function (e) {
 </script>
 </body>
 </html>
-
