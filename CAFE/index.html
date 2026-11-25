@@ -44,7 +44,16 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
 .da-tra{background:#E7F5EC;color:#1E6B45;border-radius:12px;padding:10px 12px;font-weight:700;text-align:center;margin-top:10px}
 /* Yêu cầu đã gửi */
 .yc-ds{margin:14px 14px 0;display:grid;gap:8px}
-.yc{background:#fff;border-radius:14px;box-shadow:var(--bong);padding:10px 14px;display:flex;gap:10px;align-items:center;font-size:14px}
+.yc{background:#fff;border-radius:14px;box-shadow:var(--bong);padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px}
+.yc.xong{box-shadow:0 0 0 2px var(--xanh),var(--bong)}
+.pill.pha{background:#FFF1DE;color:var(--cam)}
+/* Tiến trình đơn: Đã gửi → Quán đã nhận → Đang pha → Đã xong */
+.buoc{display:flex;gap:4px;width:100%;margin-top:-2px}
+.buoc span{flex:1;font-size:10.5px;text-align:center;color:var(--mo);padding-top:5px;border-top:4px solid var(--kem-dam);border-radius:2px;white-space:nowrap}
+.buoc span.xong{border-top-color:var(--xanh);color:var(--xanh);font-weight:600}
+.buoc span.dang{border-top-color:var(--cam);color:var(--cam);font-weight:700;animation:nhay 1.4s infinite}
+.tien-do{width:100%;height:6px;border-radius:99px;background:var(--kem-dam);overflow:hidden;margin-top:-4px}
+.tien-do i{display:block;height:100%;background:var(--xanh);border-radius:99px;transition:width .4s}
 .yc .nd{flex:1;min-width:0}
 .yc .nd small{display:block;color:var(--mo);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill{font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;white-space:nowrap}
@@ -259,15 +268,27 @@ window.addEventListener('error', function (e) {
     t.classList.remove('nay'); void t.offsetWidth; t.classList.add('nay');
   }
 
-  const NHAN_TT = {'Đang gửi': ['cho', 'Đang gửi…'], 'Lỗi gửi': ['huy', 'Chưa gửi được'], 'Chờ xác nhận': ['cho', 'Đang chờ nhân viên'], 'Đang xử lý': ['cho', 'Đang chuyển pha chế'], 'Đã xác nhận': ['ok', 'Đã nhận – đang pha chế'],
+  const NHAN_TT = {'Đang gửi': ['cho', 'Đang gửi…'], 'Lỗi gửi': ['huy', 'Chưa gửi được'], 'Chờ xác nhận': ['cho', 'Đang chờ nhân viên'], 'Đang xử lý': ['cho', 'Đang chuyển pha chế'], 'Đã xác nhận': ['pha', 'Đang pha chế'],
+    'Đã pha xong': ['ok', '✓ Đã xong – đang mang ra'], 'Đã thanh toán': ['ok', '✓ Đã thanh toán'], 'Đã hủy': ['huy', 'Đã hủy'],
     'Đã xử lý': ['ok', 'Nhân viên đã nhận'], 'Từ chối': ['huy', 'Không thực hiện được']};
+  /* Trạng thái đã kết thúc: không cần hỏi máy chủ nữa */
+  const XONG_HAN = /^(Đã xử lý|Từ chối|Đã thanh toán|Đã hủy|Lỗi gửi)$/;
+  /** Số bước đã xong trên thanh tiến trình gọi món (0–4) */
+  function buocYC(y) {
+    return {'Đang gửi': 0, 'Chờ xác nhận': 1, 'Đang xử lý': 1, 'Đã xác nhận': 2, 'Đã pha xong': 4, 'Đã thanh toán': 4}[y.TRANG_THAI];
+  }
   function renderYC() {
     const o = $('#yc-ds'); if (!o) return;
     const ds = S.yc.slice(-4).reverse();
     o.innerHTML = ds.map(y => { let n = NHAN_TT[y.TRANG_THAI] || ['cho', y.TRANG_THAI];
       if (y.TRANG_THAI === 'Chờ xác nhận' && y.LOAI === 'Gọi món' && S.dm.cheDo === 'Gửi thẳng quầy pha chế') n = ['cho', 'Đang chuyển pha chế'];
-      return `<div class="yc"><div class="nd"><b>${esc(y.LOAI)}</b><small>${esc(y.MO_TA || '')}${y.LY_DO ? ' – ' + esc(y.LY_DO) : ''}</small></div>
-        <span class="pill ${n[0]}">${n[0] === 'cho' ? '<span class="cham"></span>' : ''}${n[1]}</span></div>`; }).join('');
+      if (y.TRANG_THAI === 'Đã xác nhận' && y.TONG) n = ['pha', 'Đang pha ' + (y.XONG || 0) + '/' + y.TONG + ' món'];
+      if (y.TRANG_THAI === 'Đã xử lý' && y.LOAI === 'Xin thanh toán') n = ['ok', 'Nhân viên đang mang hóa đơn tới'];
+      const b = y.LOAI === 'Gọi món' ? buocYC(y) : undefined;
+      return `<div class="yc ${y.TRANG_THAI === 'Đã pha xong' ? 'xong' : ''}"><div class="nd"><b>${esc(y.LOAI)}</b><small>${esc(y.MO_TA || '')}${y.LY_DO ? ' – ' + esc(y.LY_DO) : ''}</small></div>
+        <span class="pill ${n[0]}">${n[0] === 'cho' || n[0] === 'pha' ? '<span class="cham"></span>' : ''}${n[1]}</span>
+        ${b !== undefined ? `<div class="buoc">${['Đã gửi', 'Quán đã nhận', 'Đang pha', 'Đã xong'].map((t, i) => `<span class="${i < b || (i === 0 && b >= 0 && y.TRANG_THAI !== 'Đang gửi') ? 'xong' : i === b ? 'dang' : ''}">${t}</span>`).join('')}</div>` : ''}
+        ${y.TRANG_THAI === 'Đã xác nhận' && y.TONG ? `<div class="tien-do"><i style="width:${Math.round((y.XONG || 0) / y.TONG * 100)}%"></i></div>` : ''}</div>`; }).join('');
   }
 
   /* ---------- Ngăn kéo ---------- */
@@ -398,7 +419,7 @@ window.addEventListener('error', function (e) {
   /** Hỏi trạng thái: chỉ hỏi các yêu cầu còn chờ; hóa đơn của bàn chỉ lấy khi khách mở xem hoặc mỗi ~1 phút */
   async function capNhat(canDon) {
     if (dangHoi) return;
-    const ma = S.yc.filter(y => /Chờ|Đang xử lý/.test(y.TRANG_THAI) && !/^tam/.test(y.MA_YEU_CAU)).map(y => y.MA_YEU_CAU);
+    const ma = S.yc.filter(y => !XONG_HAN.test(y.TRANG_THAI) && y.TRANG_THAI !== 'Đang gửi' && !/^tam/.test(y.MA_YEU_CAU)).map(y => y.MA_YEU_CAU);
     const layDon = canDon || S.ngan === 'don' || (++demTT % 6 === 0);
     if (!ma.length && !layDon) return;
     dangHoi = true;
@@ -406,8 +427,14 @@ window.addEventListener('error', function (e) {
       const kq = await goi({api: 'tt', ma: ma.join(','), don: layDon ? 1 : 0});
       let doi = false;
       (kq.yeuCau || []).forEach(n => { const y = S.yc.find(x => x.MA_YEU_CAU === n.MA_YEU_CAU);
-        if (y && y.TRANG_THAI !== n.TRANG_THAI) { y.TRANG_THAI = n.TRANG_THAI; y.LY_DO = n.LY_DO; doi = true;
-          if (n.TRANG_THAI === 'Đã xác nhận') toast('Quán đã nhận món của bạn ☕', 'ok');
+        if (!y) return;
+        if (y.XONG !== n.XONG || y.TONG !== n.TONG) { y.XONG = n.XONG; y.TONG = n.TONG; doi = true; }
+        if (y.TRANG_THAI !== n.TRANG_THAI) { y.TRANG_THAI = n.TRANG_THAI; y.LY_DO = n.LY_DO; doi = true;
+          if (n.TRANG_THAI === 'Đã xác nhận') { toast('Quán đã nhận món của bạn – đang pha chế ☕', 'ok'); bao(1); }
+          if (n.TRANG_THAI === 'Đã pha xong') { toast('Món của bạn đã xong – nhân viên đang mang ra 🥤', 'ok'); bao(2); }
+          if (n.TRANG_THAI === 'Đã thanh toán') toast('Đã thanh toán. Cảm ơn quý khách!', 'ok');
+          if (n.TRANG_THAI === 'Đã xử lý' && y.LOAI !== 'Gọi món') { toast(y.LOAI === 'Xin thanh toán' ? 'Nhân viên đang mang hóa đơn tới.' : 'Nhân viên đã nhận, đang tới bàn bạn.', 'ok'); bao(1); }
+          if (n.TRANG_THAI === 'Đã hủy') toast('Đơn đã bị hủy' + (n.LY_DO ? ': ' + n.LY_DO : ''), 'loi');
           if (n.TRANG_THAI === 'Từ chối') toast('Yêu cầu không thực hiện được' + (n.LY_DO ? ': ' + n.LY_DO : ''), 'loi'); } });
       if (doi) { luuYC(); renderYC(); }
       if (!('don' in kq)) return;
@@ -418,12 +445,27 @@ window.addEventListener('error', function (e) {
   }
   function lich() {
     clearTimeout(hen);
-    const dangCho = S.yc.some(y => /Chờ|Đang/.test(y.TRANG_THAI));
-    /* Vừa gửi (2 phút đầu): hỏi 3 giây/lần – rất nhẹ vì máy chủ chỉ đọc bộ nhớ chung; sau đó 8 giây; không còn gì chờ: 60 giây */
+    const dangCho = S.yc.some(y => /Chờ|Đang|Đã xác nhận/.test(y.TRANG_THAI));
+    const doiTT = S.yc.some(y => y.TRANG_THAI === 'Đã pha xong');
+    /* Vừa gửi (2 phút đầu): hỏi 3 giây/lần – rất nhẹ vì máy chủ chỉ đọc bộ nhớ chung; đang pha: 8 giây; đã xong, chờ thanh toán: 8 giây; không còn gì: 60 giây */
     const moiGui = Date.now() - (S.tGui || 0) < 120000;
-    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? (moiGui ? 3000 : 8000) : 60000);
+    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? (moiGui ? 3000 : 8000) : doiTT ? 8000 : 60000);
   }
   function theoDoiNhanh() { lich(); }
+  /* Rung + tiếng "ting" khi trạng thái đổi (trình duyệt chỉ cho phát sau khi khách đã chạm vào trang) */
+  let AC = null;
+  function bao(lan) {
+    try { if (navigator.vibrate) navigator.vibrate(lan > 1 ? [200, 100, 200] : 150); } catch (e) {}
+    try {
+      AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume();
+      (lan > 1 ? [[784, 0], [1047, .15], [1319, .3]] : [[988, 0]]).forEach(([f, t]) => {
+        const o = AC.createOscillator(), g = AC.createGain(), t0 = AC.currentTime + t;
+        o.frequency.value = f; o.connect(g); g.connect(AC.destination);
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.45);
+        o.start(t0); o.stop(t0 + 0.5);
+      });
+    } catch (e) {}
+  }
 
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-act]'); if (!t) return;
