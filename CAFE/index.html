@@ -38,6 +38,10 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
 .nhanh{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .nhanh button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--vien);background:var(--kem);border-radius:12px;padding:10px 6px;font-weight:600;font-size:14px}
 .nhanh svg{width:18px;height:18px}
+.tra-quay{display:block;width:100%;margin-top:10px;border:1px dashed #9CC6DD;background:#F1F8FC;color:#1F5F85;border-radius:12px;padding:9px 10px;font-size:13.5px;text-align:center}
+.tra-quay b{white-space:nowrap}
+.o input.ma{font-size:30px;letter-spacing:.4em;text-align:center;font-weight:700;padding:12px;font-variant-numeric:tabular-nums}
+.da-tra{background:#E7F5EC;color:#1E6B45;border-radius:12px;padding:10px 12px;font-weight:700;text-align:center;margin-top:10px}
 /* Yêu cầu đã gửi */
 .yc-ds{margin:14px 14px 0;display:grid;gap:8px}
 .yc{background:#fff;border-radius:14px;box-shadow:var(--bong);padding:10px 14px;display:flex;gap:10px;align-items:center;font-size:14px}
@@ -201,6 +205,10 @@ window.addEventListener('error', function (e) {
     $('#thanh') && $('#thanh').remove();
   }
 
+  function nhanDon() {
+    const d = S.don;
+    return IC.hoaDon + (d && d.TRA_TRUOC ? 'Đơn đã trả ✓' : 'Hóa đơn' + (d ? ' · ' + tien(d.TONG_THANH_TOAN - d.DA_THANH_TOAN) : ''));
+  }
   function render() {
     const d = S.dm, q = d.quan, b = d.ban;
     document.title = (q.TEN_QUAN || 'Gọi món') + ' – ' + b.TEN_BAN;
@@ -209,7 +217,8 @@ window.addEventListener('error', function (e) {
         <div><h1>${esc(q.TEN_QUAN || 'Quán cafe')}</h1><p>${esc(q.SLOGAN || b.TEN_CHI_NHANH)}</p></div></div></div>
       <div class="the-ban"><div class="tb-dong"><span class="so">${esc(b.TEN_BAN)}</span>
         <div><b>${esc(b.KHU_VUC || b.TEN_CHI_NHANH)}</b><small>${esc(b.TEN_CHI_NHANH)}${q.WIFI ? ' · Wifi: ' + esc(q.WIFI) : ''}</small></div></div>
-        <div class="nhanh"><button data-act="goiNV">${IC.chuong}Gọi nhân viên</button><button data-act="xemDon">${IC.hoaDon}Hóa đơn${S.don ? ' · ' + tien(S.don.TONG_THANH_TOAN - S.don.DA_THANH_TOAN) : ''}</button></div></div>
+        <div class="nhanh"><button data-act="goiNV">${IC.chuong}Gọi nhân viên</button><button data-act="xemDon">${nhanDon()}</button></div>
+        <button class="tra-quay" data-act="moNgoi">🧾 Đã gọi &amp; trả tiền tại quầy? <b>Nhập mã nhận bàn →</b></button></div>
       <div class="yc-ds" id="yc-ds"></div>
       <div class="loc"><input class="tim" id="tim" type="search" placeholder="🔍 Tìm món…" value="${esc(S.tim)}">
         <div class="chips" id="chips"></div></div>
@@ -283,8 +292,8 @@ window.addEventListener('error', function (e) {
       $('#g-ten').addEventListener('input', e => { S.ten = e.target.value; });
       $('#g-gc').addEventListener('input', e => { S.ghiChu = e.target.value; });
     } else if (S.ngan === 'don') {
-      $('#ngan-tieu').textContent = 'Hóa đơn của bàn';
       const d = S.don, q = S.dm.quan;
+      $('#ngan-tieu').textContent = d && d.TRA_TRUOC ? 'Order #' + d.SO + ' – đã trả tại quầy' : 'Hóa đơn của bàn';
       if (!d || !d.mon.length) {
         $('#ngan-than').innerHTML = '<div class="rong">Bàn chưa có món nào được xác nhận.</div>';
         $('#ngan-chan').innerHTML = '<button class="btn lon" data-act="dong">Đóng</button>'; return;
@@ -297,11 +306,20 @@ window.addEventListener('error', function (e) {
         `<div style="margin-top:10px"><div class="tong"><span>Tổng tiền hàng</span><span>${tien(d.TONG_TIEN_HANG)}</span></div>
           ${d.TIEN_GIAM_GIA ? `<div class="tong"><span>Giảm giá</span><span>−${tien(d.TIEN_GIAM_GIA)}</span></div>` : ''}
           ${d.DA_THANH_TOAN ? `<div class="tong"><span>Đã trả</span><span>${tien(d.DA_THANH_TOAN)}</span></div>` : ''}
-          <div class="tong lon"><span>Cần thanh toán</span><span>${tien(con)}</span></div></div>` +
+          ${d.TRA_TRUOC || con <= 0 ? '<div class="da-tra">✓ Đã thanh toán – cảm ơn quý khách!</div>' : `<div class="tong lon"><span>Cần thanh toán</span><span>${tien(con)}</span></div>`}</div>` +
         (qr ? `<div class="qr"><img src="${esc(qr)}" alt="Mã QR chuyển khoản"><p>Quét bằng app ngân hàng: số tiền và nội dung đã điền sẵn.<br>${esc(q.NGAN_HANG || '')} · ${esc(q.SO_TAI_KHOAN)}</p></div>` : '');
       $('#ngan-chan').innerHTML = con > 0 ? `<div style="font-size:13px;color:var(--mo);text-align:center">Báo nhân viên bạn muốn thanh toán bằng:</div>
         <div class="chon-tt"><button class="btn" data-act="xinTT" data-id="Tiền mặt">💵 Tiền mặt</button><button class="btn xanh" data-act="xinTT" data-id="Chuyển khoản">🏦 Chuyển khoản</button></div>`
         : '<button class="btn lon" data-act="dong">Đóng</button>';
+    } else if (S.ngan === 'ngoi') {
+      $('#ngan-tieu').textContent = 'Nhận bàn – đã trả tiền tại quầy';
+      $('#ngan-than').innerHTML = `<p style="color:var(--mo);margin:0">Bạn đã gọi món và thanh toán ở quầy? Nhập <b>mã nhận bàn</b> (4 số) in trên biên lai để quán mang đồ uống ra <b>${esc(S.dm.ban.TEN_BAN)}</b>.</p>
+        <label class="o"><span>Mã nhận bàn</span><input class="ma" id="ma-nb" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="····"></label>
+        <p style="color:var(--mo);font-size:12.5px;margin:10px 0 0">Không thấy mã? Báo nhân viên <b>số order</b> trên biên lai.</p>`;
+      $('#ngan-chan').innerHTML = `<button class="btn chinh lon" data-act="nhanBan" ${S.gui ? 'disabled' : ''}>${S.gui ? 'Đang gửi…' : 'Nhận bàn này'}</button>`;
+      const o = $('#ma-nb'); o.addEventListener('input', () => { o.value = o.value.replace(/\D/g, '').slice(0, 4); });
+      o.addEventListener('keydown', e => { if (e.key === 'Enter') nhanBan(); });
+      setTimeout(() => o.focus(), 250);
     } else if (S.ngan === 'nv') {
       $('#ngan-tieu').textContent = 'Gọi nhân viên';
       $('#ngan-than').innerHTML = `<p style="color:var(--mo);margin:0">Chọn nhanh hoặc ghi rõ yêu cầu:</p>
@@ -328,7 +346,7 @@ window.addEventListener('error', function (e) {
     S.yc.push(tam); renderYC();
     window.scrollTo({top: 0, behavior: 'smooth'});
     const thu = lan => goi(null, body, 40).then(kq => {
-      tam.MA_YEU_CAU = kq.MA_YEU_CAU; tam.TRANG_THAI = kq.TRANG_THAI; luuYC(); renderYC(); lich();
+      tam.MA_YEU_CAU = kq.MA_YEU_CAU; tam.TRANG_THAI = kq.TRANG_THAI; S.tGui = Date.now(); luuYC(); renderYC(); lich();
       toast(body.loai === 'Gọi món' ? (S.dm.cheDo === 'Gửi thẳng quầy pha chế' ? 'Đã gửi món tới quầy pha chế!' : 'Đã gửi! Nhân viên sẽ xác nhận ngay.')
         : body.loai === 'Xin thanh toán' ? 'Đã báo nhân viên mang hóa đơn tới.' : 'Đã gọi nhân viên, vui lòng đợi trong giây lát.', 'ok');
     }).catch(e => {
@@ -352,6 +370,23 @@ window.addEventListener('error', function (e) {
     guiYC({api: 'dat', loai: 'Gọi nhân viên', ghiChu: noiDung, ten: S.ten}, noiDung || 'Cần hỗ trợ tại bàn');
     dongNgan();
   }
+  /* Khách trả tiền tại quầy rồi mới chọn bàn: nhập mã nhận bàn để quán biết mang đồ ra bàn nào */
+  function nhanBan() {
+    const o = $('#ma-nb'), ma = (o ? o.value : '').replace(/\D/g, '');
+    if (ma.length !== 4) { toast('Mã nhận bàn gồm 4 chữ số.', 'loi'); if (o) o.focus(); return; }
+    if (S.gui) return;
+    S.gui = true; veNgan();
+    const thu = lan => goi(null, {api: 'ngoi', ma}, 40).then(kq => {
+      S.gui = false; dongNgan();
+      toast('Đã nhận ' + kq.TEN_BAN + ' – order #' + kq.SO + ' sẽ được mang ra bàn này ☕', 'ok');
+      capNhat(true);
+    }).catch(e => {
+      if (lan < 1 && e.kyThuat) return thu(lan + 1);
+      S.gui = false; if (S.ngan === 'ngoi') { veNgan(); const o2 = $('#ma-nb'); if (o2) o2.value = ma; }
+      toast(e.message, 'loi');
+    });
+    thu(0);
+  }
   function xinTT(pt) {
     guiYC({api: 'dat', loai: 'Xin thanh toán', phuongThuc: pt, ten: S.ten}, pt);
     dongNgan();
@@ -359,24 +394,34 @@ window.addEventListener('error', function (e) {
 
   /* ---------- Theo dõi trạng thái ---------- */
   let hen;
-  async function capNhat() {
+  let demTT = 0, dangHoi = false;
+  /** Hỏi trạng thái: chỉ hỏi các yêu cầu còn chờ; hóa đơn của bàn chỉ lấy khi khách mở xem hoặc mỗi ~1 phút */
+  async function capNhat(canDon) {
+    if (dangHoi) return;
+    const ma = S.yc.filter(y => /Chờ|Đang xử lý/.test(y.TRANG_THAI) && !/^tam/.test(y.MA_YEU_CAU)).map(y => y.MA_YEU_CAU);
+    const layDon = canDon || S.ngan === 'don' || (++demTT % 6 === 0);
+    if (!ma.length && !layDon) return;
+    dangHoi = true;
     try {
-      const ma = S.yc.filter(y => /Chờ|Đang xử lý/.test(y.TRANG_THAI) && !/^tam/.test(y.MA_YEU_CAU)).map(y => y.MA_YEU_CAU);
-      const kq = await goi({api: 'tt', ma: ma.join(',')});
+      const kq = await goi({api: 'tt', ma: ma.join(','), don: layDon ? 1 : 0});
       let doi = false;
       (kq.yeuCau || []).forEach(n => { const y = S.yc.find(x => x.MA_YEU_CAU === n.MA_YEU_CAU);
         if (y && y.TRANG_THAI !== n.TRANG_THAI) { y.TRANG_THAI = n.TRANG_THAI; y.LY_DO = n.LY_DO; doi = true;
           if (n.TRANG_THAI === 'Đã xác nhận') toast('Quán đã nhận món của bạn ☕', 'ok');
           if (n.TRANG_THAI === 'Từ chối') toast('Yêu cầu không thực hiện được' + (n.LY_DO ? ': ' + n.LY_DO : ''), 'loi'); } });
       if (doi) { luuYC(); renderYC(); }
+      if (!('don' in kq)) return;
       const cu = JSON.stringify(S.don); S.don = kq.don;
-      if (cu !== JSON.stringify(S.don)) { const nut = document.querySelector('[data-act="xemDon"]'); if (nut) nut.innerHTML = IC.hoaDon + 'Hóa đơn' + (S.don ? ' · ' + tien(S.don.TONG_THANH_TOAN - S.don.DA_THANH_TOAN) : ''); if (S.ngan === 'don') veNgan(); }
+      if (cu !== JSON.stringify(S.don)) { const nut = document.querySelector('[data-act="xemDon"]'); if (nut) nut.innerHTML = nhanDon(); if (S.ngan === 'don') veNgan(); }
     } catch (e) { /* mạng chập chờn: thử lại lần sau */ }
+    finally { dangHoi = false; }
   }
   function lich() {
     clearTimeout(hen);
     const dangCho = S.yc.some(y => /Chờ|Đang/.test(y.TRANG_THAI));
-    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? 6000 : 60000);
+    /* Vừa gửi (2 phút đầu): hỏi 3 giây/lần – rất nhẹ vì máy chủ chỉ đọc bộ nhớ chung; sau đó 8 giây; không còn gì chờ: 60 giây */
+    const moiGui = Date.now() - (S.tGui || 0) < 120000;
+    hen = setTimeout(async () => { if (!document.hidden) await capNhat(); lich(); }, dangCho ? (moiGui ? 3000 : 8000) : 60000);
   }
   function theoDoiNhanh() { lich(); }
 
@@ -394,10 +439,12 @@ window.addEventListener('error', function (e) {
     else if (a === 'goiNV') moNgan('nv');
     else if (a === 'nvNhanh') { const o = $('#nv-gc'); o.value = (o.value ? o.value + ', ' : '') + id; }
     else if (a === 'guiNV') guiNV($('#nv-gc').value.trim());
-    else if (a === 'xemDon') { moNgan('don'); capNhat(); }
+    else if (a === 'xemDon') { moNgan('don'); capNhat(true); }
     else if (a === 'xinTT') xinTT(id);
+    else if (a === 'moNgoi') moNgan('ngoi');
+    else if (a === 'nhanBan') nhanBan();
   });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && S.dm) capNhat(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && S.dm) capNhat(true); });
 
   /* ---------- Khởi động ---------- */
   (async function () {
