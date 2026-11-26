@@ -184,7 +184,7 @@ window.addEventListener('load', function () {
     hoaDon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>'
   };
   const KHO = 'goimon_' + B;
-  const PHIEN_BAN_TRANG = '2026.11.26-41';
+  const PHIEN_BAN_TRANG = '2026.11.26-42';
 
   let toastT;
   function toast(m, loai) { const t = $('#toast'); t.textContent = m; t.className = 'hien ' + (loai || ''); clearTimeout(toastT); toastT = setTimeout(() => { t.className = ''; }, loai === 'loi' ? 5000 : 3000); }
