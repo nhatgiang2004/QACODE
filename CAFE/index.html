@@ -179,7 +179,7 @@ window.addEventListener('error', function (e) {
     hoaDon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>'
   };
   const KHO = 'goimon_' + B;
-  const PHIEN_BAN_TRANG = '2026.11.26-37';
+  const PHIEN_BAN_TRANG = '2026.11.26-38';
 
   let toastT;
   function toast(m, loai) { const t = $('#toast'); t.textContent = m; t.className = 'hien ' + (loai || ''); clearTimeout(toastT); toastT = setTimeout(() => { t.className = ''; }, loai === 'loi' ? 5000 : 3000); }
@@ -288,16 +288,32 @@ window.addEventListener('error', function (e) {
   /* Trạng thái đã kết thúc: không cần hỏi máy chủ nữa */
   const XONG_HAN = /^(Đã xử lý|Từ chối|Đã thanh toán|Đã hủy|Lỗi gửi)$/;
   /** Số bước đã xong trên thanh tiến trình gọi món (0–4) */
-  /** Bước đã tới trên thanh tiến trình gọi món: -1 đang gửi · 0 Đã gửi · 1 Quán đã nhận · 2 Đang pha · 3 Đã xong
-   *  Quán bấm "Xác nhận, gửi pha chế" → Quán đã nhận; pha chế bấm "Đã biết" / "Mở quầy pha chế" → Đang pha; pha chế bấm Xong hết → Đã xong */
-  const daNhanPC = y => y.NHAN !== 0;
+  /** Bước đã tới trên thanh tiến trình gọi món: -1 đang gửi · 0 Đã gửi · 2 Đang pha (Quán đã nhận + Đang pha) · 3 Đã xong
+   *  Quán bấm "Xác nhận, gửi pha chế" → Đang pha; pha chế bấm Xong hết món của đơn / "Hoàn thành cả đơn" → Đã xong */
+  const daNhanPC = () => true;
   function buocYC(y) {
-    if (y.TRANG_THAI === 'Đã xác nhận') return daNhanPC(y) ? 2 : 1;
-    return {'Đang gửi': -1, 'Chờ xác nhận': 0, 'Đang xử lý': 0, 'Đã pha xong': 3, 'Đã thanh toán': 3}[y.TRANG_THAI];
+    return {'Đã xác nhận': 2, 'Đang gửi': -1, 'Chờ xác nhận': 0, 'Đang xử lý': 0, 'Đã pha xong': 3, 'Đã thanh toán': 3}[y.TRANG_THAI];
   }
   /* Kết thúc hẳn (đã thanh toán, hủy, từ chối, đã xử lý): hết lượt khách thì nhật ký order của bàn được xóa */
   const KET_THUC = /^(Đã thanh toán|Đã hủy|Từ chối|Đã xử lý)$/;
   let henXoa = null;
+  /** Thời điểm gửi lấy từ mã yêu cầu (YCyyMMddHHmmss…, giờ Việt Nam) */
+  function tgYC(y) {
+    const m = /^YC(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/.exec(y.MA_YEU_CAU || '');
+    return m ? Date.UTC(2000 + +m[1], m[2] - 1, +m[3], m[4] - 7, +m[5], +m[6]) : Date.now();
+  }
+  /** Bỏ các đơn chưa hoàn thành của lượt khách trước (lỗi, bị bỏ dở):
+   *  - đơn đã vào hóa đơn mà hóa đơn đó không còn mở ở bàn này;
+   *  - yêu cầu chờ xác nhận quá 90 phút. Trả về true nếu có bỏ. */
+  function donCu(don) {
+    const mo = don && !don.TRA_TRUOC ? don.MA_HOA_DON : '', truoc = S.yc.length;
+    S.yc = S.yc.filter(y => {
+      if (KET_THUC.test(y.TRANG_THAI) || /^tam/.test(y.MA_YEU_CAU)) return true;
+      if (/Đã xác nhận|Đã pha xong/.test(y.TRANG_THAI)) return y.HD ? y.HD === mo : !!mo;
+      return Date.now() - tgYC(y) < 90 * 60000;
+    });
+    return S.yc.length !== truoc;
+  }
   /** Mọi yêu cầu của bàn đã kết thúc (thường là sau khi thanh toán) → 2 phút sau xóa nhật ký, khách sau quét mã sẽ thấy trang trống */
   function donPhien() {
     const het = S.yc.length && S.yc.every(y => KET_THUC.test(y.TRANG_THAI));
@@ -473,16 +489,17 @@ window.addEventListener('error', function (e) {
         if (!y) return;
         if (y.XONG !== n.XONG || y.TONG !== n.TONG || String(y.XI) !== String(n.XI || [])) { y.XONG = n.XONG; y.TONG = n.TONG; y.XI = n.XI || []; doi = true; }
         if (n.HD && y.HD !== n.HD) { y.HD = n.HD; doi = true; }
-        const nhanMoi = n.NHAN === 0 ? 0 : 1;
-        if (y.NHAN !== nhanMoi) { const cu = y.NHAN; y.NHAN = nhanMoi; doi = true;
-          if (cu === 0 && nhanMoi === 1 && y.TRANG_THAI === 'Đã xác nhận' && n.TRANG_THAI === 'Đã xác nhận') { toast('Quầy pha chế đang pha món của bạn ☕', 'ok'); bao(1); } }
         if (y.TRANG_THAI !== n.TRANG_THAI) { y.TRANG_THAI = n.TRANG_THAI; y.LY_DO = n.LY_DO; doi = true;
-          if (n.TRANG_THAI === 'Đã xác nhận') { toast(nhanMoi ? 'Quầy pha chế đang pha món của bạn ☕' : 'Quán đã nhận món của bạn ✓', 'ok'); bao(1); }
+          if (n.TRANG_THAI === 'Đã xác nhận') { toast('Quán đã nhận – món của bạn đang được pha ☕', 'ok'); bao(1); }
           if (n.TRANG_THAI === 'Đã pha xong') { toast('Món của bạn đã xong – nhân viên đang mang ra 🥤', 'ok'); bao(2); }
           if (n.TRANG_THAI === 'Đã thanh toán') toast('Đã thanh toán. Cảm ơn quý khách!', 'ok');
           if (n.TRANG_THAI === 'Đã xử lý' && y.LOAI !== 'Gọi món') { toast(y.LOAI === 'Xin thanh toán' ? 'Nhân viên đang mang hóa đơn tới.' : 'Nhân viên đã nhận, đang tới bàn bạn.', 'ok'); bao(1); }
           if (n.TRANG_THAI === 'Đã hủy') toast('Đơn đã bị hủy' + (n.LY_DO ? ': ' + n.LY_DO : ''), 'loi');
           if (n.TRANG_THAI === 'Từ chối') toast('Yêu cầu không thực hiện được' + (n.LY_DO ? ': ' + n.LY_DO : ''), 'loi'); } });
+      /* Máy chủ không còn biết yêu cầu này (bộ nhớ đã hết hạn, đơn của lượt khách trước bị lỗi) → bỏ khỏi nhật ký */
+      const coTra = new Set((kq.yeuCau || []).map(n => n.MA_YEU_CAU));
+      if (ma.some(m => !coTra.has(m))) { S.yc = S.yc.filter(y => ma.indexOf(y.MA_YEU_CAU) < 0 || coTra.has(y.MA_YEU_CAU)); doi = true; }
+      if ('don' in kq && donCu(kq.don)) doi = true;
       if (doi) { luuYC(); renderYC(); }
       donPhien();
       if (!('don' in kq)) return;
@@ -544,7 +561,7 @@ window.addEventListener('error', function (e) {
       const cham = setTimeout(() => { const c = $('#cho-chu'); if (c) c.textContent = 'Đang kết nối máy chủ của quán… (lần đầu có thể mất vài giây)'; }, 4000);
       try { S.dm = await goi({api: 'menu'}); } finally { clearTimeout(cham); }
       /* Mở lại trang (khách mới quét mã): không hiện các yêu cầu đã kết thúc của lượt khách trước */
-      S.don = S.dm.don; S.yc = docYC().filter(y => !KET_THUC.test(y.TRANG_THAI)); luuYC();
+      S.don = S.dm.don; S.yc = docYC().filter(y => !KET_THUC.test(y.TRANG_THAI)); donCu(S.don); luuYC();
       render(); if (S.yc.length) capNhat(); lich();
     } catch (e) { loiMan(e.message, e.kyThuat); }
   })();
