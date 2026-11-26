@@ -38,9 +38,6 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
 .nhanh{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .nhanh button{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--vien);background:var(--kem);border-radius:12px;padding:10px 6px;font-weight:600;font-size:14px}
 .nhanh svg{width:18px;height:18px}
-.tra-quay{display:block;width:100%;margin-top:10px;border:1px dashed #9CC6DD;background:#F1F8FC;color:#1F5F85;border-radius:12px;padding:9px 10px;font-size:13.5px;text-align:center}
-.tra-quay b{white-space:nowrap}
-.o input.ma{font-size:30px;letter-spacing:.4em;text-align:center;font-weight:700;padding:12px;font-variant-numeric:tabular-nums}
 .da-tra{background:#E7F5EC;color:#1E6B45;border-radius:12px;padding:10px 12px;font-weight:700;text-align:center;margin-top:10px}
 /* Yêu cầu đã gửi */
 .yc-ds{margin:14px 14px 0;display:grid;gap:8px}
@@ -154,16 +151,24 @@ input,textarea{font:inherit;font-size:16px;color:inherit}
 <div id="toast"></div>
 <script>
 /* Báo lỗi ngay trên trang nếu trình duyệt không chạy được mã (không để màn hình chờ mãi) */
-window.addEventListener('error', function (e) {
-  var a = document.getElementById('app');
-  if (a && document.getElementById('cho-chu')) a.innerHTML = '<div class="loi-man"><div class="bieu">☕</div><h2>Trình duyệt không chạy được trang</h2><p>' +
-    String(e.message || e).replace(/[<>&]/g, '') + '</p><p>Hãy mở bằng Chrome hoặc Safari.</p></div>';
+/* Trình duyệt trong Zalo, Facebook… tự chèn mã riêng và mã đó hay báo lỗi (ví dụ "Can't find variable: zaloJSV2").
+   Không để lỗi của mã lạ chặn trang: chỉ báo lỗi khi chính mã của trang KHÔNG chạy được (sau khi tải xong 3 giây). */
+var __loiCuoi = '';
+window.addEventListener('error', function (e) { if (!window.__gmOK) __loiCuoi = String((e && e.message) || ''); });
+window.addEventListener('load', function () {
+  setTimeout(function () {
+    var a = document.getElementById('app');
+    if (window.__gmOK || !a || !document.getElementById('cho-chu')) return;
+    a.innerHTML = '<div class="loi-man"><div class="bieu">☕</div><h2>Trình duyệt không chạy được trang</h2><p>' +
+      __loiCuoi.replace(/[<>&]/g, '') + '</p><p>Hãy bấm ⋯ rồi chọn mở bằng Chrome hoặc Safari.</p></div>';
+  }, 3000);
 });
 </script>
 <script src="config.js?v=2"></script>
 <script>
 (function () {
   'use strict';
+  window.__gmOK = true;
   const CH = window.GOI_MON_CAU_HINH || {};
   const API = (new URLSearchParams(location.search).get('api')) || CH.API_URL;
   const tham = new URLSearchParams(location.search);
@@ -179,7 +184,7 @@ window.addEventListener('error', function (e) {
     hoaDon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>'
   };
   const KHO = 'goimon_' + B;
-  const PHIEN_BAN_TRANG = '2026.11.26-39';
+  const PHIEN_BAN_TRANG = '2026.11.26-41';
 
   let toastT;
   function toast(m, loai) { const t = $('#toast'); t.textContent = m; t.className = 'hien ' + (loai || ''); clearTimeout(toastT); toastT = setTimeout(() => { t.className = ''; }, loai === 'loi' ? 5000 : 3000); }
@@ -239,8 +244,7 @@ window.addEventListener('error', function (e) {
         <div><h1>${esc(q.TEN_QUAN || 'Quán cafe')}</h1><p>${esc(q.SLOGAN || b.TEN_CHI_NHANH)}</p></div></div></div>
       <div class="the-ban"><div class="tb-dong"><span class="so">${esc(b.TEN_BAN)}</span>
         <div><b>${esc(b.KHU_VUC || b.TEN_CHI_NHANH)}</b><small>${esc(b.TEN_CHI_NHANH)}${q.WIFI ? ' · Wifi: ' + esc(q.WIFI) : ''}</small></div></div>
-        <div class="nhanh"><button data-act="goiNV">${IC.chuong}Gọi nhân viên</button><button data-act="xemDon">${nhanDon()}</button></div>
-        <button class="tra-quay" data-act="moNgoi">🧾 Đã gọi &amp; trả tiền tại quầy? <b>Nhập mã nhận bàn →</b></button></div>
+        <div class="nhanh"><button data-act="goiNV">${IC.chuong}Gọi nhân viên</button><button data-act="xemDon">${nhanDon()}</button></div></div>
       <div class="yc-ds" id="yc-ds"></div>
       <div class="loc"><input class="tim" id="tim" type="search" placeholder="🔍 Tìm món…" value="${esc(S.tim)}">
         <div class="chips" id="chips"></div></div>
@@ -386,15 +390,6 @@ window.addEventListener('error', function (e) {
       $('#ngan-chan').innerHTML = con > 0 ? `<div style="font-size:13px;color:var(--mo);text-align:center">Báo nhân viên bạn muốn thanh toán bằng:</div>
         <div class="chon-tt"><button class="btn" data-act="xinTT" data-id="Tiền mặt">💵 Tiền mặt</button><button class="btn xanh" data-act="xinTT" data-id="Chuyển khoản">🏦 Chuyển khoản</button></div>`
         : '<button class="btn lon" data-act="dong">Đóng</button>';
-    } else if (S.ngan === 'ngoi') {
-      $('#ngan-tieu').textContent = 'Nhận bàn – đã trả tiền tại quầy';
-      $('#ngan-than').innerHTML = `<p style="color:var(--mo);margin:0">Bạn đã gọi món và thanh toán ở quầy? Nhập <b>mã nhận bàn</b> (4 số) in trên biên lai để quán mang đồ uống ra <b>${esc(S.dm.ban.TEN_BAN)}</b>.</p>
-        <label class="o"><span>Mã nhận bàn</span><input class="ma" id="ma-nb" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="····"></label>
-        <p style="color:var(--mo);font-size:12.5px;margin:10px 0 0">Không thấy mã? Báo nhân viên <b>số order</b> trên biên lai.</p>`;
-      $('#ngan-chan').innerHTML = `<button class="btn chinh lon" data-act="nhanBan" ${S.gui ? 'disabled' : ''}>${S.gui ? 'Đang gửi…' : 'Nhận bàn này'}</button>`;
-      const o = $('#ma-nb'); o.addEventListener('input', () => { o.value = o.value.replace(/\D/g, '').slice(0, 4); });
-      o.addEventListener('keydown', e => { if (e.key === 'Enter') nhanBan(); });
-      setTimeout(() => o.focus(), 250);
     } else if (S.ngan === 'nv') {
       $('#ngan-tieu').textContent = 'Gọi nhân viên';
       $('#ngan-than').innerHTML = `<p style="color:var(--mo);margin:0">Chọn nhanh hoặc ghi rõ yêu cầu:</p>
@@ -447,23 +442,6 @@ window.addEventListener('error', function (e) {
   function guiNV(noiDung) {
     guiYC({api: 'dat', loai: 'Gọi nhân viên', ghiChu: noiDung, ten: S.ten}, noiDung || 'Cần hỗ trợ tại bàn');
     dongNgan();
-  }
-  /* Khách trả tiền tại quầy rồi mới chọn bàn: nhập mã nhận bàn để quán biết mang đồ ra bàn nào */
-  function nhanBan() {
-    const o = $('#ma-nb'), ma = (o ? o.value : '').replace(/\D/g, '');
-    if (ma.length !== 4) { toast('Mã nhận bàn gồm 4 chữ số.', 'loi'); if (o) o.focus(); return; }
-    if (S.gui) return;
-    S.gui = true; veNgan();
-    const thu = lan => goi(null, {api: 'ngoi', ma}, 40).then(kq => {
-      S.gui = false; dongNgan();
-      toast('Đã nhận ' + kq.TEN_BAN + ' – order #' + kq.SO + ' sẽ được mang ra bàn này ☕', 'ok');
-      capNhat(true);
-    }).catch(e => {
-      if (lan < 1 && e.kyThuat) return thu(lan + 1);
-      S.gui = false; if (S.ngan === 'ngoi') { veNgan(); const o2 = $('#ma-nb'); if (o2) o2.value = ma; }
-      toast(e.message, 'loi');
-    });
-    thu(0);
   }
   function xinTT(pt) {
     guiYC({api: 'dat', loai: 'Xin thanh toán', phuongThuc: pt, ten: S.ten}, pt);
@@ -546,9 +524,7 @@ window.addEventListener('error', function (e) {
     else if (a === 'guiNV') guiNV($('#nv-gc').value.trim());
     else if (a === 'xemDon') { moNgan('don'); capNhat(true); }
     else if (a === 'xinTT') xinTT(id);
-    else if (a === 'moNgoi') moNgan('ngoi');
     else if (a === 'goiThem') { const l = $('.loc'); if (l) window.scrollTo({top: l.offsetTop, behavior: 'smooth'}); toast('Chọn món muốn gọi thêm rồi bấm "Gọi thêm" ở dưới cùng.', ''); }
-    else if (a === 'nhanBan') nhanBan();
   });
   document.addEventListener('visibilitychange', () => { if (!document.hidden && S.dm) capNhat(true); });
 
